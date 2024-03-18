@@ -1,0 +1,16 @@
+<MudAppBar Fixed Color="Color.Primary">
+    <MudIconButton Class="text-white" Icon="@IconsF.Menu" OnClick="@Toggle" />
+    <MudText Class="ml-2 mark-one" Typo="Typo.h5">The Company</MudText>
+    <MudSpacer />
+    <MudText Class="mr-6 mark-one">Nav content here...</MudText>
+    <MenuProfile></MenuProfile>
+</MudAppBar>
+<MudDrawer @bind-Open="_docked" Variant="DrawerVariant.Temporary" ClipMode="DrawerClipMode.Always">
+    <MudDrawerHeader>
+        <MudStack AlignItems="AlignItems.Center" Spacing="4" Row>
+            <MudImage Src="Content/Pictures/integrity.png" Height="32"/>
+            <MudText Class="mark-one" Typo="Typo.h4">Skills</MudText>
+        </MudStack>
+    </MudDrawerHeader>
+    <NavMenu />
+</MudDrawer>

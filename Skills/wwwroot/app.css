@@ -1,0 +1,29 @@
+/* Fonts */
+@import 'https://fonts.googleapis.com/css2?family=Marko+One&display=swap';
+/* Fonts */
+
+/* Global utility */
+* { outline: none!important; }
+
+.text-white { color: #fff!important; }
+.white-all * { color: #fff!important; }
+.transparent { opacity: 0; background: transparent!important; }
+.mark-one {
+    font-family: "Marko One", 'Helvetica Neue', Helvetica, Arial, sans-serif!important;
+    font-weight: 400!important;
+    font-style: normal!important;
+}
+/* Global utility */
+
+/* Appbar */
+.icon-hoverable:hover {
+    background-color: rgba(0, 0, 0, .1)!important;
+    border-radius: 50%!important;
+}
+
+.chrome-bg {
+    background: transparent!important;
+    backdrop-filter: blur(2px)!important;
+    border: 1px solid #808080!important;
+}
+/* Appbar */
