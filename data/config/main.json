@@ -1,4 +1,8 @@
 {
-    "Primary": "#1C359A",
-    "Secondary": "#34495E"
+    "name": "Your Company Name",
+    "favicon": "YourBrandIcon.png",
+    "appbar-background": "#013a63",
+    "drawer-background": "#f9f7f3",
+    "primary": "#1C359A",
+    "secondary": "#34495E"
 }

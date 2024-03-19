@@ -1,23 +1,30 @@
-<MudAppBar Fixed Color="Color.Primary">
-    <MudIconButton Class="text-white" Icon="@IconsF.Menu" OnClick="@Toggle" />
-    <MudLink Class="text-white" Href="/"><MudText Class="ml-2 mark-one" Typo="Typo.h5">The Company</MudText></MudLink>
+@using Skills.Services
+<MudAppBar Fixed Style="@($"background: {ThemeManager.Get("appbar-background")}!important;")">
+    <MudIconButton Class="text-white" Icon="@IconsF.Menu" OnClick="@(() => Toggle())" />
+    <MudLink Class="white-all" Href="/" Underline="Underline.Hover" Style="text-decoration-color: #fff;">
+        <MudText Class="ml-2 text-white mark-one" Typo="Typo.h5">@ThemeManager.Get("name")</MudText>
+    </MudLink>
     <MudSpacer />
-    <MudText Class="mr-6 mark-one">Nav content here...</MudText>
     @if (_identity != null && _identity.IsAuthenticated)
     {
-        <MenuProfile></MenuProfile>
+        <div class="mr-4">
+            <MenuProfile></MenuProfile>
+        </div>
     }
     else
     {
-        <MudButton Class="text-white hoverable" Href="MicrosoftIdentity/Account/SignIn" Variant="Variant.Text">Se connecter</MudButton>
+        <MudButton Class="text-white hoverable mr-4" Href="MicrosoftIdentity/Account/SignIn" Variant="Variant.Text">Se connecter</MudButton>
     }
 </MudAppBar>
-<MudDrawer @bind-Open="_docked" Variant="DrawerVariant.Temporary" ClipMode="DrawerClipMode.Always">
+<MudDrawer @bind-Open="_docked" Variant="DrawerVariant.Temporary" ClipMode="DrawerClipMode.Always" 
+           Style="@($"background: {ThemeManager.Get("drawer-background")}!important;")">
     <MudDrawerHeader>
         <MudStack AlignItems="AlignItems.Center" Spacing="4" Row>
             <MudImage Src="Content/Pictures/integrity.png" Height="32"/>
             <MudText Class="mark-one" Typo="Typo.h4">Skills</MudText>
         </MudStack>
     </MudDrawerHeader>
-    <NavMenu />
+    <CascadingValue Name="HeaderInstance" Value="@this">
+        <NavMenu />
+    </CascadingValue>
 </MudDrawer>

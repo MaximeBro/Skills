@@ -1,5 +1,5 @@
+using System.DirectoryServices;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
-using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Identity.Web;
 using Microsoft.Identity.Web.UI;
@@ -52,7 +52,8 @@ builder.Services.AddRazorComponents()
 builder.Services.AddMudServices();
 
 /* Custom Services */
-builder.Services.AddSingleton<ThemeService>();
+builder.Services.AddSingleton<ActiveDirectoryService>();
+builder.Services.AddSingleton<ThemeManager>();
 builder.Services.AddTransient<AuthenticationService>();
 /* Custom Services */
 
@@ -76,10 +77,14 @@ app.UseStaticFiles();
 app.UseRouting();
 app.UseAntiforgery();
 
+app.UseAuthorization();
 app.MapControllers();
 
 app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode();
+
+var adService = app.Services.GetRequiredService<ActiveDirectoryService>();
+await adService.InitAsync();
 
 await RunMigrationAsync<SkillsContext>(app);
 

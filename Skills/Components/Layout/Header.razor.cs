@@ -9,6 +9,7 @@ namespace Skills.Components.Layout;
 public partial class Header
 {
     [Inject] public AuthenticationService AuthenticationService { get; set; } = null!;
+    [Inject] public ThemeManager ThemeManager { get; set; } = null!;
 
     private bool _docked = false;
     private IIdentity? _identity;
@@ -18,9 +19,9 @@ public partial class Header
         _identity = await AuthenticationService.GetUserIdentityAsync();
     }
 
-    private void Toggle()
+    public void Toggle(bool toggle = true)
     {
-        _docked = true;
+        _docked = toggle;
         StateHasChanged();
     }
 }
