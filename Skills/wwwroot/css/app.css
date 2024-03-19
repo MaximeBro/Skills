@@ -8,6 +8,7 @@
 .text-white { color: #fff!important; }
 .white-all * { color: #fff!important; }
 .transparent { opacity: 0; background: transparent!important; }
+.dark-bg { background-color: #323232!important; }
 .mark-one {
     font-family: "Marko One", 'Helvetica Neue', Helvetica, Arial, sans-serif!important;
     font-weight: 400!important;
@@ -16,6 +17,10 @@
 /* Global utility */
 
 /* Appbar */
+.hoverable:hover {
+    background-color: rgba(0, 0, 0, .1)!important;
+}
+
 .icon-hoverable:hover {
     background-color: rgba(0, 0, 0, .1)!important;
     border-radius: 50%!important;

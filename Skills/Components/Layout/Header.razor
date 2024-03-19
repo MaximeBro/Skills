@@ -1,9 +1,16 @@
 <MudAppBar Fixed Color="Color.Primary">
     <MudIconButton Class="text-white" Icon="@IconsF.Menu" OnClick="@Toggle" />
-    <MudText Class="ml-2 mark-one" Typo="Typo.h5">The Company</MudText>
+    <MudLink Class="text-white" Href="/"><MudText Class="ml-2 mark-one" Typo="Typo.h5">The Company</MudText></MudLink>
     <MudSpacer />
     <MudText Class="mr-6 mark-one">Nav content here...</MudText>
-    <MenuProfile></MenuProfile>
+    @if (_identity != null && _identity.IsAuthenticated)
+    {
+        <MenuProfile></MenuProfile>
+    }
+    else
+    {
+        <MudButton Class="text-white hoverable" Href="MicrosoftIdentity/Account/SignIn" Variant="Variant.Text">Se connecter</MudButton>
+    }
 </MudAppBar>
 <MudDrawer @bind-Open="_docked" Variant="DrawerVariant.Temporary" ClipMode="DrawerClipMode.Always">
     <MudDrawerHeader>

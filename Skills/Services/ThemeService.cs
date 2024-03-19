@@ -1,4 +1,3 @@
-using System.Drawing;
 using MudBlazor.Utilities;
 using Color = MudBlazor.Color;
 

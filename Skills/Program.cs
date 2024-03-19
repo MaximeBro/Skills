@@ -1,6 +1,11 @@
+using Microsoft.AspNetCore.Authentication.OpenIdConnect;
+using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Identity.Web;
+using Microsoft.Identity.Web.UI;
 using MudBlazor.Services;
 using Skills.Components;
+using Skills.Databases;
 using Skills.Services;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -8,15 +13,52 @@ var builder = WebApplication.CreateBuilder(args);
 var dataPath = new DirectoryInfo(Path.Combine(builder.Environment.ContentRootPath, "../data/")).FullName;
 builder.Configuration.AddJsonFile(Path.Combine(dataPath, "config/main.json"), optional: false, reloadOnChange: true);
 
-// Add services to the container.
+
+/* Microsoft Azure AD authentication */
+var initialScopes = builder.Configuration["DownstreamApi:Scopes"]?.Split(' ');
+
+builder.Services.AddAuthentication(OpenIdConnectDefaults.AuthenticationScheme)
+    .AddMicrosoftIdentityWebApp(builder.Configuration.GetSection("AzureAd"))
+    .EnableTokenAcquisitionToCallDownstreamApi(initialScopes)
+    .AddMicrosoftGraph(builder.Configuration.GetSection("DownstreamApi"))
+    .AddInMemoryTokenCaches();
+
+builder.Services.AddControllersWithViews()
+    .AddMicrosoftIdentityUI();
+
+builder.Services.AddAuthorization(options =>
+{
+    // By default, all incoming requests will be authorized according to the default policy
+    // options.FallbackPolicy = options.DefaultPolicy;
+});
+
+builder.Services.Configure<OpenIdConnectOptions> (OpenIdConnectDefaults.AuthenticationScheme, options =>
+{
+    options.Events.OnSignedOutCallbackRedirect = context =>
+    {
+        context.HttpContext.Response.Redirect(context.Options.SignedOutRedirectUri);
+        context.HandleResponse();
+        return Task.CompletedTask;
+    };
+
+});
+/* Microsoft Azure AD authentication */
+
+
 builder.Services.AddRazorComponents()
-    .AddInteractiveServerComponents();
+    .AddInteractiveServerComponents()
+    .AddMicrosoftIdentityConsentHandler();
 
 builder.Services.AddMudServices();
 
 /* Custom Services */
 builder.Services.AddSingleton<ThemeService>();
+builder.Services.AddTransient<AuthenticationService>();
 /* Custom Services */
+
+/* Databases */
+builder.Services.AddDbContextFactory<SkillsContext>();
+/* Databases */
 
 var app = builder.Build();
 
@@ -31,10 +73,15 @@ if (!app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 app.UseStaticFiles();
+app.UseRouting();
 app.UseAntiforgery();
+
+app.MapControllers();
 
 app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode();
+
+await RunMigrationAsync<SkillsContext>(app);
 
 await app.RunAsync();
 return;
