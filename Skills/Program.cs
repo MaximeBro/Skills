@@ -1,11 +1,14 @@
 using System.DirectoryServices;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Identity.Web;
 using Microsoft.Identity.Web.UI;
 using MudBlazor.Services;
 using Skills.Components;
 using Skills.Databases;
+using Skills.Models;
+using Skills.Models.Enums;
 using Skills.Services;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -33,6 +36,15 @@ builder.Services.AddAuthorization(options =>
     // options.FallbackPolicy = options.DefaultPolicy;
 });
 
+builder.Services.AddAuthorizationBuilder()
+    .AddPolicy("Read", policy => policy.AddRequirements(new PermissionRequirement(PermissionPolicy.Read)))
+    .AddPolicy("Write", policy => policy.AddRequirements(new PermissionRequirement(PermissionPolicy.Write)))
+    .AddPolicy("Edit", policy => policy.AddRequirements(new PermissionRequirement(PermissionPolicy.Edit)))
+    .AddPolicy("Delete", policy => policy.AddRequirements(new PermissionRequirement(PermissionPolicy.Delete)))
+    .AddPolicy("Users", policy => policy.AddRequirements(new PermissionRequirement(PermissionPolicy.Users)))
+    .AddPolicy("Skills", policy => policy.AddRequirements(new PermissionRequirement(PermissionPolicy.Skills)))
+    .AddPolicy("Root", policy => policy.AddRequirements(new PermissionRequirement(PermissionPolicy.Root)));
+
 builder.Services.Configure<OpenIdConnectOptions> (OpenIdConnectDefaults.AuthenticationScheme, options =>
 {
     options.Events.OnSignedOutCallbackRedirect = context =>
@@ -53,6 +65,7 @@ builder.Services.AddRazorComponents()
 builder.Services.AddMudServices();
 
 /* Custom Services */
+builder.Services.AddScoped<IAuthorizationHandler, PermissionHandler>();
 builder.Services.AddSingleton<ActiveDirectoryService>();
 builder.Services.AddSingleton<ThemeManager>();
 builder.Services.AddSingleton<SkillService>();

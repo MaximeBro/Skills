@@ -1,0 +1,9 @@
+@page "/overview"
+@page "/overview/{Id}"
+@using Skills.Components.Pages.Overview
+
+<MudTabs Centered Color="Color.Primary">
+    <UserProfile User="@_user" />
+    <SkillsProfile User="@_user" />
+    <CvProfile User="@_user" />
+</MudTabs>

@@ -7,6 +7,16 @@ namespace Skills.Extensions;
 public static class ModelExtensions
 {
     /// <summary>
+    /// Get all the flags of the specified enum.
+    /// </summary>
+    /// <param name="this">An <see cref="Enum"/></param>
+    /// <returns>An <see cref="IEnumerable{T}"/> of the given enum.</returns>
+    public static IEnumerable<Enum> GetFlags(this Enum @this)
+    {
+        return Enum.GetValues(@this.GetType()).Cast<Enum>().Where(@this.HasFlag);
+    }
+    
+    /// <summary>
     /// Converts a <see cref="UserPrincipal"/> into a <see cref="UserModel"/> with the name and email of the user.
     /// </summary>
     /// <param name="this">The <see cref="UserPrincipal"/> to convert.</param>

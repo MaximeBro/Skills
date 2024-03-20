@@ -1,4 +1,3 @@
-@using Skills.Services
 <MudAppBar Fixed Style="@($"background: {ThemeManager.Get("appbar-background")}!important;")">
     <MudIconButton Class="text-white" Icon="@IconsF.Menu" OnClick="@(() => Toggle())" />
     <MudLink Class="white-all" Href="/" Underline="Underline.Hover" Style="text-decoration-color: #fff;">
@@ -7,6 +6,9 @@
     <MudSpacer />
     @if (_identity != null && _identity.IsAuthenticated)
     {
+        <MudStack Class="mr-4" AlignItems="AlignItems.Center" Row>
+            <MudText Class="text-white mark-one"><MudIcon Class="mb-n1" Icon="@IconsF.Check" Color="Color.Info" /> Vous êtes connecté</MudText>
+        </MudStack>
         <div class="mr-4">
             <MenuProfile></MenuProfile>
         </div>

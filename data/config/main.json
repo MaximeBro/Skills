@@ -3,6 +3,6 @@
     "favicon": "YourBrandIcon.png",
     "appbar-background": "#013a63",
     "drawer-background": "#f9f7f3",
-    "primary": "#1C359A",
+    "primary": "#013a63",
     "secondary": "#34495E"
 }

@@ -12,7 +12,8 @@ public class SkillService(IConfiguration configuration, IDbContextFactory<Skills
     public async Task InitAsync()
     {
         var file = configuration["excel-file"];
-        if (!string.IsNullOrWhiteSpace(file))
+        var import = !string.IsNullOrWhiteSpace(configuration["import"]) && bool.Parse(configuration["import"]!);
+        if (import && !string.IsNullOrWhiteSpace(file))
         {
             var fileStream = File.OpenRead(Path.Combine(Directory.GetCurrentDirectory(), "..\\data\\config", file));
             var ms = new MemoryStream();

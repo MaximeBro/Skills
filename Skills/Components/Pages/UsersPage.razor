@@ -1,22 +1,98 @@
 @page "/users"
-@attribute [Authorize]
+@attribute [Authorize(Policy = "Users")]
 
-<MudText Class="mt-2 mark-one" Typo="Typo.h2" Align="Align.Center" GutterBottom>Utilisateurs</MudText>
-
+<MudText Class="mt-2 mark-one" Typo="Typo.h2" Align="Align.Center">Utilisateurs</MudText>
+<MudToolBar Class="mb-6 pl-10">
+    <MudTooltip Placement="Placement.Bottom" Text="@_toggleTooltip" Arrow>
+        <MudIconButton Icon="@_toggleIcon" OnClick="ToggleView"/>
+    </MudTooltip>
+    <AuthorizeView Policy="Write">
+        <Authorized>
+            <MudTooltip Placement="Placement.Bottom" Text="Créer un utilisateur" Arrow>
+                <MudIconButton Icon="@IconsF.Add"/>
+            </MudTooltip>
+        </Authorized>
+    </AuthorizeView>
+    <MudSpacer/>
+    <div>
+        <MudTextField T="string" @bind-Value="_search" Class="mr-8 flex-shrink-0" Style="width: 400px;" Placeholder="Rechercher" Immediate
+                      Adornment="Adornment.Start" AdornmentIcon="@IconsF.Search"/>
+    </div>
+</MudToolBar>
 <MudContainer MaxWidth="MaxWidth.ExtraLarge">
-    <MudGrid Justify="Justify.FlexStart">
-        @foreach (var user in _users)
-        {
-            <MudItem xs="12" sm="6" md="3" lg="2" xl="1">
-                <MudLink Href="/" Underline="Underline.None">
+    @if (_toggleIndex == 1)
+    {
+        <MudGrid Class="pb-4" Justify="Justify.FlexStart">
+            @foreach (var user in _users.Where(QuickFilter))
+            {
+                <MudItem xs="12" sm="6" md="4" lg="3" xl="2">
+                    
                     <MudPaper Class="py-4 px-6" Elevation="5">
-                        <MudStack Row="false" AlignItems="AlignItems.Center" Justify="Justify.Center" Spacing="0">
-                            <MudText Align="Align.Center">@user.Name</MudText>
-                            <MudText Align="Align.Center">@user.Email</MudText>
+                        <MudStack Row Justify="Justify.SpaceBetween" AlignItems="AlignItems.Center" Spacing="0">
+                            <MudLink Href="@($"/overview/{user.Username}/")" Underline="Underline.None">
+                                <MudStack Class="flex-shrink-0" Row="false" AlignItems="AlignItems.Center" Justify="Justify.Center" Spacing="0">
+                                    <MudText Align="Align.Center">@user.Name</MudText>
+                                    <MudText Align="Align.Center">@user.Email</MudText>
+                                </MudStack>
+                            </MudLink>
+                            <AuthorizeView Policy="Delete">
+                                <Authorized>
+                                    <div>
+                                        <MudTooltip Placement="Placement.Bottom" Text="Supprimer un utilisateur" Arrow>
+                                            <MudIconButton Size="Size.Small" Icon="@IconsF.Delete"/>
+                                        </MudTooltip>
+                                    </div>
+                                </Authorized>
+                            </AuthorizeView>
                         </MudStack>
                     </MudPaper>
-                </MudLink>
-            </MudItem>
-        }
-    </MudGrid>
+                </MudItem>
+            }
+        </MudGrid>
+    }
+    else if (_toggleIndex == 2)
+    {
+        <MudContainer MaxWidth="MaxWidth.Medium">
+            <MudGrid Class="pb-6" Justify="Justify.FlexStart">
+                @foreach (var user in _users.Where(QuickFilter))
+                {
+                    <MudItem xs="12">
+                        <MudPaper Class="py-4 px-6" Elevation="5">
+                            <MudStack Row AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween" Spacing="0">
+                                <MudLink Href="@($"/overview/{user.Username}/")" Underline="Underline.None">
+                                    <MudStack Row="false" AlignItems="AlignItems.Center" Justify="Justify.Center" Spacing="0">
+                                        <MudText Align="Align.Center">@user.Name</MudText>
+                                        <MudText Align="Align.Center">@user.Email</MudText>
+                                    </MudStack>
+                                </MudLink>
+                                <AuthorizeView Policy="Delete">
+                                    <Authorized>
+                                        <div>
+                                            <MudTooltip Placement="Placement.Bottom" Text="Supprimer un utilisateur" Arrow>
+                                                <MudIconButton Size="Size.Small" Icon="@IconsF.Delete"/>
+                                            </MudTooltip>
+                                        </div>
+                                    </Authorized>
+                                </AuthorizeView>
+                            </MudStack>
+                        </MudPaper>
+                    </MudItem>
+                }
+            </MudGrid>
+        </MudContainer>
+    }
+    else
+    {
+        <div class="pb-6">
+            <MudDataGrid T="UserModel" Items="_users" Bordered Hover Outlined Filterable Striped SortMode="SortMode.Multiple" Dense FixedHeader
+                         Culture="@(new CultureInfo("fr-FR"))" Height="70vh" Virtualize OverscanCount="25" QuickFilter="@QuickFilter"
+                         RowClick="@OnRowClicked">
+                <Columns>
+                    <PropertyColumn Title="Nom" Property="x => x.Name"/>
+                    <PropertyColumn Title="Email" Property="x => x.Email"/>
+                    <PropertyColumn Title="Identifiant" Property="x => x.Username"/>
+                </Columns>
+            </MudDataGrid>
+        </div>
+    }
 </MudContainer>

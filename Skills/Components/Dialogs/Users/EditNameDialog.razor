@@ -1,0 +1,22 @@
+<MudDialog Class="pa-0 rounded-lg">
+    <DialogContent>
+        <MudIconButton Class="ml-n4" Icon="@IconsF.Close" Color="Color.Dark" OnClick="@(() => Dialog.Close())" />
+        <MudStack Class="px-4 py-2" Row="false" Justify="Justify.Center">
+            <MudTextField T="string" @bind-Value="_name" Placeholder="Prénom Nom" Label="Nomination" />
+        </MudStack>
+    </DialogContent>
+    <DialogActions>
+        <MudButton Class="mark-one" Style="text-transform: none;" Color="Color.Success" Variant="Variant.Outlined" OnClick="@Submit">Enregistrer</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    [CascadingParameter] public MudDialogInstance Dialog { get; set; } = null!;
+
+    [Parameter] public string Name { get; set; } = null!;
+    
+    private string _name = string.Empty;
+
+    protected override void OnInitialized() => _name = Name;
+    private void Submit() => Dialog.Close(DialogResult.Ok(_name));
+}
