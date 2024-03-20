@@ -12,6 +12,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 var dataPath = new DirectoryInfo(Path.Combine(builder.Environment.ContentRootPath, "../data/")).FullName;
 builder.Configuration.AddJsonFile(Path.Combine(dataPath, "config/main.json"), optional: false, reloadOnChange: true);
+builder.Configuration.AddJsonFile(Path.Combine(dataPath, "config/skills.json"), optional: false, reloadOnChange: true);
 
 
 /* Microsoft Azure AD authentication */
@@ -54,6 +55,7 @@ builder.Services.AddMudServices();
 /* Custom Services */
 builder.Services.AddSingleton<ActiveDirectoryService>();
 builder.Services.AddSingleton<ThemeManager>();
+builder.Services.AddSingleton<SkillService>();
 builder.Services.AddTransient<AuthenticationService>();
 /* Custom Services */
 
@@ -80,13 +82,19 @@ app.UseAntiforgery();
 app.UseAuthorization();
 app.MapControllers();
 
+var themeManager = app.Services.GetRequiredService<ThemeManager>();
+var skillServices = app.Services.GetRequiredService<SkillService>();
+await themeManager.InitAsync();
+await skillServices.InitAsync();
+
 app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode();
 
+await RunMigrationAsync<SkillsContext>(app);
+
+// This service needs migrations to be performed before its InitAsync method is called because it may produce requests on the SkillsContext !
 var adService = app.Services.GetRequiredService<ActiveDirectoryService>();
 await adService.InitAsync();
-
-await RunMigrationAsync<SkillsContext>(app);
 
 await app.RunAsync();
 return;

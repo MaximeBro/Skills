@@ -4,14 +4,10 @@
             <MudNavLink Class="mark-one" Href="/" Match="NavLinkMatch.All" Icon="@IconsF.Home">Accueil</MudNavLink>
         </div>
         <div>
-            <MudNavGroup Class="mark-one" Title="Compétences">
-                <MudNavLink Class="mark-one" OnClick="@(async () => await NavigateToAsync("/skills"))" Match="NavLinkMatch.All" Icon="fas fa-toolbox">Compétences</MudNavLink>
-            </MudNavGroup>
+            <MudNavLink Class="mark-one" OnClick="@(async () => await NavigateToAsync("/skills"))" Match="NavLinkMatch.All" Icon="fas fa-toolbox">Compétences</MudNavLink>
         </div>
         <div>
-            <MudNavGroup Class="mark-one" Title="Utilisateurs">
-                <MudNavLink Class="mark-one" OnClick="@(async () => await NavigateToAsync("/users"))" Match="NavLinkMatch.All" Icon="@IconsF.People">Utilisateurs</MudNavLink>
-            </MudNavGroup>
+            <MudNavLink Class="mark-one" OnClick="@(async () => await NavigateToAsync("/users"))" Match="NavLinkMatch.All" Icon="@IconsF.People">Utilisateurs</MudNavLink>
         </div>
     </MudStack>
 </MudNavMenu>

@@ -24,10 +24,15 @@
       <PackageReference Include="Microsoft.Identity.Web" Version="2.17.2" />
       <PackageReference Include="Microsoft.Identity.Web.MicrosoftGraph" Version="2.17.2" />
       <PackageReference Include="Microsoft.Identity.Web.UI" Version="2.17.2" />
+      <PackageReference Include="MiniExcel" Version="1.31.3" />
       <PackageReference Include="MudBlazor" Version="6.17.0" />
       <PackageReference Include="System.DirectoryServices" Version="8.0.0" />
       <PackageReference Include="System.DirectoryServices.AccountManagement" Version="8.0.0" />
       <PackageReference Include="System.DirectoryServices.Protocols" Version="8.0.0" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="wwwroot\pictures\" />
     </ItemGroup>
 
 </Project>

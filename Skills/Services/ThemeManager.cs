@@ -12,6 +12,19 @@ public class ThemeManager
     {
         _configuration = configuration;
     }
+
+    public Task InitAsync()
+    {
+        var filePath = Path.Combine(Directory.GetCurrentDirectory(), "..\\data\\config\\", _configuration["favicon"] ?? "YourBrandIcon.png");
+        var resourcePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot\\pictures\\", _configuration["favicon"] ?? "YourBrandIcon.png");
+        if (File.Exists(filePath))
+        {
+            if (File.Exists(resourcePath)) File.Delete(resourcePath);
+            File.Copy(filePath, resourcePath);
+        }
+        
+        return Task.CompletedTask;
+    }
     
     public string GetColor(Color color) => _configuration[color.ToString().ToLower()] ?? DefaultColor;
 

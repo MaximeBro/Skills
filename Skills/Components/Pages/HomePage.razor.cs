@@ -3,7 +3,7 @@ using Skills.Services;
 
 namespace Skills.Components.Pages;
 
-public partial class Home
+public partial class HomePage
 {
     [Inject] public ThemeManager ThemeManager { get; set; } = null!;
 }

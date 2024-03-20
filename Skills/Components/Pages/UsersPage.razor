@@ -1,0 +1,22 @@
+@page "/users"
+@attribute [Authorize]
+
+<MudText Class="mt-2 mark-one" Typo="Typo.h2" Align="Align.Center" GutterBottom>Utilisateurs</MudText>
+
+<MudContainer MaxWidth="MaxWidth.ExtraLarge">
+    <MudGrid Justify="Justify.FlexStart">
+        @foreach (var user in _users)
+        {
+            <MudItem xs="12" sm="6" md="3" lg="2" xl="1">
+                <MudLink Href="/" Underline="Underline.None">
+                    <MudPaper Class="py-4 px-6" Elevation="5">
+                        <MudStack Row="false" AlignItems="AlignItems.Center" Justify="Justify.Center" Spacing="0">
+                            <MudText Align="Align.Center">@user.Name</MudText>
+                            <MudText Align="Align.Center">@user.Email</MudText>
+                        </MudStack>
+                    </MudPaper>
+                </MudLink>
+            </MudItem>
+        }
+    </MudGrid>
+</MudContainer>

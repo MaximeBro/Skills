@@ -20,7 +20,7 @@
            Style="@($"background: {ThemeManager.Get("drawer-background")}!important;")">
     <MudDrawerHeader>
         <MudStack AlignItems="AlignItems.Center" Spacing="4" Row>
-            <MudImage Src="Content/Pictures/integrity.png" Height="32"/>
+            <MudImage Src="@($"/pictures/{ThemeManager.Get("favicon")}")" Alt="Icône" Height="40"/>
             <MudText Class="mark-one" Typo="Typo.h4">Skills</MudText>
         </MudStack>
     </MudDrawerHeader>
