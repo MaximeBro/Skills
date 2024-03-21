@@ -9,6 +9,7 @@ namespace Skills.Services;
 
 public class PermissionHandler(IDbContextFactory<SkillsContext> factory) : IAuthorizationHandler
 {
+    /// <inheritdoc/>
     public async Task HandleAsync(AuthorizationHandlerContext context)
     {
         if (context.PendingRequirements.Any())

@@ -27,7 +27,8 @@ public static class ModelExtensions
         return new UserModel
         {
             Name = @this.Name,
-            Email = @this.EmailAddress
+            Email = @this.EmailAddress,
+            IsDisabled = @this.Enabled != null && (bool)!@this.Enabled
         };
     }
     

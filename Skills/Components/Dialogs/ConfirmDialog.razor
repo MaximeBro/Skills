@@ -1,0 +1,18 @@
+<MudDialog Class="pa-0 rounded-lg">
+    <DialogContent>
+        <MudIconButton Class="ml-n4" Icon="@IconsF.Close" Color="Color.Dark" OnClick="@(() => Dialog.Close(false))" />
+        <MudStack Class="pb-2 px-4" Row="false" Spacing="0">
+            <MudText Class="mark-one" Typo="Typo.h6" Align="Align.Center" GutterBottom>@Text</MudText>
+        </MudStack>
+    </DialogContent>
+    <DialogActions>
+        <MudButton Color="Color.Dark" OnClick="@(() => Dialog.Close(false))">Annuler</MudButton>
+        <MudButton Color="Color.Error" OnClick="@(() => Dialog.Close(true))">Ok</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+
+    [CascadingParameter] public MudDialogInstance Dialog { get; set; } = null!;
+    [Parameter] public string Text { get; set; } = null!;
+}

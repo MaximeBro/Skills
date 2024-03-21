@@ -20,15 +20,6 @@ public partial class UserProfile
     private string _name = string.Empty;
     private string _email = string.Empty;
     private string _policy = string.Empty;
-    
-    private DialogOptions _options = new DialogOptions
-    {
-        ClassBackground = "chrome-bg",
-        CloseOnEscapeKey = true,
-        DisableBackdropClick = false,
-        CloseButton = true,
-        NoHeader = true
-    };
 
     protected override void OnInitialized()
     {
@@ -40,7 +31,7 @@ public partial class UserProfile
     private async Task EditNameAsync()
     {
         var parameters = new DialogParameters<EditNameDialog> { { x => x.Name, _name } };
-        var instance = await DialogService.ShowAsync<EditNameDialog>(string.Empty, parameters, _options);
+        var instance = await DialogService.ShowAsync<EditNameDialog>(string.Empty, parameters, Hardcoded.DialogOptions);
         var result = await instance.Result;
         if (result is { Data: string name } && !string.IsNullOrWhiteSpace(name))
         {
@@ -58,7 +49,7 @@ public partial class UserProfile
     private async Task EditEmailAsync()
     {
         var parameters = new DialogParameters<EditEmailDialog> { { x => x.Email, _email } };
-        var instance = await DialogService.ShowAsync<EditEmailDialog>(string.Empty, parameters, _options);
+        var instance = await DialogService.ShowAsync<EditEmailDialog>(string.Empty, parameters, Hardcoded.DialogOptions);
         var result = await instance.Result;
         if (result is { Data: string email } && !string.IsNullOrWhiteSpace(email))
         {
@@ -84,7 +75,7 @@ public partial class UserProfile
     private async Task EditPolicyAsync()
     {
         var parameters = new DialogParameters<EditPolicyDialog> { { x => x.Policy, User.Policy } };
-        var instance = await DialogService.ShowAsync<EditPolicyDialog>(string.Empty, parameters, _options);
+        var instance = await DialogService.ShowAsync<EditPolicyDialog>(string.Empty, parameters, Hardcoded.DialogOptions);
         var result = await instance.Result;
 
         if (result is { Data: IEnumerable<PermissionPolicy> policies })

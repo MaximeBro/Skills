@@ -3,6 +3,7 @@ using System.Security.Principal;
 using Microsoft.AspNetCore.Components.Authorization;
 using MudBlazor;
 using Skills.Components.Dialogs;
+using Skills.Extensions;
 
 namespace Skills.Services;
 
@@ -17,18 +18,31 @@ public class AuthenticationService
         _dialogService = dialogService;
     }
 
+    /// <summary>
+    /// Checks if the user is really authenticated with its identity state.
+    /// </summary>
+    /// <returns>True if authenticated, false it not.</returns>
     public async Task<bool> IsAuthenticatedAsync()
     {
         var authState = await _authenticationStateProvider.GetAuthenticationStateAsync();
         return authState.User.Identity is { IsAuthenticated: true };
     }
 
+    
+    /// <summary>
+    /// Gets the current authenticated user state.
+    /// </summary>
+    /// <returns>The user as a <see cref="ClaimsPrincipal"/>.</returns>
     public async Task<ClaimsPrincipal> GetUserAsync()
     {
         var authState = await _authenticationStateProvider.GetAuthenticationStateAsync();
         return authState.User;
     }
-    
+
+    /// <summary>
+    /// Retrieves the user Azure AD identity.
+    /// </summary>
+    /// <returns>The user information as a <see cref="IIdentity"/>.</returns>
     public async Task<IIdentity?> GetUserIdentityAsync()
     {
         var authState = await _authenticationStateProvider.GetAuthenticationStateAsync();
@@ -48,16 +62,11 @@ public class AuthenticationService
         return true;
     }
 
+    /// <summary>
+    /// In case the user is not authenticated and tries to access a restricted content, we show him this dialog.
+    /// </summary>
     public async Task ShowLoginDialogAsync()
     {
-        var options = new DialogOptions
-        {
-            ClassBackground = "chrome-bg",
-            CloseOnEscapeKey = true,
-            DisableBackdropClick = false,
-            CloseButton = true,
-            NoHeader = true
-        };
-        await _dialogService.ShowAsync<LoginRequiredDialog>(string.Empty, options);
+        await _dialogService.ShowAsync<LoginRequiredDialog>(string.Empty, Hardcoded.DialogOptions);
     }
 }

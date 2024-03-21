@@ -10,6 +10,7 @@ public class SkillsContext : DbContext
     public DbSet<SkillModel> Skills { get; set; }
     public DbSet<UserModel> Users { get; set; }
     public DbSet<UserSkillModel> Userskills { get; set; }
+    public DbSet<SKillInfo> SkillInfos { get; set; }
 
     public SkillsContext(DbContextOptions<SkillsContext> options, IConfiguration configuration) : base(options)
     {

@@ -1,4 +1,5 @@
 {
+    "default-roots": "maxime.brochard@sasp.fr,romain.pichard@sasp.fr",
     "excel-file": "SASP-skills.xlsx",
     "import": "false"
 }

@@ -29,7 +29,7 @@
                     
                     <MudPaper Class="py-4 px-6" Elevation="5">
                         <MudStack Row Justify="Justify.SpaceBetween" AlignItems="AlignItems.Center" Spacing="0">
-                            <MudLink Href="@($"/overview/{user.Username}/")" Underline="Underline.None">
+                            <MudLink Class="flex-grow-1" Href="@($"/overview/{user.Username}/")" Underline="Underline.None">
                                 <MudStack Class="flex-shrink-0" Row="false" AlignItems="AlignItems.Center" Justify="Justify.Center" Spacing="0">
                                     <MudText Align="Align.Center">@user.Name</MudText>
                                     <MudText Align="Align.Center">@user.Email</MudText>
@@ -39,11 +39,19 @@
                                 <Authorized>
                                     <div>
                                         <MudTooltip Placement="Placement.Bottom" Text="Supprimer un utilisateur" Arrow>
-                                            <MudIconButton Size="Size.Small" Icon="@IconsF.Delete"/>
+                                            <MudIconButton Size="Size.Small" Icon="@IconsF.Delete" OnClick="@(async () => await DeleteUserAsync(user))" />
                                         </MudTooltip>
                                     </div>
                                 </Authorized>
                             </AuthorizeView>
+                            @if (user.IsDisabled)
+                            {
+                                <div class="ml-2">
+                                   <MudTooltip Placement="Placement.Bottom" Text="Ce compte est désactivé !" Arrow>
+                                       <MudIcon Icon="@IconsF.Warning" Size="Size.Small" Color="Color.Warning" />
+                                   </MudTooltip>
+                                </div>
+                            }
                         </MudStack>
                     </MudPaper>
                 </MudItem>
@@ -65,15 +73,25 @@
                                         <MudText Align="Align.Center">@user.Email</MudText>
                                     </MudStack>
                                 </MudLink>
-                                <AuthorizeView Policy="Delete">
-                                    <Authorized>
-                                        <div>
-                                            <MudTooltip Placement="Placement.Bottom" Text="Supprimer un utilisateur" Arrow>
-                                                <MudIconButton Size="Size.Small" Icon="@IconsF.Delete"/>
+                                <MudStack Row Spacing="0" AlignItems="AlignItems.Center">
+                                    <AuthorizeView Policy="Delete">
+                                        <Authorized>
+                                            <div>
+                                                <MudTooltip Placement="Placement.Bottom" Text="Supprimer un utilisateur" Arrow>
+                                                    <MudIconButton Size="Size.Small" Icon="@IconsF.Delete" OnClick="@(async () => await DeleteUserAsync(user))" />
+                                                </MudTooltip>
+                                            </div>
+                                        </Authorized>
+                                    </AuthorizeView>
+                                    @if (user.IsDisabled)
+                                    {
+                                        <div class="ml-2">
+                                            <MudTooltip Placement="Placement.Bottom" Text="Ce compte est désactivé !" Arrow>
+                                                <MudIcon Icon="@IconsF.Warning" Size="Size.Small" Color="Color.Warning" />
                                             </MudTooltip>
                                         </div>
-                                    </Authorized>
-                                </AuthorizeView>
+                                    }
+                                </MudStack>
                             </MudStack>
                         </MudPaper>
                     </MudItem>
@@ -88,9 +106,28 @@
                          Culture="@(new CultureInfo("fr-FR"))" Height="70vh" Virtualize OverscanCount="25" QuickFilter="@QuickFilter"
                          RowClick="@OnRowClicked">
                 <Columns>
-                    <PropertyColumn Title="Nom" Property="x => x.Name"/>
+                    <PropertyColumn Title="Nom" Property="x => x.Name" />
                     <PropertyColumn Title="Email" Property="x => x.Email"/>
                     <PropertyColumn Title="Identifiant" Property="x => x.Username"/>
+                    <PropertyColumn Title="Désactivé" Property="x => x.IsDisabled" CellStyleFunc="@DisabledColor" />
+                    <TemplateColumn Title="Actions" Sortable="false" Filterable="false">
+                        <CellTemplate>
+                            <AuthorizeView Policy="Read" Context="auth">
+                                <Authorized>
+                                    <MudTooltip Placement="Placement.Bottom" Text="Voir le profil" Arrow>
+                                        <MudIconButton Size="Size.Small" Icon="@IconsF.Visibility" OnClick="@(() => NavigateToProfile(context.Item))"/>
+                                    </MudTooltip>
+                                </Authorized>
+                            </AuthorizeView>
+                            <AuthorizeView Policy="Delete" Context="auth">
+                                <Authorized>
+                                    <MudTooltip Placement="Placement.Bottom" Text="Supprimer un utilisateur" Arrow>
+                                        <MudIconButton Size="Size.Small" Icon="@IconsF.Delete" OnClick="@(async () => await DeleteUserAsync(context.Item))"/>
+                                    </MudTooltip>
+                                </Authorized>
+                            </AuthorizeView>
+                        </CellTemplate>
+                    </TemplateColumn>
                 </Columns>
             </MudDataGrid>
         </div>

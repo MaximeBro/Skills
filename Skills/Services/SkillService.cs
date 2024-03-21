@@ -9,6 +9,10 @@ namespace Skills.Services;
 
 public class SkillService(IConfiguration configuration, IDbContextFactory<SkillsContext> factory)
 {
+    /// <summary>
+    /// If the "excel-file" is defined and the "import" is set to true, this will deserialize
+    /// the specified .XLSX file as skills and register them in the db.
+    /// </summary>
     public async Task InitAsync()
     {
         var file = configuration["excel-file"];
@@ -41,6 +45,9 @@ public class SkillService(IConfiguration configuration, IDbContextFactory<Skills
         }
     }
 
+    /// <summary>
+    /// Class used for xlsx deserialization.
+    /// </summary>
     private sealed class SkillRowModel
     {
         [ExcelColumn(Name = "Type")] public string Type { get; set; } = string.Empty;
