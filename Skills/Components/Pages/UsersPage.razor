@@ -1,32 +1,39 @@
 @page "/users"
-@attribute [Authorize(Policy = "Users")]
 
-<MudText Class="mt-2 mark-one" Typo="Typo.h2" Align="Align.Center">Utilisateurs</MudText>
-<MudToolBar Class="mb-6 pl-10">
-    <MudTooltip Placement="Placement.Bottom" Text="@_toggleTooltip" Arrow>
-        <MudIconButton Icon="@_toggleIcon" OnClick="ToggleView"/>
-    </MudTooltip>
-    <AuthorizeView Policy="Write">
-        <Authorized>
-            <MudTooltip Placement="Placement.Bottom" Text="Créer un utilisateur" Arrow>
-                <MudIconButton Icon="@IconsF.Add"/>
+<AuthorizedComponent>
+    <Content>
+        <MudText Class="mt-4 mark-one" Typo="Typo.h2" Align="Align.Center">Utilisateurs</MudText>
+        <MudToolBar Class="mb-6 pl-10">
+            <MudTooltip Placement="Placement.Bottom" Text="@_toggleTooltip" Arrow>
+                <MudIconButton Icon="@_toggleIcon" OnClick="@ToggleView"/>
             </MudTooltip>
-        </Authorized>
-    </AuthorizeView>
-    <MudSpacer/>
-    <div>
-        <MudTextField T="string" @bind-Value="_search" Class="mr-8 flex-shrink-0" Style="width: 400px;" Placeholder="Rechercher" Immediate
-                      Adornment="Adornment.Start" AdornmentIcon="@IconsF.Search"/>
-    </div>
-</MudToolBar>
-<MudContainer MaxWidth="MaxWidth.ExtraLarge">
-    @if (_toggleIndex == 1)
-    {
-        <MudGrid Class="pb-4" Justify="Justify.FlexStart">
-            @foreach (var user in _users.Where(QuickFilter))
+            <MudTooltip Placement="Placement.Bottom" Text="Filtres" Arrow>
+                <MudMenu Icon="@IconsF.FilterAlt" ListClass="pa-0" PopoverClass="pa-0" AnchorOrigin="Origin.BottomLeft" TransformOrigin="Origin.TopLeft">
+                    <MudStack Row="false" Spacing="0">
+                        <MudCheckBox T="bool?" Class="pr-3" Value="_showDisabledAccounts" ValueChanged="@ShowDisabledAccounts" Label="Afficher les comptes désactivés"/>
+                    </MudStack>
+                </MudMenu>
+            </MudTooltip>
+            @if (_toggleIndex == 3)
             {
+                <MudTooltip Placement="Placement.Right" Text="Vous pouvez faire un double-clic sur une ligne pour ouvrir le profil d'un utilisateur !" Arrow>
+                    <MudIcon Class="ml-3 mt-1" Icon="@IconsF.Info" Color="Color.Info" />
+                </MudTooltip>
+            }
+            <MudSpacer/>
+            <div>
+                <MudTextField T="string" @bind-Value="_search" Class="mr-8 flex-shrink-0" Style="width: 400px;" Placeholder="Rechercher" Immediate
+                              Adornment="Adornment.Start" AdornmentIcon="@IconsF.Search"/>
+            </div>
+        </MudToolBar>
+        <MudContainer MaxWidth="MaxWidth.ExtraLarge">
+            @if (_toggleIndex == 1)
+            {
+            <MudGrid Class="pb-4" Justify="Justify.FlexStart">
+                @foreach (var user in _filteredUsers.Where(QuickFilter))
+                {
                 <MudItem xs="12" sm="6" md="4" lg="3" xl="2">
-                    
+
                     <MudPaper Class="py-4 px-6" Elevation="5">
                         <MudStack Row Justify="Justify.SpaceBetween" AlignItems="AlignItems.Center" Spacing="0">
                             <MudLink Class="flex-grow-1" Href="@($"/overview/{user.Username}/")" Underline="Underline.None">
@@ -35,35 +42,26 @@
                                     <MudText Align="Align.Center">@user.Email</MudText>
                                 </MudStack>
                             </MudLink>
-                            <AuthorizeView Policy="Delete">
-                                <Authorized>
-                                    <div>
-                                        <MudTooltip Placement="Placement.Bottom" Text="Supprimer un utilisateur" Arrow>
-                                            <MudIconButton Size="Size.Small" Icon="@IconsF.Delete" OnClick="@(async () => await DeleteUserAsync(user))" />
-                                        </MudTooltip>
-                                    </div>
-                                </Authorized>
-                            </AuthorizeView>
                             @if (user.IsDisabled)
                             {
-                                <div class="ml-2">
-                                   <MudTooltip Placement="Placement.Bottom" Text="Ce compte est désactivé !" Arrow>
-                                       <MudIcon Icon="@IconsF.Warning" Size="Size.Small" Color="Color.Warning" />
-                                   </MudTooltip>
-                                </div>
+                            <div class="mr-2 mb-n2">
+                                <MudTooltip Placement="Placement.Bottom" Text="Ce compte est désactivé !" Arrow>
+                                    <MudIcon Icon="@IconsF.Warning" Size="Size.Small" Color="Color.Warning" />
+                                </MudTooltip>
+                            </div>
                             }
                         </MudStack>
                     </MudPaper>
                 </MudItem>
+                }
+            </MudGrid>
             }
-        </MudGrid>
-    }
-    else if (_toggleIndex == 2)
-    {
-        <MudContainer MaxWidth="MaxWidth.Medium">
-            <MudGrid Class="pb-6" Justify="Justify.FlexStart">
-                @foreach (var user in _users.Where(QuickFilter))
-                {
+            else if (_toggleIndex == 2)
+            {
+            <MudContainer MaxWidth="MaxWidth.Medium">
+                <MudGrid Class="pb-6" Justify="Justify.FlexStart">
+                    @foreach (var user in _filteredUsers.Where(QuickFilter))
+                    {
                     <MudItem xs="12">
                         <MudPaper Class="py-4 px-6" Elevation="5">
                             <MudStack Row AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween" Spacing="0">
@@ -74,62 +72,44 @@
                                     </MudStack>
                                 </MudLink>
                                 <MudStack Row Spacing="0" AlignItems="AlignItems.Center">
-                                    <AuthorizeView Policy="Delete">
-                                        <Authorized>
-                                            <div>
-                                                <MudTooltip Placement="Placement.Bottom" Text="Supprimer un utilisateur" Arrow>
-                                                    <MudIconButton Size="Size.Small" Icon="@IconsF.Delete" OnClick="@(async () => await DeleteUserAsync(user))" />
-                                                </MudTooltip>
-                                            </div>
-                                        </Authorized>
-                                    </AuthorizeView>
                                     @if (user.IsDisabled)
                                     {
-                                        <div class="ml-2">
-                                            <MudTooltip Placement="Placement.Bottom" Text="Ce compte est désactivé !" Arrow>
-                                                <MudIcon Icon="@IconsF.Warning" Size="Size.Small" Color="Color.Warning" />
-                                            </MudTooltip>
-                                        </div>
+                                    <div class="mr-2 mb-n2">
+                                        <MudTooltip Placement="Placement.Bottom" Text="Ce compte est désactivé !" Arrow>
+                                            <MudIcon Icon="@IconsF.Warning" Size="Size.Small" Color="Color.Warning" />
+                                        </MudTooltip>
+                                    </div>
                                     }
                                 </MudStack>
                             </MudStack>
                         </MudPaper>
                     </MudItem>
-                }
-            </MudGrid>
+                    }
+                </MudGrid>
+            </MudContainer>
+            }
+            else
+            {
+            <div class="pb-6">
+                <MudDataGrid T="UserModel" Items="_filteredUsers" Bordered Hover Outlined Filterable Striped SortMode="SortMode.Multiple" Dense FixedHeader
+                             Culture="@(new CultureInfo("fr-FR"))" Height="70vh" Virtualize OverscanCount="25" QuickFilter="@QuickFilter"
+                             RowClick="@OnRowClicked">
+                    <Columns>
+                        <PropertyColumn Title="Nom" Property="x => x.Name"/>
+                        <PropertyColumn Title="Email" Property="x => x.Email"/>
+                        <PropertyColumn Title="Identifiant" Property="x => x.Username"/>
+                        <PropertyColumn Title="Désactivé" Property="x => x.IsDisabled" CellStyleFunc="@DisabledColor"/>
+                        <TemplateColumn Title="Actions" Sortable="false" Filterable="false">
+                            <CellTemplate>
+                                <MudTooltip Placement="Placement.Bottom" Text="Voir le profil" Arrow>
+                                    <MudIconButton Class="mr-3" Size="Size.Small" Color="Color.Info" Icon="@IconsF.Visibility" OnClick="@(() => NavigateToProfile(context.Item))"/>
+                                </MudTooltip>
+                            </CellTemplate>
+                        </TemplateColumn>
+                    </Columns>
+                </MudDataGrid>
+            </div>
+            }
         </MudContainer>
-    }
-    else
-    {
-        <div class="pb-6">
-            <MudDataGrid T="UserModel" Items="_users" Bordered Hover Outlined Filterable Striped SortMode="SortMode.Multiple" Dense FixedHeader
-                         Culture="@(new CultureInfo("fr-FR"))" Height="70vh" Virtualize OverscanCount="25" QuickFilter="@QuickFilter"
-                         RowClick="@OnRowClicked">
-                <Columns>
-                    <PropertyColumn Title="Nom" Property="x => x.Name" />
-                    <PropertyColumn Title="Email" Property="x => x.Email"/>
-                    <PropertyColumn Title="Identifiant" Property="x => x.Username"/>
-                    <PropertyColumn Title="Désactivé" Property="x => x.IsDisabled" CellStyleFunc="@DisabledColor" />
-                    <TemplateColumn Title="Actions" Sortable="false" Filterable="false">
-                        <CellTemplate>
-                            <AuthorizeView Policy="Read" Context="auth">
-                                <Authorized>
-                                    <MudTooltip Placement="Placement.Bottom" Text="Voir le profil" Arrow>
-                                        <MudIconButton Size="Size.Small" Icon="@IconsF.Visibility" OnClick="@(() => NavigateToProfile(context.Item))"/>
-                                    </MudTooltip>
-                                </Authorized>
-                            </AuthorizeView>
-                            <AuthorizeView Policy="Delete" Context="auth">
-                                <Authorized>
-                                    <MudTooltip Placement="Placement.Bottom" Text="Supprimer un utilisateur" Arrow>
-                                        <MudIconButton Size="Size.Small" Icon="@IconsF.Delete" OnClick="@(async () => await DeleteUserAsync(context.Item))"/>
-                                    </MudTooltip>
-                                </Authorized>
-                            </AuthorizeView>
-                        </CellTemplate>
-                    </TemplateColumn>
-                </Columns>
-            </MudDataGrid>
-        </div>
-    }
-</MudContainer>
+    </Content>
+</AuthorizedComponent>

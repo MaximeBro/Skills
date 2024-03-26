@@ -1,0 +1,14 @@
+<AuthorizeView Roles="@Roles" Context="authorized">
+    <Authorized>
+        <CascadingValue Name="Authorized" Value="@this" TValue="AuthorizedComponent">
+            @Content
+        </CascadingValue>
+    </Authorized>
+    <NotAuthorized>
+        <button id="loginbtn" onclick="@(async() => await AuthenticationService.InvokeNotAuthorized())"></button>
+        <script>
+            let btn = document.getElementById("loginbtn");
+            btn.click();
+        </script>
+    </NotAuthorized>
+</AuthorizeView>

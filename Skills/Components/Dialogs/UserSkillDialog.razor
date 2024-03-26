@@ -1,0 +1,67 @@
+@using Microsoft.EntityFrameworkCore
+@using Skills.Databases
+
+<MudDialog Class="pa-0 rounded-lg">
+    <DialogContent>
+        <MudStack Class="py-3 px-6" Justify="Justify.SpaceEvenly" Row="false" Spacing="0">
+            <MudText Class="mark-one" GutterBottom>Attribution de compétence</MudText>
+            <MudSelect T="Guid" @bind-Value="_selectedSkill" ToStringFunc="@SkillToString" Style="min-width: 450px!important;" Label="Compétence">
+                @foreach (var skill in _skills)
+                {
+                    <MudSelectItem Value="skill.Id">
+                        <MudStack Row="false" Spacing="0">
+                            <MudText Class="mark-one">[@skill.Type.Value] - @skill.Category.Value - @skill.SubCategory?.Value</MudText>
+                            <MudText Class="mark-one" Typo="Typo.body2">@skill.Description</MudText>
+                        </MudStack>
+                    </MudSelectItem>
+                }
+            </MudSelect>
+            <MudStack Row Justify="Justify.FlexStart">
+                <MudText Class="mark-one">Évaluation</MudText>
+                <MudRating @bind-SelectedValue="_rating" MaxValue="4" Size="Size.Small"/>
+            </MudStack>
+            
+        </MudStack>
+    </DialogContent>
+    <DialogActions>
+        <MudButton Class="mark-one" Color="Color.Success" Variant="Variant.Text" OnClick="@Submit">Enregistrer</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    [CascadingParameter] public MudDialogInstance Dialog { get; set; } = null!;
+    [Inject] public IDbContextFactory<SkillsContext> Factory { get; set; } = null!;
+    
+    [Parameter] public UserSkillModel? UserSkill { get; set; }
+
+    private int _rating = 0;
+    private List<SkillModel> _skills = new();
+    private Guid _selectedSkill;
+
+    private Func<Guid, string> SkillToString => x =>
+    {
+        var skill = _skills.FirstOrDefault(y => y.Id == x);
+        if (skill is null) return string.Empty;
+        
+        
+        return $"[{skill.Type.Value}] - {skill.Category.Value} - {skill.SubCategory?.Value} - {skill.Description}";
+    };
+
+    protected override async Task OnInitializedAsync()
+    {
+        var db = await Factory.CreateDbContextAsync();
+        _skills = await db.Skills.AsNoTracking()
+                                 .Include(x => x.Type)
+                                 .Include(x => x.Category)
+                                 .Include(x => x.SubCategory)
+                                 .ToListAsync();
+        
+        if (UserSkill != null)
+        {
+            _selectedSkill = UserSkill.SkillId;
+            _rating = UserSkill.Level;
+        }
+    }
+
+    private void Submit() => Dialog.Close(new UserSkillModel { SkillId = _selectedSkill, Level = _rating });
+}

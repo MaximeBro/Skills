@@ -5,15 +5,67 @@
 <MudSnackbarProvider/>
 
 <MudLayout>
-    <Header></Header>
-    <MudMainContent Class="pa-0 ma-0" Style="padding-top: 64px!important;"> @* Padding-top used for appbar space only *@
-        @Body
+    <MudAppBar Style="@($"background: {ThemeManager.Get("appbar-background")}!important;")">
+        <MudIconButton Class="text-white" Icon="@IconsF.Menu" OnClick="@Toggle"/>
+        <MudLink Class="white-all" Href="/" Underline="Underline.Hover" Style="text-decoration-color: #fff;">
+            <MudText Class="ml-2 text-white mark-one" Typo="Typo.h5">@ThemeManager.Get("name")</MudText>
+        </MudLink>
+        <MudSpacer/>
+        @if (_identity != null && _identity.IsAuthenticated)
+        {
+            <MudStack Class="mr-4" AlignItems="AlignItems.Center" Row>
+                <MudText Class="text-white mark-one"><MudIcon Class="mb-n1" Icon="@IconsF.Check" Color="Color.Info"/> Vous êtes connecté</MudText>
+            </MudStack>
+            <div class="mr-4">
+                <MenuProfile></MenuProfile>
+            </div>
+        }
+        else
+        {
+            <MudButton Class="text-white hoverable mr-4" Href="/login" Variant="Variant.Text">Se connecter</MudButton>
+        }
+    </MudAppBar>
+    <MudDrawer Class="mud-drawer-fixed" @bind-Open="_docked" Variant="DrawerVariant.Temporary" ClipMode="DrawerClipMode.Always"
+               Elevation="1" Style="@($"background: {ThemeManager.Get("drawer-background")}!important;")">
+        <MudNavMenu Class="pa-2" Color="Color.Primary" Rounded Dense>
+            <MudNavLink Class="mark-one" Href="/dashboard" Match="NavLinkMatch.All" Icon="@IconsF.Home">Accueil</MudNavLink>
+            <AuthorizeView Roles="Admin, Manager">
+                <Authorized>
+                    <MudNavLink Class="mark-one my-2" Href="/skills" Match="NavLinkMatch.All" Icon="@IconsF.Checklist">Compétences</MudNavLink>
+                </Authorized>
+            </AuthorizeView>
+            <AuthorizeView Roles="Admin, Manager, User">
+                <Authorized>
+                    <MudNavLink Class="mark-one my-2" Href="/users" Match="NavLinkMatch.All" Icon="@IconsF.People">Utilisateurs</MudNavLink>
+                </Authorized>
+            </AuthorizeView>
+            <AuthorizeView Roles="Admin">
+                <Authorized>
+                    <MudNavGroup Class="mt-3 mark-one" Title="Administration" Icon="@IconsF.AdminPanelSettings" IconColor="Color.Tertiary" Expanded>
+                        <MudNavLink Class="mark-one" Href="/admin/users" Match="NavLinkMatch.All" Icon="@IconsF.ManageAccounts">Utilisateurs</MudNavLink>
+                        <MudNavLink Class="mark-one" Href="/admin/skills" Match="NavLinkMatch.All" Icon="@IconsF.Checklist">Compétences</MudNavLink>
+                        <MudNavLink Class="mark-one" Href="/admin/cv" Match="NavLinkMatch.All" Icon="@IconsFF.FileDocument">CV</MudNavLink>
+                    </MudNavGroup>
+                </Authorized>
+            </AuthorizeView>
+        </MudNavMenu>
+        <MudSpacer/>
+        <MudStack Class="mb-4" AlignItems="AlignItems.Center" Justify="Justify.Center" Spacing="0" Row>
+            <MudImage Src="@($"/pictures/{ThemeManager.Get("drawer-icon")}")" Alt="Icône" Height="50"/>
+        </MudStack>
+    </MudDrawer>
+    <MudMainContent> @* Padding-top used for appbar space only *@
+        <MudContainer MaxWidth="MaxWidth.False" Class="pa-0 ma-0">
+            @Body
+        </MudContainer>
     </MudMainContent>
 
-    @* Used for development purposes only *@
-    <div id="blazor-error-ui">
-        An unhandled error has occurred.
-        <a href="" class="reload">Reload</a>
-        <a class="dismiss">🗙</a>
-    </div>
+    @if (Environment.IsDevelopment())
+    {
+        <div id="blazor-error-ui">
+            An unhandled error has occurred.
+            <a href="" class="reload">Reload</a>
+            <a class="dismiss">🗙</a>.
+        </div>
+    }
 </MudLayout>

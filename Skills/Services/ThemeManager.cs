@@ -19,13 +19,25 @@ public class ThemeManager
     /// <returns>A completed task.</returns>
     public Task InitAsync()
     {
-        var filePath = Path.Combine(Directory.GetCurrentDirectory(), "..\\data\\config\\", _configuration["favicon"] ?? "YourBrandIcon.ico");
-        var resourcePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot\\pictures\\", _configuration["favicon"] ?? "YourBrandIcon.ico");
-        if (File.Exists(filePath))
+        var files = new string[]
         {
-            if (File.Exists(resourcePath)) File.Delete(resourcePath);
-            File.Copy(filePath, resourcePath);
+            _configuration["favicon"] ?? "YourBrandIcon.ico",
+            _configuration["drawer-icon"] ?? "YourBrandIcon.ico",
+            _configuration["home-banner"] ?? "YourBrandBanner.png"
+        };
+
+        foreach (var file in files)
+        {
+            var filePath = Path.Combine(Directory.GetCurrentDirectory(), "..\\data\\config\\", file);
+            var resourcePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot\\pictures\\", file);
+            if (File.Exists(filePath))
+            {
+                if (File.Exists(resourcePath)) File.Delete(resourcePath);
+                File.Copy(filePath, resourcePath);
+            }
         }
+        
+        
         
         return Task.CompletedTask;
     }

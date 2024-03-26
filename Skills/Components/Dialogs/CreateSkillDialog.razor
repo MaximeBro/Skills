@@ -1,0 +1,82 @@
+@using Microsoft.EntityFrameworkCore
+@using Skills.Databases
+@using Skills.Models.Enums
+
+<MudDialog Class="pa-0 rounded-lg">
+    <DialogContent>
+        <MudStack Class="py-2 px-6" Justify="Justify.SpaceEvenly" Row="false" Spacing="0">
+            <MudText Class="mark-one" GutterBottom>Création d'une compétence</MudText>
+            <MudStack Class="mt-1" Row Spacing="5">
+                <MudSelect T="SKillInfo" @bind-Value="_seletectedType" Label="Type" Required Style="min-width: 220px;"
+                           AnchorOrigin="Origin.BottomLeft" TransformOrigin="Origin.TopLeft">
+                    @foreach (var type in _types)
+                    {
+                        <MudSelectItem Value="type">@type.Value</MudSelectItem>
+                    }
+                </MudSelect>
+
+                <MudSelect T="SKillInfo" @bind-Value="_seletectedCategory" Label="Catégorie" Required Style="min-width: 220px;" 
+                           AnchorOrigin="Origin.BottomLeft" TransformOrigin="Origin.TopLeft">
+                    @foreach (var category in _categories)
+                    {
+                        <MudSelectItem Value="category">@category.Value</MudSelectItem>
+                    }
+                </MudSelect>
+            </MudStack>
+            
+            <MudStack Row Spacing="5">
+                <MudSelect T="SKillInfo?" @bind-Value="_seletectedSubCategory" Label="Sous catégorie" Style="min-width: 220px;"
+                           AnchorOrigin="Origin.BottomLeft" TransformOrigin="Origin.TopLeft">
+                    @foreach (var subcategory in _subcategories)
+                    {
+                        <MudSelectItem Value="subcategory">@subcategory.Value</MudSelectItem>
+                    }
+                </MudSelect>
+                
+                <MudTextField T="string" @bind-Value="_desc" Label="Description" Style="min-width: 220px;" />
+            </MudStack>
+        </MudStack>
+    </DialogContent>
+    <DialogActions>
+        <MudButton Class="mark-one" Color="Color.Success" Variant="Variant.Text" OnClick="@Submit">Enregistrer</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    [CascadingParameter] public MudDialogInstance Dialog { get; set; } = null!;
+
+    [Inject] public IDbContextFactory<SkillsContext> Factory { get; set; } = null!;
+    [Inject] public ISnackbar Snackbar { get; set; } = null!;
+
+    private List<SKillInfo> _types = new();
+    private List<SKillInfo> _categories = new();
+    private List<SKillInfo> _subcategories = new();
+
+    private SKillInfo _seletectedType;
+    private SKillInfo _seletectedCategory;
+    private SKillInfo? _seletectedSubCategory;
+
+    private string _desc = string.Empty;
+    
+    protected override async Task OnInitializedAsync()
+    {
+        var db = await Factory.CreateDbContextAsync();
+        _types = db.SkillsTypes.AsNoTracking().Where(x => x.Type == SkillDataType.Type).ToList();
+        _categories = db.SkillsTypes.AsNoTracking().Where(x => x.Type == SkillDataType.Category).ToList();
+        _subcategories = db.SkillsTypes.AsNoTracking().Where(x => x.Type == SkillDataType.SubCategory).ToList();
+    }
+
+    private void Submit()
+    {
+        var skill = new SkillModel
+        {
+            TypeId = _seletectedType.Id,
+            CategoryId = _seletectedCategory.Id,
+            Description = _desc
+        };
+        
+        if (_seletectedSubCategory != null) skill.SubCategoryId = _seletectedSubCategory.Id;
+
+        Dialog.Close(skill);
+    }
+}

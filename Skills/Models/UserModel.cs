@@ -10,9 +10,9 @@ public class UserModel
     public List<UserSkillModel> UserSkills { get; set; } = new();
     public string Name { get; set; }
     public string Email { get; set; }
-    public PermissionPolicy Policy { get; set; }
+    public string Username { get; set; }
+    public UserRole Role { get; set; } = UserRole.User;
     public bool IsDisabled { get; set; }
-
-    [NotMapped]
-    public string Username => Email.Replace("@sasp.fr", string.Empty);
+    public Guid? GroupId { get; set; }
+    public GroupModel? Group { get; set; }
 }

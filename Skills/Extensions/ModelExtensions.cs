@@ -6,6 +6,8 @@ namespace Skills.Extensions;
 
 public static class ModelExtensions
 {
+    public static string FirstCharToUpper(this string @this) => string.Concat(@this[0].ToString().ToUpper(), @this.AsSpan(1));
+    
     /// <summary>
     /// Get all the flags of the specified enum.
     /// </summary>
@@ -28,6 +30,7 @@ public static class ModelExtensions
         {
             Name = @this.Name,
             Email = @this.EmailAddress,
+            Username = @this.EmailAddress.Replace("@sasp.fr", string.Empty),
             IsDisabled = @this.Enabled != null && (bool)!@this.Enabled
         };
     }

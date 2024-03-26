@@ -1,0 +1,62 @@
+<MudTabPanel Class="mark-one" Text="Utilisateurs">
+    <MudContainer MaxWidth="MaxWidth.ExtraLarge">
+        <MudDataGrid T="UserModel" Items="_users" Bordered Hover Outlined Filterable Striped SortMode="SortMode.Multiple" Dense FixedHeader
+                     Culture="@(new CultureInfo("fr-FR"))" Height="70vh" Virtualize OverscanCount="25" QuickFilter="@QuickFilter"
+                     ReadOnly="false" EditMode="DataGridEditMode.Form" EditTrigger="DataGridEditTrigger.OnRowClick" CanCancelEdit
+                     CommittedItemChanges="OnEditDoneAsync" Class="mt-8" @ref="_grid">
+            <ToolBarContent>
+                <MudTooltip Placement="Placement.Bottom" Text="Créer un utilisateur" Arrow>
+                    <MudIconButton Icon="@IconsF.Add" Color="Color.Tertiary" OnClick="@(async () => await CreateUserAsync())"/>
+                </MudTooltip>
+                <MudTooltip Placement="Placement.Right" Text="Pour éditer, faites un clic gauche sur une ligne !" Arrow>
+                    <MudIcon Class="ml-2 mt-1" Icon="@IconsF.Info" Color="Color.Info" />
+                </MudTooltip>
+                <MudSpacer/>
+                <MudTextField T="string" @bind-Value="_search" Immediate Adornment="Adornment.Start"
+                              AdornmentIcon="@IconsF.Search" Placeholder="Rechercher" Class="flex-grow-0 mr-8 mt-0" Style="width: 400px;"/>
+            </ToolBarContent>
+            <Columns>
+                <PropertyColumn IsEditable Title="Nomination" Property="x => x.Name"/>
+                <PropertyColumn IsEditable Title="Email" Property="x => x.Email"/>
+                <PropertyColumn IsEditable Title="Identifiant" Property="x => x.Username"/>
+                <PropertyColumn IsEditable Title="Rôle" Property="x => x.Role.Humanize()">
+                    <EditTemplate Context="row">
+                        <MudSelect T="UserRole" Class="my-2" @bind-Value="row.Item.Role" Required Label="Rôle">
+                            <MudSelectItem Value="UserRole.User">@UserRole.User.Humanize()</MudSelectItem>
+                            <MudSelectItem Value="UserRole.Manager">@UserRole.Manager.Humanize()</MudSelectItem>
+                            <MudSelectItem Value="UserRole.Admin">@UserRole.Admin.Humanize()</MudSelectItem>
+                        </MudSelect>
+                    </EditTemplate>
+                </PropertyColumn>
+                <TemplateColumn Title="Groupe" IsEditable>
+                    <CellTemplate Context="row">
+                        <MudText Typo="Typo.body2">@(row.Item!.Group?.Name ?? string.Empty)</MudText>
+                    </CellTemplate>
+                    <EditTemplate Context="edit">
+                        <MudSelect T="Guid?" @bind-Value="edit.Item.GroupId" ToStringFunc="@(id => id.HasValue ? _groups.FirstOrDefault(x => x.Id == id.Value)?.Name ?? string.Empty : string.Empty)">
+                            @foreach (var group in _groups)
+                            {
+                                <MudSelectItem Value="(Guid?)group.Id">@group.Name</MudSelectItem>
+                            }
+                        </MudSelect>
+                    </EditTemplate>
+                </TemplateColumn>
+                <PropertyColumn IsEditable="false" Title="Désactivé" Property="x => x.IsDisabled">
+                    <EditTemplate Context="row">
+                        <MudCheckBox T="bool" @bind-Value="row.Item.IsDisabled" Label="Désactivé" />
+                    </EditTemplate>
+                </PropertyColumn>
+                <TemplateColumn IsEditable="false">
+                    <CellTemplate Context="row">
+                        <MudTooltip Placement="Placement.Bottom" Text="Éditer" Arrow>
+                            <MudIconButton Size="Size.Small" Icon="@IconsF.Edit" Color="Color.Primary" OnClick="@(async() => await _grid.SetEditingItemAsync(row.Item))"/>
+                        </MudTooltip>
+                        <MudTooltip Class="ml-2" Placement="Placement.Bottom" Text="Supprimer" Arrow>
+                            <MudIconButton Class="ml-4" Size="Size.Small" Icon="@IconsF.Delete" Color="Color.Error" OnClick="@(async () => await DeleteUserAsync(row.Item))"/>
+                        </MudTooltip>
+                    </CellTemplate>
+                </TemplateColumn>
+            </Columns>
+        </MudDataGrid>
+    </MudContainer>
+</MudTabPanel>

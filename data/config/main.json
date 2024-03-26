@@ -1,8 +1,12 @@
 {
-    "name": "Your Company Name",
-    "favicon": "YourBrandIcon.ico",
+    "name": "SASP",
+    "favicon": "sasp.ico",
+    "drawer-icon": "banner.png",
+    "home-banner": "banner.png",
     "appbar-background": "#013a63",
     "drawer-background": "#f9f7f3",
-    "primary": "#013a63",
-    "secondary": "#34495E"
+    "other-background": "#4e7cb0",
+    "success": "#0BBA83",
+    "primary": "#174489",
+    "secondary": "#5287C4"
 }

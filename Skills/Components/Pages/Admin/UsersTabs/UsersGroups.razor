@@ -1,0 +1,34 @@
+<MudTabPanel Class="mark-one" Text="Groupes">
+    <MudContainer MaxWidth="MaxWidth.ExtraLarge">
+        <MudGrid Class="mt-8" Justify="Justify.Center">
+            <MudItem xs="12" sm="6" md="4">
+                <MudStack Row="false">
+                    <MudStack Row Justify="Justify.Center">
+                        <MudText Class="mark-one">Groupes</MudText>
+                        <MudTooltip Class="ml-1" Placement="Placement.Bottom" Text="Créer un groupe" Arrow>
+                            <MudIconButton Icon="@IconsF.Add" Size="Size.Small" Class="mud-elevation-5 text-white ml-2" Style="@($"background: {ThemeManager.Get("success")};")"
+                                           OnClick="@(async () => await AddAsync())"/>
+                        </MudTooltip>
+                    </MudStack>
+                    <MudStack Row="false" Class="px-3 py-1" Style="height: 50vh; max-height: 50vh; overflow-y: auto;">
+                        @foreach (var group in _groups)
+                        {
+                        <MudPaper Class="rounded mb-1 px-6 py-3" Outlined="false" Elevation="5">
+                            <MudStack Row Spacing="0" AlignItems="AlignItems.Center">
+                                <MudText>@group.Name</MudText>
+                                <MudSpacer/>
+                                <MudTooltip Placement="Placement.Bottom" Text="Éditer" Arrow>
+                                    <MudIconButton Icon="@IconsF.Edit" Color="Color.Primary" Size="Size.Small" OnClick="@(async () => await EditAsync(group))"/>
+                                </MudTooltip>
+                                <MudTooltip Class="ml-2" Placement="Placement.Bottom" Text="Supprimer" Arrow>
+                                    <MudIconButton Class="ml-4" Icon="@IconsF.Delete" Color="Color.Error" Size="Size.Small" OnClick="@(async () => await DeleteAsync(group))"/>
+                                </MudTooltip>
+                            </MudStack>
+                        </MudPaper>
+                        }
+                    </MudStack>
+                </MudStack>
+            </MudItem>
+        </MudGrid>
+    </MudContainer>
+</MudTabPanel>

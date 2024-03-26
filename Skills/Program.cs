@@ -1,14 +1,10 @@
-using System.DirectoryServices;
-using Microsoft.AspNetCore.Authentication.OpenIdConnect;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Identity.Web;
-using Microsoft.Identity.Web.UI;
 using MudBlazor.Services;
 using Skills.Components;
 using Skills.Databases;
-using Skills.Models;
-using Skills.Models.Enums;
+using Skills.Extensions;
 using Skills.Services;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -17,59 +13,26 @@ var dataPath = new DirectoryInfo(Path.Combine(builder.Environment.ContentRootPat
 builder.Configuration.AddJsonFile(Path.Combine(dataPath, "config/main.json"), optional: false, reloadOnChange: true);
 builder.Configuration.AddJsonFile(Path.Combine(dataPath, "config/skills.json"), optional: false, reloadOnChange: true);
 
-
-/* Microsoft Azure AD authentication */
-var initialScopes = builder.Configuration["DownstreamApi:Scopes"]?.Split(' ');
-
-builder.Services.AddAuthentication(OpenIdConnectDefaults.AuthenticationScheme)
-    .AddMicrosoftIdentityWebApp(builder.Configuration.GetSection("AzureAd"))
-    .EnableTokenAcquisitionToCallDownstreamApi(initialScopes)
-    .AddMicrosoftGraph(builder.Configuration.GetSection("DownstreamApi"))
-    .AddInMemoryTokenCaches();
-
-builder.Services.AddControllersWithViews()
-    .AddMicrosoftIdentityUI();
-
-builder.Services.AddAuthorization(options =>
-{
-    // By default, all incoming requests will be authorized according to the default policy
-    // options.FallbackPolicy = options.DefaultPolicy;
-});
-
-builder.Services.AddAuthorizationBuilder()
-    .AddPolicy("Read", policy => policy.AddRequirements(new PermissionRequirement(PermissionPolicy.Read)))
-    .AddPolicy("Write", policy => policy.AddRequirements(new PermissionRequirement(PermissionPolicy.Write)))
-    .AddPolicy("Edit", policy => policy.AddRequirements(new PermissionRequirement(PermissionPolicy.Edit)))
-    .AddPolicy("Delete", policy => policy.AddRequirements(new PermissionRequirement(PermissionPolicy.Delete)))
-    .AddPolicy("Users", policy => policy.AddRequirements(new PermissionRequirement(PermissionPolicy.Users)))
-    .AddPolicy("Skills", policy => policy.AddRequirements(new PermissionRequirement(PermissionPolicy.Skills)))
-    .AddPolicy("Root", policy => policy.AddRequirements(new PermissionRequirement(PermissionPolicy.Root)));
-
-builder.Services.Configure<OpenIdConnectOptions> (OpenIdConnectDefaults.AuthenticationScheme, options =>
-{
-    options.Events.OnSignedOutCallbackRedirect = context =>
+builder.Services.AddHttpContextAccessor(); // Required for authentication, take a look at ServiceExtensions.cs
+builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+    .AddCookie(options =>
     {
-        context.HttpContext.Response.Redirect(context.Options.SignedOutRedirectUri);
-        context.HandleResponse();
-        return Task.CompletedTask;
-    };
-
-});
-/* Microsoft Azure AD authentication */
-
+        options.LoginPath = "/login";
+        options.AccessDeniedPath = "/";
+        options.Cookie.Name = "Skills";
+    });
 
 builder.Services.AddRazorComponents()
-    .AddInteractiveServerComponents()
-    .AddMicrosoftIdentityConsentHandler();
+    .AddInteractiveServerComponents();
 
 builder.Services.AddMudServices();
 
 /* Custom Services */
-builder.Services.AddScoped<IAuthorizationHandler, PermissionHandler>();
+builder.Services.AddTransient<ADAuthenticationService>();
+builder.Services.AddSingleton<UserTokenHoldingService>();
 builder.Services.AddSingleton<ActiveDirectoryService>();
 builder.Services.AddSingleton<ThemeManager>();
 builder.Services.AddSingleton<SkillService>();
-builder.Services.AddTransient<AuthenticationService>();
 /* Custom Services */
 
 /* Databases */
@@ -92,8 +55,11 @@ app.UseStaticFiles();
 app.UseRouting();
 app.UseAntiforgery();
 
+app.UseAuthentication();
 app.UseAuthorization();
-app.MapControllers();
+app.UseLogin();
+app.UseLogout();
+app.UseFileUpload();
 
 var themeManager = app.Services.GetRequiredService<ThemeManager>();
 var skillServices = app.Services.GetRequiredService<SkillService>();

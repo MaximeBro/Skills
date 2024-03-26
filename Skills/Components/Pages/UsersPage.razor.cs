@@ -1,5 +1,6 @@
 using System.Security.Claims;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.EntityFrameworkCore;
 using MudBlazor;
 using Skills.Components.Dialogs;
@@ -11,23 +12,28 @@ using Icons = MudBlazor.Icons.Material.Filled;
 
 namespace Skills.Components.Pages;
 
-public partial class UsersPage
+public partial class UsersPage : ComponentBase
 {
-    [Inject] public AuthenticationService AuthenticationService { get; set; } = null!;
+    [CascadingParameter] public Task<AuthenticationState> AuthenticationState { get; set; } = null!;
     [Inject] public IDbContextFactory<SkillsContext> Factory { get; set; } = null!;
-    [Inject] public IDialogService DialogService { get; set; } = null!;
+    [Inject] public ADAuthenticationService AuthenticationService { get; set; } = null!;
     [Inject] public NavigationManager NavManager { get; set; } = null!;
+    [Inject] public IDialogService DialogService { get; set; } = null!;
+    [Inject] public ISnackbar Snackbar { get; set; } = null!;
 
     private List<UserModel> _users = new();
+    private List<UserModel> _filteredUsers = new();
     private ClaimsPrincipal _user = null!;
 
+    private bool _showDisabledAccounts = false;
+    
     private string _search = string.Empty;
     private Func<UserModel, bool> QuickFilter => x =>
     {
         if (x.Name.Contains(_search, StringComparison.OrdinalIgnoreCase)) return true;
         if (x.Username.Contains(_search, StringComparison.OrdinalIgnoreCase)) return true;
         if (x.Email.Contains(_search, StringComparison.OrdinalIgnoreCase)) return true;
-            
+        
         return false;
     };
 
@@ -39,7 +45,7 @@ public partial class UsersPage
 
     protected override async Task OnInitializedAsync()
     {
-        await RefreshUsersAsync();
+        await RefreshDataAsync();
     }
 
     private async Task DeleteUserAsync(UserModel model)
@@ -60,9 +66,9 @@ public partial class UsersPage
                 NavManager.NavigateTo("MicrosoftIdentity/Account/SignOut", true);
                 return;
             }
-            
-            await RefreshUsersAsync();
-            
+        
+            await RefreshDataAsync();
+        
         }
     }
 
@@ -74,13 +80,25 @@ public partial class UsersPage
         }
     }
 
+    private void ShowDisabledAccounts(bool? show)
+    {
+        if (show != null)
+        {
+            _showDisabledAccounts = (bool)show;
+            _filteredUsers = _users.Where(x => !x.IsDisabled || x.IsDisabled == _showDisabledAccounts).ToList();
+            StateHasChanged();
+        }
+    }
+    
     private void NavigateToProfile(UserModel model) => NavManager.NavigateTo($"/overview/{model.Username}");
 
-    private async Task RefreshUsersAsync()
+    private async Task RefreshDataAsync()
     {
-        _user = await AuthenticationService.GetUserAsync();
+        var authState = await AuthenticationState;
+        _user = authState.User;
         var db = await Factory.CreateDbContextAsync();
         _users = await db.Users.AsNoTracking().ToListAsync();
+        _filteredUsers = _users.Where(x => !x.IsDisabled || x.IsDisabled == _showDisabledAccounts).ToList();
         await db.DisposeAsync();
     }
 }

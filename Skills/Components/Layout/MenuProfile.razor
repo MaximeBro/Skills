@@ -1,16 +1,20 @@
-@using System.Security.Claims
+@inherits AuthorizedComponent
+
 <MudMenu Icon="@IconsF.AccountCircle" Size="Size.Small" Class="icon-hoverable white-all pa-1" PopoverClass="dark-bg" ListClass="rounded-lg"
          Style="border: 2px solid white; border-radius: 50%;" AnchorOrigin="Origin.BottomRight" TransformOrigin="Origin.TopRight">
     <MudStack Class="pt-1" Row="false" Spacing="0">
         <MudStack Class="px-4" Row AlignItems="AlignItems.Center">
-            <MudAvatar Variant="Variant.Filled" Color="Color.Dark">@_name[0].ToString()</MudAvatar>
+            <MudAvatar Variant="Variant.Filled" Color="Color.Dark">@_name[0].ToString().ToUpper()</MudAvatar>
             <MudStack Class="py-2" Row="false" Justify="Justify.FlexStart" Spacing="0">
-                <MudText Class="text-white">@_name</MudText>
+                <MudLink Class="text-white mark-one" Underline="Underline.Hover" Href="@($"/overview/{_email.Replace("@sasp.fr", string.Empty)}")"
+                         Style="text-decoration-color: #fff;">
+                    <MudText Class="text-white">@_name</MudText>
+                </MudLink>
                 <MudText Class="text-white">@_email</MudText>
             </MudStack>
         </MudStack>
         <MudDivider Class="my-2" Style="border-color: grey!important;" />
-        <MudLink Class="text-white py-1" Href="MicrosoftIdentity/Account/SignOut" Underline="Underline.Hover" Style="text-decoration-color: #fff;">
+        <MudLink Class="text-white py-1" Href="/api/logout" Underline="Underline.Hover" Style="text-decoration-color: #fff;">
             <MudText Class="text-white" Align="Align.Center">Se déconnecter</MudText>
         </MudLink>
     </MudStack>

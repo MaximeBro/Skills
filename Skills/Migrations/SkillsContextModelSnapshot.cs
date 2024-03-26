@@ -17,29 +17,72 @@ namespace Skills.Migrations
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.3");
 
+            modelBuilder.Entity("Skills.Models.GroupModel", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Icon")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Groups");
+                });
+
+            modelBuilder.Entity("Skills.Models.SKillInfo", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Value")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("SkillsTypes");
+                });
+
             modelBuilder.Entity("Skills.Models.SkillModel", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("Category")
-                        .IsRequired()
+                    b.Property<Guid>("CategoryId")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Description")
-                        .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("SubCategory")
-                        .IsRequired()
+                    b.Property<Guid?>("JobId")
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("Type")
-                        .IsRequired()
+                    b.Property<Guid?>("SubCategoryId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<Guid>("TypeId")
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("CategoryId");
+
+                    b.HasIndex("JobId");
+
+                    b.HasIndex("SubCategoryId");
+
+                    b.HasIndex("TypeId");
 
                     b.ToTable("Skills");
                 });
@@ -54,6 +97,9 @@ namespace Skills.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
+                    b.Property<Guid?>("GroupId")
+                        .HasColumnType("TEXT");
+
                     b.Property<bool>("IsDisabled")
                         .HasColumnType("INTEGER");
 
@@ -61,10 +107,16 @@ namespace Skills.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<int>("Policy")
+                    b.Property<int>("Role")
                         .HasColumnType("INTEGER");
 
+                    b.Property<string>("Username")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("GroupId");
 
                     b.ToTable("Users");
                 });
@@ -90,7 +142,52 @@ namespace Skills.Migrations
 
                     b.HasIndex("UsersId");
 
+                    b.HasIndex("UserId", "SkillId")
+                        .IsUnique();
+
                     b.ToTable("Userskills");
+                });
+
+            modelBuilder.Entity("Skills.Models.SkillModel", b =>
+                {
+                    b.HasOne("Skills.Models.SKillInfo", "Category")
+                        .WithMany()
+                        .HasForeignKey("CategoryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Skills.Models.GroupModel", "Job")
+                        .WithMany()
+                        .HasForeignKey("JobId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("Skills.Models.SKillInfo", "SubCategory")
+                        .WithMany()
+                        .HasForeignKey("SubCategoryId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("Skills.Models.SKillInfo", "Type")
+                        .WithMany()
+                        .HasForeignKey("TypeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Category");
+
+                    b.Navigation("Job");
+
+                    b.Navigation("SubCategory");
+
+                    b.Navigation("Type");
+                });
+
+            modelBuilder.Entity("Skills.Models.UserModel", b =>
+                {
+                    b.HasOne("Skills.Models.GroupModel", "Group")
+                        .WithMany()
+                        .HasForeignKey("GroupId");
+
+                    b.Navigation("Group");
                 });
 
             modelBuilder.Entity("Skills.Models.UserSkillModel", b =>

@@ -1,0 +1,25 @@
+<MudDialog Class="pa-0 rounded-lg">
+    <DialogContent>
+        <MudStack Class="py-2 px-6" Justify="Justify.SpaceEvenly" Row="false" Spacing="0">
+            <MudText Class="mark-one" GutterBottom>Groupe</MudText>
+            <MudTextField T="string" @bind-Value="_name" Label="Nomination" Placeholder="Nom"/>
+        </MudStack>
+    </DialogContent>
+    <DialogActions>
+        <MudButton Class="mark-one" Color="Color.Success" Variant="Variant.Text" OnClick="@Submit">Enregistrer</MudButton>
+    </DialogActions>
+</MudDialog>
+@code {
+    [CascadingParameter] public MudDialogInstance Dialog { get; set; } = null!;
+    [Parameter] public string? Name { get; set; }
+    
+    private string _name = string.Empty;
+
+    protected override void OnInitialized()
+    {
+        _name = Name ?? string.Empty;
+        // TODO: Add icon browser
+    }
+
+    private void Submit() => Dialog.Close(new GroupModel { Name = _name });
+}

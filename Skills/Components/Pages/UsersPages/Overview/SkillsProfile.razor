@@ -1,0 +1,49 @@
+<MudTabPanel Text="Compétences">
+    <MudGrid Justify="Justify.Center" Spacing="0">
+
+        @* User information *@
+        <MudItem Class="pl-0 pl-md-8" xs="12" md="3">
+            <MudPaper Class="my-12 px-4 py-3" Elevation="2">
+                <MudStack Row AlignItems="AlignItems.Center">
+                    <MudAvatar Color="Color.Dark">@User.Name[0].ToString().ToUpper()</MudAvatar>
+                    <MudStack Row="false" Spacing="0">
+                        <MudText Class="mark-one">@User.Name</MudText>
+                        <MudText Class="mark-one">@User.Email</MudText>
+                    </MudStack>
+                </MudStack>
+                
+            </MudPaper>
+        </MudItem>
+
+        @* Skills *@
+        <MudItem Class="px-16" xs="12" md="9">
+            <MudPaper Class="my-12 px-6 py-2" Elevation="2">
+                
+                @* Toolbar *@
+                <MudStack Row AlignItems="AlignItems.Center">
+                    <MudText Class="mark-one">Compétences (attribuées)</MudText>
+                    <MudTooltip Placement="Placement.Bottom" Text="Ajouter une compétence" Arrow>
+                        <MudIconButton Icon="@IconsF.Add" Color="Color.Tertiary" OnClick="@(async() => await GrantSkillAsync())" 
+                                       Style="border-radius: 6px!important; padding: 4px!important;"/>
+                    </MudTooltip>
+                </MudStack>
+
+                <MudStack Class="px-10 py-4" Row="false">
+                    @foreach (var userSkill in _userSkills)
+                    {
+                        <MudPaper Class="px-6 py-1" Elevation="2">
+                            <MudStack Row AlignItems="AlignItems.Center">
+                                <MudStack Row="false" Spacing="0">
+                                    <MudText Class="mark-one">[@userSkill.Type.Value] - @userSkill.Category.Value - @userSkill.SubCategory?.Value</MudText>
+                                    <MudText Class="mark-one" Typo="Typo.body2">@userSkill.Description</MudText>
+                                </MudStack>
+                                <MudSpacer />
+                                <MudIconButton Icon="@IconsF.Minimize" Color="Color.Error" OnClick="@(async() => await RevokeSkillAsync(userSkill.Id))" />
+                            </MudStack>
+                        </MudPaper>
+                    }
+                </MudStack>
+            </MudPaper>
+        </MudItem>
+    </MudGrid>
+</MudTabPanel>

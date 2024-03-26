@@ -15,34 +15,33 @@ public class SkillService(IConfiguration configuration, IDbContextFactory<Skills
     /// </summary>
     public async Task InitAsync()
     {
-        var file = configuration["excel-file"];
-        var import = !string.IsNullOrWhiteSpace(configuration["import"]) && bool.Parse(configuration["import"]!);
-        if (import && !string.IsNullOrWhiteSpace(file))
-        {
-            var fileStream = File.OpenRead(Path.Combine(Directory.GetCurrentDirectory(), "..\\data\\config", file));
-            var ms = new MemoryStream();
-            await fileStream.CopyToAsync(ms);
-            ms.Position = 0;
-
-            await fileStream.DisposeAsync();
-            
-            var excelFile = await ms.QueryAsync<SkillRowModel>(null, ExcelType.XLSX);
-            if (excelFile is null) return;
-
-            var db = await factory.CreateDbContextAsync();
-
-            await db.Skills.AddRangeAsync(excelFile.Select(x => new SkillModel
-            {
-                Type = x.Type,
-                Category = x.Category,
-                SubCategory = x.SubCategory,
-                Description = x.Description
-            }));
-            
-            await db.SaveChangesAsync();
-            await db.DisposeAsync();
-            await ms.DisposeAsync();
-        }
+        // var file = configuration["excel-file"];
+        // var import = !string.IsNullOrWhiteSpace(configuration["import"]) && bool.Parse(configuration["import"]!);
+        // if (import && !string.IsNullOrWhiteSpace(file))
+        // {
+        //     var fileStream = File.OpenRead(Path.Combine(Directory.GetCurrentDirectory(), "..\\data\\config", file));
+        //     var ms = new MemoryStream();
+        //     await fileStream.CopyToAsync(ms);
+        //     ms.Position = 0;
+        //
+        //     await fileStream.DisposeAsync();
+        //     
+        //     var excelFile = await ms.QueryAsync<SkillRowModel>(null, ExcelType.XLSX);
+        //     if (excelFile is null) return;
+        //
+        //     var db = await factory.CreateDbContextAsync();
+        //     await db.Skills.AddRangeAsync(excelFile.Select(x => new SkillModel
+        //     {
+        //         Type = x.Type,
+        //         Category = x.Category,
+        //         SubCategory = x.SubCategory,
+        //         Description = x.Description
+        //     }));
+        //     
+        //     await db.SaveChangesAsync();
+        //     await db.DisposeAsync();
+        //     await ms.DisposeAsync();
+        // }
     }
 
     /// <summary>

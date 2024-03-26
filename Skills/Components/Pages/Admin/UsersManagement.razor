@@ -1,0 +1,10 @@
+@page "/admin/users"
+
+<AuthorizedComponent Roles="Admin">
+    <Content>
+        <MudTabs Color="Color.Primary" Centered ActivePanelIndex="0">
+            <UsersList @ref="_users" Manager="@this" />
+            <UsersGroups Manager="@this" />
+        </MudTabs>
+    </Content>
+</AuthorizedComponent>

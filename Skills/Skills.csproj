@@ -9,9 +9,12 @@
     <ItemGroup>
       <_ContentIncludedByDefault Remove="wwwroot\bootstrap\bootstrap.min.css" />
       <_ContentIncludedByDefault Remove="wwwroot\bootstrap\bootstrap.min.css.map" />
+      <_ContentIncludedByDefault Remove="Components\Pages\SkillsPages\Edition\SkillsManagement.razor" />
+      <_ContentIncludedByDefault Remove="Components\Pages\SkillsPages\Edition\SkillsTypes.razor" />
     </ItemGroup>
 
     <ItemGroup>
+      <PackageReference Include="Humanizer" Version="3.0.0-beta.13" />
       <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.3" />
       <PackageReference Include="Microsoft.AspNetCore.Authentication.OpenIdConnect" Version="8.0.3" />
       <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.3" />
@@ -25,7 +28,7 @@
       <PackageReference Include="Microsoft.Identity.Web.MicrosoftGraph" Version="2.17.2" />
       <PackageReference Include="Microsoft.Identity.Web.UI" Version="2.17.2" />
       <PackageReference Include="MiniExcel" Version="1.31.3" />
-      <PackageReference Include="MudBlazor" Version="6.17.0" />
+      <PackageReference Include="MudBlazor" Version="6.18.0" />
       <PackageReference Include="System.DirectoryServices" Version="8.0.0" />
       <PackageReference Include="System.DirectoryServices.AccountManagement" Version="8.0.0" />
       <PackageReference Include="System.DirectoryServices.Protocols" Version="8.0.0" />
@@ -33,6 +36,12 @@
 
     <ItemGroup>
       <Folder Include="wwwroot\pictures\" />
+      <Folder Include="wwwroot\_content\docs\" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <AdditionalFiles Include="Components\Pages\UsersPages\Overview\CvProfile.razor" />
+      <AdditionalFiles Include="Components\Pages\UsersPages\Overview\SkillsProfile.razor" />
     </ItemGroup>
 
 </Project>

@@ -62,7 +62,7 @@ public class ActiveDirectoryService(IConfiguration configuration, IDbContextFact
             var user = await db.Users.AsTracking().FirstOrDefaultAsync(x => x.Email == email);
             if (user != null)
             {
-                user.Policy = PermissionPolicy.Root;
+                user.Role = UserRole.Admin;
             }
         }
         
