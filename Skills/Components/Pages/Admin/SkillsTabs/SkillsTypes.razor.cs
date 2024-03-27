@@ -23,6 +23,15 @@ public partial class SkillsTypes : ComponentBase
     private List<SKillInfo> _categories = new();
     private List<SKillInfo> _subcategories = new();
 
+    private SkillTypeModel _typeModel = new();
+    private SkillTypeModel _categoryModel = new();
+    private SkillTypeModel _subCategoryModel = new();
+
+    private MudTextField<string> _typeInput = null!;
+    private MudTextField<string> _categoryInput = null!;
+    private MudTextField<string> _subCategoryInput = null!;
+    
+
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
@@ -31,17 +40,34 @@ public partial class SkillsTypes : ComponentBase
 
     private async Task AddAsync(SkillDataType type)
     {
-        var parameters = new DialogParameters<SkillInfoDialog> { { x => x.Type, type } };
-        var instance = await DialogService.ShowAsync<SkillInfoDialog>(string.Empty, parameters, Hardcoded.DialogOptions);
-        var result = await instance.Result;
-        if (result is { Data: SKillInfo skillInfo })
+        SKillInfo skillInfo = new SKillInfo { Type = type };
+        switch (type)
         {
-            var db = await Factory.CreateDbContextAsync();
-            db.SkillsTypes.Add(skillInfo);
-            await db.SaveChangesAsync();
-            await db.DisposeAsync();
-            await RefreshDataAsync();
-        } 
+            case SkillDataType.Type:
+            {
+                skillInfo.Value = _typeModel.Value;
+                await _typeInput.Clear();
+                break;
+            }
+            case SkillDataType.Category:
+            {
+                skillInfo.Value = _categoryModel.Value;
+                await _categoryInput.Clear();
+                break;
+            }
+            case SkillDataType.SubCategory:
+            {
+                skillInfo.Value = _subCategoryModel.Value;
+                await _subCategoryInput.Clear();
+                break;
+            }
+        }
+        
+        var db = await Factory.CreateDbContextAsync();
+        db.SkillsTypes.Add(skillInfo);
+        await db.SaveChangesAsync();
+        await db.DisposeAsync();
+        await RefreshDataAsync();
     }
 
     private async Task EditAsync(SKillInfo model)
@@ -84,5 +110,10 @@ public partial class SkillsTypes : ComponentBase
         _categories = db.SkillsTypes.AsNoTracking().Where(x => x.Type == SkillDataType.Category).ToList();
         _subcategories = db.SkillsTypes.AsNoTracking().Where(x => x.Type == SkillDataType.SubCategory).ToList();
         await db.DisposeAsync();
+    }
+
+    private sealed class SkillTypeModel
+    {
+        public string Value { get; set; } = string.Empty;
     }
 }

@@ -65,7 +65,7 @@ namespace Skills.Migrations
                     b.Property<string>("Description")
                         .HasColumnType("TEXT");
 
-                    b.Property<Guid?>("JobId")
+                    b.Property<Guid?>("GroupId")
                         .HasColumnType("TEXT");
 
                     b.Property<Guid?>("SubCategoryId")
@@ -78,7 +78,7 @@ namespace Skills.Migrations
 
                     b.HasIndex("CategoryId");
 
-                    b.HasIndex("JobId");
+                    b.HasIndex("GroupId");
 
                     b.HasIndex("SubCategoryId");
 
@@ -123,27 +123,18 @@ namespace Skills.Migrations
 
             modelBuilder.Entity("Skills.Models.UserSkillModel", b =>
                 {
-                    b.Property<Guid>("SkillsId")
-                        .HasColumnType("TEXT");
-
-                    b.Property<Guid>("UsersId")
-                        .HasColumnType("TEXT");
-
-                    b.Property<int>("Level")
-                        .HasColumnType("INTEGER");
-
                     b.Property<Guid>("SkillId")
                         .HasColumnType("TEXT");
 
                     b.Property<Guid>("UserId")
                         .HasColumnType("TEXT");
 
-                    b.HasKey("SkillsId", "UsersId");
+                    b.Property<int>("Level")
+                        .HasColumnType("INTEGER");
 
-                    b.HasIndex("UsersId");
+                    b.HasKey("SkillId", "UserId");
 
-                    b.HasIndex("UserId", "SkillId")
-                        .IsUnique();
+                    b.HasIndex("UserId");
 
                     b.ToTable("Userskills");
                 });
@@ -156,10 +147,9 @@ namespace Skills.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Skills.Models.GroupModel", "Job")
+                    b.HasOne("Skills.Models.GroupModel", "Group")
                         .WithMany()
-                        .HasForeignKey("JobId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .HasForeignKey("GroupId");
 
                     b.HasOne("Skills.Models.SKillInfo", "SubCategory")
                         .WithMany()
@@ -174,7 +164,7 @@ namespace Skills.Migrations
 
                     b.Navigation("Category");
 
-                    b.Navigation("Job");
+                    b.Navigation("Group");
 
                     b.Navigation("SubCategory");
 
@@ -192,17 +182,21 @@ namespace Skills.Migrations
 
             modelBuilder.Entity("Skills.Models.UserSkillModel", b =>
                 {
-                    b.HasOne("Skills.Models.SkillModel", null)
+                    b.HasOne("Skills.Models.SkillModel", "Skill")
                         .WithMany("UserSkills")
-                        .HasForeignKey("SkillsId")
+                        .HasForeignKey("SkillId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Skills.Models.UserModel", null)
+                    b.HasOne("Skills.Models.UserModel", "User")
                         .WithMany("UserSkills")
-                        .HasForeignKey("UsersId")
+                        .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Skill");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Skills.Models.SkillModel", b =>

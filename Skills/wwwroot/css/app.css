@@ -1,5 +1,5 @@
 /* Fonts */
-@import 'https://fonts.googleapis.com/css2?family=Marko+One&display=swap';
+@import 'https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&family=Reddit+Mono:wght@200..900&display=swap';
 /* Fonts */
 
 /* Global utility */
@@ -10,8 +10,8 @@
 .transparent { opacity: 0; background: transparent!important; }
 .dark-bg { background-color: #323232!important; }
 .mark-one {
-    font-family: "Marko One", 'Helvetica Neue', Helvetica, Arial, sans-serif!important;
-    font-weight: 400!important;
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif!important;
+    font-weight:500!important;
     font-style: normal!important;
 }
 /* Global utility */

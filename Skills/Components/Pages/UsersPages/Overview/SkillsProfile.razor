@@ -2,48 +2,69 @@
     <MudGrid Justify="Justify.Center" Spacing="0">
 
         @* User information *@
-        <MudItem Class="pl-0 pl-md-8" xs="12" md="3">
-            <MudPaper Class="my-12 px-4 py-3" Elevation="2">
-                <MudStack Row AlignItems="AlignItems.Center">
-                    <MudAvatar Color="Color.Dark">@User.Name[0].ToString().ToUpper()</MudAvatar>
-                    <MudStack Row="false" Spacing="0">
-                        <MudText Class="mark-one">@User.Name</MudText>
-                        <MudText Class="mark-one">@User.Email</MudText>
+        <MudItem Class="px-16" xs="12">
+            <MudStack Row>
+                <MudPaper Class="my-4 px-4 py-3" Elevation="2">
+                    <MudStack Row AlignItems="AlignItems.Center">
+                        <MudAvatar Color="Color.Dark">@User.Name[0].ToString().ToUpper()</MudAvatar>
+                        <MudStack Row="false" Spacing="0">
+                            <MudText Class="mark-one">@User.Name</MudText>
+                            <MudText Class="mark-one">@User.Email</MudText>
+                        </MudStack>
                     </MudStack>
-                </MudStack>
-                
-            </MudPaper>
+                </MudPaper>
+                <MudSpacer/>
+            </MudStack>
         </MudItem>
 
         @* Skills *@
-        <MudItem Class="px-16" xs="12" md="9">
-            <MudPaper Class="my-12 px-6 py-2" Elevation="2">
-                
-                @* Toolbar *@
-                <MudStack Row AlignItems="AlignItems.Center">
+        <MudItem Class="px-16" xs="12">
+            
+            <MudDataGrid T="UserSkillModel" Items="_userSkillsModels" Bordered Hover Outlined Filterable Striped SortMode="SortMode.Multiple" Dense FixedHeader
+                         Culture="@(new CultureInfo("fr-FR"))" Height="65vh" Virtualize OverscanCount="25" QuickFilter="@QuickFilter">
+                <ToolBarContent>
                     <MudText Class="mark-one">Compétences (attribuées)</MudText>
-                    <MudTooltip Placement="Placement.Bottom" Text="Ajouter une compétence" Arrow>
-                        <MudIconButton Icon="@IconsF.Add" Color="Color.Tertiary" OnClick="@(async() => await GrantSkillAsync())" 
+                    <MudTooltip Class="ml-2" Placement="Placement.Bottom" Text="Ajouter une compétence" Arrow>
+                        <MudIconButton Class="ml-4" Icon="@IconsF.Add" Color="Color.Tertiary" OnClick="@(async() => await GrantSkillAsync())"
                                        Style="border-radius: 6px!important; padding: 4px!important;"/>
                     </MudTooltip>
-                </MudStack>
-
-                <MudStack Class="px-10 py-4" Row="false">
-                    @foreach (var userSkill in _userSkills)
-                    {
-                        <MudPaper Class="px-6 py-1" Elevation="2">
-                            <MudStack Row AlignItems="AlignItems.Center">
-                                <MudStack Row="false" Spacing="0">
-                                    <MudText Class="mark-one">[@userSkill.Type.Value] - @userSkill.Category.Value - @userSkill.SubCategory?.Value</MudText>
-                                    <MudText Class="mark-one" Typo="Typo.body2">@userSkill.Description</MudText>
-                                </MudStack>
-                                <MudSpacer />
-                                <MudIconButton Icon="@IconsF.Minimize" Color="Color.Error" OnClick="@(async() => await RevokeSkillAsync(userSkill.Id))" />
-                            </MudStack>
-                        </MudPaper>
-                    }
-                </MudStack>
-            </MudPaper>
+                    <MudSpacer/>
+                    <MudTextField T="string" @bind-Value="_search" Placeholder="Rechercher" Adornment="Adornment.Start" AdornmentIcon="@IconsF.Search" />
+                </ToolBarContent>
+                <Columns>
+                    <TemplateColumn Title="Type">
+                        <CellTemplate>
+                            <MudText Class="mark-one">@(context.Item.Skill?.Type.Value ?? string.Empty)</MudText>
+                        </CellTemplate>
+                    </TemplateColumn>
+                    <TemplateColumn Title="Catégorie">
+                        <CellTemplate>
+                            <MudText Class="mark-one">@(context.Item.Skill?.Category.Value ?? string.Empty)</MudText>
+                        </CellTemplate>
+                    </TemplateColumn>
+                    <TemplateColumn Title="Sous catégorie">
+                        <CellTemplate>
+                            <MudText Class="mark-one">@(context.Item.Skill?.SubCategory?.Value ?? string.Empty)</MudText>
+                        </CellTemplate>
+                    </TemplateColumn>
+                    <TemplateColumn Title="Description">
+                        <CellTemplate>
+                            <MudText Class="mark-one">@(context.Item.Skill?.Description ?? string.Empty)</MudText>
+                        </CellTemplate>
+                    </TemplateColumn>
+                    <PropertyColumn Title="Niveau" Property="x => x.Level" />
+                    <TemplateColumn Title="Actions" Filterable="false" Sortable="false">
+                        <CellTemplate>
+                            <MudTooltip Placement="Placement.Bottom" Text="Éditer" Arrow>
+                                <MudIconButton Icon="@IconsF.Edit" Size="Size.Small" Color="Color.Primary" OnClick="@(async () => await ManageSkillAsync(context.Item))"/>
+                            </MudTooltip>
+                            <MudTooltip Class="ml-2" Placement="Placement.Bottom" Text="Supprimer" Arrow>
+                                <MudIconButton Class="ml-4" Icon="fas fa-minus" Size="Size.Small" Color="Color.Error" OnClick="@(async () => await RevokeSkillAsync(context.Item))"/>
+                            </MudTooltip>
+                        </CellTemplate>    
+                    </TemplateColumn>
+                </Columns>
+            </MudDataGrid>
         </MudItem>
     </MudGrid>
 </MudTabPanel>

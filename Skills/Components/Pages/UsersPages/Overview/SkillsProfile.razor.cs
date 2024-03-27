@@ -17,6 +17,21 @@ public partial class SkillsProfile : ComponentBase
 
     private List<UserSkillModel> _userSkillsModels = new();
     private List<SkillModel> _userSkills = new();
+
+    private string _search = string.Empty;
+
+    private Func<UserSkillModel, bool> QuickFilter => x =>
+    {
+        if (x.Skill != null)
+        {
+            if (x.Skill.Type.Value.Contains(_search, StringComparison.OrdinalIgnoreCase)) return true;
+            if (x.Skill.Category.Value.Contains(_search, StringComparison.OrdinalIgnoreCase)) return true;
+            if (x.Skill.SubCategory != null && x.Skill.SubCategory.Value.Contains(_search, StringComparison.OrdinalIgnoreCase)) return true;
+            if (x.Skill.Description != null && x.Skill.Description.Contains(_search, StringComparison.OrdinalIgnoreCase)) return true;
+        } 
+        
+        return false;
+    };
     
     protected override async Task OnInitializedAsync()
     {
@@ -33,8 +48,14 @@ public partial class SkillsProfile : ComponentBase
             if (_userSkillsModels.FirstOrDefault(x => x.SkillId == model.SkillId) is null)
             {
                 var db = await Factory.CreateDbContextAsync();
-                model.UserId = User.Id;
-                db.Userskills.Add(model);
+                var newModel = new UserSkillModel
+                {
+                    UserId = User.Id,
+                    SkillId = model.SkillId,
+                    Level = model.Level
+                };
+
+                db.Userskills.Add(newModel);
                 await db.SaveChangesAsync();
                 await db.DisposeAsync();
                 await RefreshDataAsync();
@@ -47,12 +68,12 @@ public partial class SkillsProfile : ComponentBase
         }
     }
 
-    private async Task ReviewSkillAsync(UserSkillModel userSkillModel)
+    private async Task ManageSkillAsync(UserSkillModel model)
     {
         
     }
     
-    private async Task RevokeSkillAsync(Guid skillId)
+    private async Task RevokeSkillAsync(UserSkillModel model)
     {
         var parameters = new DialogParameters<ConfirmDialog> { { x => x.Text, $"Voulez-vous vraiment retirer cette compétence à {User.Name} ? Cette action est irréversible !" } };
         var instance = await DialogService.ShowAsync<ConfirmDialog>(string.Empty, parameters, Hardcoded.DialogOptions);
@@ -60,7 +81,7 @@ public partial class SkillsProfile : ComponentBase
         if (result.Data != null && (bool)result.Data)
         {
             var db = await Factory.CreateDbContextAsync();
-            var userSkill = await db.Userskills.AsNoTracking().FirstOrDefaultAsync(x => x.UserId == User.Id && x.SkillId == skillId);
+            var userSkill = await db.Userskills.AsNoTracking().FirstOrDefaultAsync(x => x.UserId == model.UserId && x.SkillId == model.SkillId);
             if (userSkill != null)
             {
                 db.Userskills.Remove(userSkill);
@@ -81,7 +102,13 @@ public partial class SkillsProfile : ComponentBase
     private async Task RefreshDataAsync()
     {
         var db = await Factory.CreateDbContextAsync();
-        _userSkillsModels = await db.Userskills.AsNoTracking().ToListAsync();
+        _userSkillsModels = await db.Userskills.AsNoTracking()
+                                               .Include(x => x.Skill).ThenInclude(x => x!.Type)
+                                               .Include(x => x.Skill).ThenInclude(x => x!.Category)
+                                               .Include(x => x.Skill).ThenInclude(x => x!.SubCategory)
+                                               .Include(x => x.User).ThenInclude(x => x!.Group)
+                                               .ToListAsync();
+        
         _userSkills = await db.Skills.AsNoTracking()
                                      .Where(x => _userSkillsModels.Select(x => x.SkillId).Contains(x.Id))
                                      .Include(x => x.Type)

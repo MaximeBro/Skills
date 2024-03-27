@@ -11,8 +11,8 @@ using Skills.Databases;
 namespace Skills.Migrations
 {
     [DbContext(typeof(SkillsContext))]
-    [Migration("20240325142635_AddsJobs")]
-    partial class AddsJobs
+    [Migration("20240327095850_Init")]
+    partial class Init
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -20,10 +20,13 @@ namespace Skills.Migrations
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.3");
 
-            modelBuilder.Entity("Skills.Models.JobModel", b =>
+            modelBuilder.Entity("Skills.Models.GroupModel", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Icon")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Name")
@@ -32,7 +35,7 @@ namespace Skills.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Jobs");
+                    b.ToTable("Groups");
                 });
 
             modelBuilder.Entity("Skills.Models.SKillInfo", b =>
@@ -41,13 +44,16 @@ namespace Skills.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("TEXT");
 
+                    b.Property<int>("Type")
+                        .HasColumnType("INTEGER");
+
                     b.Property<string>("Value")
                         .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");
 
-                    b.ToTable("SKillInfo");
+                    b.ToTable("SkillsTypes");
                 });
 
             modelBuilder.Entity("Skills.Models.SkillModel", b =>
@@ -60,13 +66,12 @@ namespace Skills.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Description")
-                        .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<Guid>("JobId")
+                    b.Property<Guid?>("GroupId")
                         .HasColumnType("TEXT");
 
-                    b.Property<Guid>("SubCategoryId")
+                    b.Property<Guid?>("SubCategoryId")
                         .HasColumnType("TEXT");
 
                     b.Property<Guid>("TypeId")
@@ -76,7 +81,7 @@ namespace Skills.Migrations
 
                     b.HasIndex("CategoryId");
 
-                    b.HasIndex("JobId");
+                    b.HasIndex("GroupId");
 
                     b.HasIndex("SubCategoryId");
 
@@ -95,15 +100,15 @@ namespace Skills.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
+                    b.Property<Guid?>("GroupId")
+                        .HasColumnType("TEXT");
+
                     b.Property<bool>("IsDisabled")
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("TEXT");
-
-                    b.Property<int>("Policy")
-                        .HasColumnType("INTEGER");
 
                     b.Property<int>("Role")
                         .HasColumnType("INTEGER");
@@ -114,29 +119,25 @@ namespace Skills.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("GroupId");
+
                     b.ToTable("Users");
                 });
 
             modelBuilder.Entity("Skills.Models.UserSkillModel", b =>
                 {
-                    b.Property<Guid>("SkillsId")
-                        .HasColumnType("TEXT");
-
-                    b.Property<Guid>("UsersId")
-                        .HasColumnType("TEXT");
-
-                    b.Property<int>("Level")
-                        .HasColumnType("INTEGER");
-
                     b.Property<Guid>("SkillId")
                         .HasColumnType("TEXT");
 
                     b.Property<Guid>("UserId")
                         .HasColumnType("TEXT");
 
-                    b.HasKey("SkillsId", "UsersId");
+                    b.Property<int>("Level")
+                        .HasColumnType("INTEGER");
 
-                    b.HasIndex("UsersId");
+                    b.HasKey("SkillId", "UserId");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("Userskills");
                 });
@@ -149,17 +150,14 @@ namespace Skills.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Skills.Models.JobModel", "Job")
+                    b.HasOne("Skills.Models.GroupModel", "Group")
                         .WithMany()
-                        .HasForeignKey("JobId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("GroupId");
 
                     b.HasOne("Skills.Models.SKillInfo", "SubCategory")
                         .WithMany()
                         .HasForeignKey("SubCategoryId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("Skills.Models.SKillInfo", "Type")
                         .WithMany()
@@ -169,26 +167,39 @@ namespace Skills.Migrations
 
                     b.Navigation("Category");
 
-                    b.Navigation("Job");
+                    b.Navigation("Group");
 
                     b.Navigation("SubCategory");
 
                     b.Navigation("Type");
                 });
 
+            modelBuilder.Entity("Skills.Models.UserModel", b =>
+                {
+                    b.HasOne("Skills.Models.GroupModel", "Group")
+                        .WithMany()
+                        .HasForeignKey("GroupId");
+
+                    b.Navigation("Group");
+                });
+
             modelBuilder.Entity("Skills.Models.UserSkillModel", b =>
                 {
-                    b.HasOne("Skills.Models.SkillModel", null)
+                    b.HasOne("Skills.Models.SkillModel", "Skill")
                         .WithMany("UserSkills")
-                        .HasForeignKey("SkillsId")
+                        .HasForeignKey("SkillId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Skills.Models.UserModel", null)
+                    b.HasOne("Skills.Models.UserModel", "User")
                         .WithMany("UserSkills")
-                        .HasForeignKey("UsersId")
+                        .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Skill");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Skills.Models.SkillModel", b =>

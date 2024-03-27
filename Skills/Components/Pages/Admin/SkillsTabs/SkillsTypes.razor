@@ -1,34 +1,37 @@
 <MudTabPanel Class="mark-one" Text="@Title">
     <MudContainer MaxWidth="MaxWidth.ExtraLarge">
-        <MudExpansionPanels MultiExpansion>
+        <MudExpansionPanels MultiExpansion Elevation="3">
             <MudGrid Class="mt-8" Justify="Justify.Center">
                 <MudItem xs="12" sm="6" md="4">
                     <MudExpansionPanel Class="rounded" IsInitiallyExpanded="true">
                         <TitleContent>
                             <MudStack Row>
                                 <MudText Class="mark-one">Type</MudText>
-                                <MudTooltip Class="ml-1" Placement="Placement.Bottom" Text="Créer un type" Arrow>
-                                    <MudIconButton Icon="@IconsF.Add" Size="Size.Small" Class="mud-elevation-5 text-white ml-2" Style="@($"background: {ThemeManager.Get("success")};")"
-                                                   OnClick="@(async () => await AddAsync(SkillDataType.Type))"/>
-                                </MudTooltip>
                             </MudStack>
                         </TitleContent>
                         <ChildContent>
-                            <MudStack Row="false" Class="px-3 py-1" Style="height: 50vh; max-height: 50vh; overflow-y: auto;">
+                            <EditForm Model="_typeModel" OnValidSubmit="@(async () => await AddAsync(SkillDataType.Type))">
+                                <MudStack Class="mb-6 px-6" Row Justify="Justify.Center">
+                                    <MudTextField T="string" @bind-Value="_typeModel.Value" Label="Ajouter un type" Placeholder="Langage" Variant="Variant.Outlined"
+                                                  Adornment="Adornment.End" AdornmentIcon="@IconsF.Check" AdornmentColor="Color.Tertiary"
+                                                  OnAdornmentClick="@(async () => await AddAsync(SkillDataType.Type))" @ref="_typeInput"/>
+                                </MudStack>
+                            </EditForm>
+                            <MudStack Row="false" Class="px-9 py-1" Style="height: 60vh; max-height: 60vh; overflow-y: auto;">
                                 @foreach (var type in _types)
                                 {
-                                <MudPaper Class="rounded mb-1 px-6 py-3" Outlined="false" Elevation="5">
-                                    <MudStack Row Spacing="0" AlignItems="AlignItems.Center">
-                                        <MudText>@type.Value</MudText>
-                                        <MudSpacer/>
-                                        <MudTooltip Placement="Placement.Bottom" Text="Éditer" Arrow>
-                                            <MudIconButton Icon="@IconsF.Edit" Color="Color.Primary" Size="Size.Small" OnClick="@(async() => await EditAsync(type))" />
-                                        </MudTooltip>
-                                        <MudTooltip Class="ml-2" Placement="Placement.Bottom" Text="Supprimer" Arrow>
-                                            <MudIconButton Class="ml-4" Icon="@IconsF.Delete" Color="Color.Error" Size="Size.Small" OnClick="@(async () => await DeleteAsync(type))"/>
-                                        </MudTooltip>
-                                    </MudStack>
-                                </MudPaper>
+                                    <MudPaper Class="rounded mb-1 px-6 py-3" Outlined="false" Elevation="5">
+                                        <MudStack Row Spacing="0" AlignItems="AlignItems.Center">
+                                            <MudText>@type.Value</MudText>
+                                            <MudSpacer/>
+                                            <MudTooltip Placement="Placement.Bottom" Text="Éditer" Arrow>
+                                                <MudIconButton Icon="@IconsF.Edit" Color="Color.Primary" Size="Size.Small" OnClick="@(async () => await EditAsync(type))"/>
+                                            </MudTooltip>
+                                            <MudTooltip Class="ml-2" Placement="Placement.Bottom" Text="Supprimer" Arrow>
+                                                <MudIconButton Class="ml-4" Icon="@IconsF.Delete" Color="Color.Error" Size="Size.Small" OnClick="@(async () => await DeleteAsync(type))"/>
+                                            </MudTooltip>
+                                        </MudStack>
+                                    </MudPaper>
                                 }
                             </MudStack>
                         </ChildContent>
@@ -40,14 +43,17 @@
                         <TitleContent>
                             <MudStack Row>
                                 <MudText Class="mark-one">Catégorie</MudText>
-                                <MudTooltip Class="ml-1" Placement="Placement.Bottom" Text="Créer une catégorie" Arrow>
-                                    <MudIconButton Icon="@IconsF.Add" Size="Size.Small" Class="mud-elevation-5 text-white ml-2" Style="@($"background: {ThemeManager.Get("success")};")"
-                                                   OnClick="@(async () => await AddAsync(SkillDataType.Category))"/>
-                                </MudTooltip>
                             </MudStack>
                         </TitleContent>
                         <ChildContent>
-                            <MudStack Row="false" Class="px-3 py-1" Style="height: 50vh; max-height: 50vh; overflow-y: auto;">
+                            <EditForm Model="_categoryModel" OnValidSubmit="@(async () => await AddAsync(SkillDataType.Category))">
+                                <MudStack Class="mb-6 px-6" Row Justify="Justify.Center">
+                                    <MudTextField T="string" @bind-Value="_categoryModel.Value" Label="Ajouter une catégorie" Placeholder="Microsoft" Variant="Variant.Outlined"
+                                                  Adornment="Adornment.End" AdornmentIcon="@IconsF.Check" AdornmentColor="Color.Tertiary"
+                                                  OnAdornmentClick="@(async () => await AddAsync(SkillDataType.Category))" @ref="_categoryInput"/>
+                                </MudStack>
+                            </EditForm>
+                            <MudStack Row="false" Class="px-9 py-1" Style="height: 60vh; max-height: 60vh; overflow-y: auto;">
                                 @foreach (var categ in _categories)
                                 {
                                 <MudPaper Class="rounded mb-1 px-6 py-3" Outlined="false" Elevation="5">
@@ -73,14 +79,17 @@
                         <TitleContent>
                             <MudStack Row>
                                 <MudText Class="mark-one">Sous catégorie</MudText>
-                                <MudTooltip Class="ml-1" Placement="Placement.Bottom" Text="Créer une sous catégorie" Arrow>
-                                    <MudIconButton Icon="@IconsF.Add" Size="Size.Small" Class="mud-elevation-5 text-white ml-2" Style="@($"background: {ThemeManager.Get("success")};")"
-                                                   OnClick="@(async () => await AddAsync(SkillDataType.SubCategory))"/>
-                                </MudTooltip>
                             </MudStack>
                         </TitleContent>
                         <ChildContent>
-                            <MudStack Row="false" Class="px-3 py-1" Style="height: 50vh; max-height: 50vh; overflow-y: auto;">
+                            <EditForm Model="_subCategoryModel" OnValidSubmit="@(async () => await AddAsync(SkillDataType.SubCategory))">
+                                <MudStack Class="mb-6 px-6" Row Justify="Justify.Center">
+                                    <MudTextField T="string" @bind-Value="_subCategoryModel.Value" Label="Ajouter une sous catégorie" Placeholder="Azure AD" Variant="Variant.Outlined"
+                                                  Adornment="Adornment.End" AdornmentIcon="@IconsF.Check" AdornmentColor="Color.Tertiary"
+                                                  OnAdornmentClick="@(async () => await AddAsync(SkillDataType.SubCategory))" @ref="_subCategoryInput"/>
+                                </MudStack>
+                            </EditForm>
+                            <MudStack Row="false" Class="px-9 py-1" Style="height: 60vh; max-height: 60vh; overflow-y: auto;">
                                 @foreach (var subcateg in _subcategories)
                                 {
                                 <MudPaper Class="rounded mb-1 px-6 py-3" Outlined="false" Elevation="2">

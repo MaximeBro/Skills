@@ -61,13 +61,13 @@ app.UseLogin();
 app.UseLogout();
 app.UseFileUpload();
 
+app.MapRazorComponents<App>()
+    .AddInteractiveServerRenderMode();
+
 var themeManager = app.Services.GetRequiredService<ThemeManager>();
 var skillServices = app.Services.GetRequiredService<SkillService>();
 await themeManager.InitAsync();
 await skillServices.InitAsync();
-
-app.MapRazorComponents<App>()
-    .AddInteractiveServerRenderMode();
 
 await RunMigrationAsync<SkillsContext>(app);
 

@@ -1,4 +1,7 @@
 using System.Security.Claims;
+using Microsoft.AspNetCore.Components;
+using MudBlazor;
+
 namespace Skills.Components.Layout;
 
 public partial class MenuProfile : AuthorizedComponent
@@ -6,6 +9,8 @@ public partial class MenuProfile : AuthorizedComponent
     private ClaimsPrincipal _user = null!;
     private string _name = string.Empty;
     private string _email = string.Empty;
+
+    private MudMenu _menu;
     
     protected override async Task OnInitializedAsync()
     {

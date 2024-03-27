@@ -5,22 +5,30 @@
     <DialogContent>
         <MudStack Class="py-3 px-6" Justify="Justify.SpaceEvenly" Row="false" Spacing="0">
             <MudText Class="mark-one" GutterBottom>Attribution de compétence</MudText>
-            <MudSelect T="Guid" @bind-Value="_selectedSkill" ToStringFunc="@SkillToString" Style="min-width: 450px!important;" Label="Compétence">
-                @foreach (var skill in _skills)
-                {
-                    <MudSelectItem Value="skill.Id">
-                        <MudStack Row="false" Spacing="0">
-                            <MudText Class="mark-one">[@skill.Type.Value] - @skill.Category.Value - @skill.SubCategory?.Value</MudText>
-                            <MudText Class="mark-one" Typo="Typo.body2">@skill.Description</MudText>
-                        </MudStack>
-                    </MudSelectItem>
-                }
-            </MudSelect>
-            <MudStack Row Justify="Justify.FlexStart">
-                <MudText Class="mark-one">Évaluation</MudText>
-                <MudRating @bind-SelectedValue="_rating" MaxValue="4" Size="Size.Small"/>
+            <MudStack Class="px-4" Justify="Justify.SpaceEvenly" Row="false" Spacing="0">
+                <MudSelect T="Guid" @bind-Value="_selectedSkill" ToStringFunc="@SkillToString" Style="min-width: 450px!important;" Label="Compétence"
+                           AnchorOrigin="Origin.BottomLeft" TransformOrigin="Origin.TopLeft" Required>
+                    @foreach (var skill in _skills)
+                    {
+                        <MudSelectItem Value="skill.Id">
+                            <MudStack Row="false" Spacing="0">
+                                <MudText Class="mark-one">
+                                    [@skill.Type.Value] - @skill.Category.Value - @skill.SubCategory?.Value
+                                    <MudText Class="mark-one" Typo="Typo.body2">@skill.Description</MudText>
+                                </MudText>
+                            </MudStack>
+                        </MudSelectItem>
+                    }
+                </MudSelect>
+                <MudSelect T="int" @bind-Value="_rating" Style="min-width: 450px!important;" Label="Niveau"
+                           AnchorOrigin="Origin.BottomLeft" TransformOrigin="Origin.TopLeft" Class="mt-4" Required>
+                    <MudSelectItem Value="0">0 → </MudSelectItem>
+                    <MudSelectItem Value="1">1 → </MudSelectItem>
+                    <MudSelectItem Value="2">2 → </MudSelectItem>
+                    <MudSelectItem Value="3">3 → </MudSelectItem>
+                    <MudSelectItem Value="4">4 → </MudSelectItem>
+                </MudSelect>
             </MudStack>
-            
         </MudStack>
     </DialogContent>
     <DialogActions>
@@ -31,6 +39,7 @@
 @code {
     [CascadingParameter] public MudDialogInstance Dialog { get; set; } = null!;
     [Inject] public IDbContextFactory<SkillsContext> Factory { get; set; } = null!;
+    [Inject] public ISnackbar Snackbar { get; set; } = null!;
     
     [Parameter] public UserSkillModel? UserSkill { get; set; }
 
@@ -42,7 +51,6 @@
     {
         var skill = _skills.FirstOrDefault(y => y.Id == x);
         if (skill is null) return string.Empty;
-        
         
         return $"[{skill.Type.Value}] - {skill.Category.Value} - {skill.SubCategory?.Value} - {skill.Description}";
     };
@@ -61,7 +69,18 @@
             _selectedSkill = UserSkill.SkillId;
             _rating = UserSkill.Level;
         }
+
+        await db.DisposeAsync();
     }
 
-    private void Submit() => Dialog.Close(new UserSkillModel { SkillId = _selectedSkill, Level = _rating });
+    private void Submit() 
+    {
+        if (_selectedSkill == Guid.Empty)
+        {
+            Snackbar.Add("Vous devez sélectionner une compétence !", Severity.Error);
+            return;
+        }
+        
+        Dialog.Close(new UserSkillModel { SkillId = _selectedSkill, Level = _rating });
+    }
 }

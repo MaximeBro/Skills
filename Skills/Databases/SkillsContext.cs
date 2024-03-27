@@ -26,20 +26,18 @@ public class SkillsContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        // UserModel constraints
         modelBuilder.Entity<UserModel>()
             .HasMany(e => e.Skills)
             .WithMany(e => e.Users)
             .UsingEntity<UserSkillModel>();
-
-        modelBuilder.Entity<UserSkillModel>()
-            .HasIndex(e => new { e.UserId, e.SkillId })
-            .IsUnique();
-
+        
         modelBuilder.Entity<UserModel>()
             .HasOne<GroupModel>(e => e.Group).WithMany()
             .HasForeignKey(e => e.GroupId)
             .IsRequired(false);
-
+        
+        // SkillModel constraints
         modelBuilder.Entity<SkillModel>()
             .HasOne<SKillInfo>(e => e.Type).WithMany()
             .HasForeignKey(e => e.TypeId)
@@ -55,11 +53,10 @@ public class SkillsContext : DbContext
             .HasForeignKey(e => e.SubCategoryId)
             .IsRequired(false)
             .OnDelete(DeleteBehavior.Cascade);
-        
+
         modelBuilder.Entity<SkillModel>()
-            .HasOne<GroupModel>(e => e.Job).WithMany()
-            .HasForeignKey(e => e.JobId)
-            .IsRequired(false)
-            .OnDelete(DeleteBehavior.Cascade);
+            .HasOne<GroupModel>(e => e.Group).WithMany()
+            .HasForeignKey(e => e.GroupId)
+            .IsRequired(false);
     }
 }

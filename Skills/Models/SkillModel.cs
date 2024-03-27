@@ -17,6 +17,6 @@ public class SkillModel
 
     public string? Description { get; set; }
     
-    public Guid? JobId { get; set; }
-    public GroupModel? Job { get; set; }
+    public Guid? GroupId { get; set; }
+    public GroupModel? Group { get; set; }
 }
