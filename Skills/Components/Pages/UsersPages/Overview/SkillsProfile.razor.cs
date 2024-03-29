@@ -68,9 +68,26 @@ public partial class SkillsProfile : ComponentBase
         }
     }
 
-    private async Task ManageSkillAsync(UserSkillModel model)
+    private async Task ManageSkillAsync(UserSkillModel userSkill)
     {
-        
+        var parameters = new DialogParameters<UserSkillDialog> { { x => x.UserSkill, userSkill } };
+        var instance = await DialogService.ShowAsync<UserSkillDialog>(string.Empty, parameters, Hardcoded.DialogOptions);
+        var result = await instance.Result;
+        if (result is { Data: UserSkillModel model })
+        {
+            var db = await Factory.CreateDbContextAsync();
+            db.Userskills.Remove(userSkill);
+            db.Userskills.Add(new UserSkillModel
+            {
+                UserId = User.Id,
+                SkillId = model.SkillId,
+                Level = model.Level
+            });
+            
+            await db.SaveChangesAsync();
+            await db.DisposeAsync();
+            await RefreshDataAsync();
+        }
     }
     
     private async Task RevokeSkillAsync(UserSkillModel model)
@@ -82,7 +99,7 @@ public partial class SkillsProfile : ComponentBase
         {
             var db = await Factory.CreateDbContextAsync();
             var userSkill = await db.Userskills.AsNoTracking().FirstOrDefaultAsync(x => x.UserId == model.UserId && x.SkillId == model.SkillId);
-            if (userSkill != null)
+            if ( userSkill != null)
             {
                 db.Userskills.Remove(userSkill);
                 await db.SaveChangesAsync();

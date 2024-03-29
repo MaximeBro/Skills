@@ -13,6 +13,7 @@ public class SkillsContext : DbContext
     
     public DbSet<UserModel> Users { get; set; }
     public DbSet<UserSkillModel> Userskills { get; set; }
+    public DbSet<TypeLevel> TypesLevels { get; set; }
 
     public SkillsContext(DbContextOptions<SkillsContext> options, IConfiguration configuration) : base(options)
     {
@@ -58,5 +59,11 @@ public class SkillsContext : DbContext
             .HasOne<GroupModel>(e => e.Group).WithMany()
             .HasForeignKey(e => e.GroupId)
             .IsRequired(false);
+        
+        // Skills type levels (0 -> 4)
+        modelBuilder.Entity<TypeLevel>()
+            .HasOne(e => e.Type).WithMany()
+            .HasForeignKey(e => e.TypeId)
+            .OnDelete(DeleteBehavior.Cascade);
     }
 }

@@ -2,11 +2,11 @@
 @using Skills.Databases
 @using Skills.Models.Enums
 
-<MudDialog Class="pa-0 rounded-lg">
+<MudDialog>
     <DialogContent>
-        <MudStack Class="py-2 px-6" Justify="Justify.SpaceEvenly" Row="false" Spacing="0">
-            <MudText Class="mark-one" GutterBottom>Création d'une compétence</MudText>
-            <MudStack Class="mt-1" Row Spacing="5">
+        <MudIconButton Class="ml-n4" Icon="@IconsF.Close" Color="Color.Dark" OnClick="@(() => Dialog.Close())" />
+        <MudStack Class="px-4 py-2" Justify="Justify.SpaceEvenly" Row="false" Spacing="0">
+            <MudStack Row Justify="Justify.Center">
                 <MudSelect T="SKillInfo" @bind-Value="_seletectedType" Label="Type" Required Style="min-width: 220px;"
                            AnchorOrigin="Origin.BottomLeft" TransformOrigin="Origin.TopLeft">
                     @foreach (var type in _types)
@@ -24,7 +24,7 @@
                 </MudSelect>
             </MudStack>
             
-            <MudStack Row Spacing="5">
+            <MudStack Row Justify="Justify.Center">
                 <MudSelect T="SKillInfo?" @bind-Value="_seletectedSubCategory" Label="Sous catégorie" Style="min-width: 220px;"
                            AnchorOrigin="Origin.BottomLeft" TransformOrigin="Origin.TopLeft">
                     @foreach (var subcategory in _subcategories)

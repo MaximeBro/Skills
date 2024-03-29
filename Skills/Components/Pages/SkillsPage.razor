@@ -14,9 +14,13 @@
                                           AdornmentIcon="@IconsF.Search" Placeholder="Rechercher" Class="flex-grow-0 mr-8 mt-0" Style="width: 400px;"/>
                         </ToolBarContent>
                         <Columns>
-                            <PropertyColumn Title="Type" Property="x => x.Type"/>
-                            <PropertyColumn Title="Catégorie" Property="x => x.Category"/>
-                            <PropertyColumn Title="Sous catégorie" Property="x => x.SubCategory"/>
+                            <PropertyColumn Title="Type" Property="x => x.Type.Value"/>
+                            <PropertyColumn Title="Catégorie" Property="x => x.Category.Value"/>
+                            <TemplateColumn Title="Sous catégorie">
+                                <CellTemplate>
+                                    <MudText Typo="Typo.body2">@(context.Item.SubCategory?.Value ?? string.Empty)</MudText>
+                                </CellTemplate>
+                            </TemplateColumn>
                             <PropertyColumn Title="Description" Property="x => x.Description"/>
                         </Columns>
                     </MudDataGrid>

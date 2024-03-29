@@ -16,6 +16,7 @@
                                       AdornmentIcon="@IconsF.Search" Placeholder="Rechercher" Class="flex-grow-0 mr-8 mt-0" Style="width: 400px;"/>
                     </ToolBarContent>
                     <Columns>
+                        <HierarchyColumn T="SkillModel" />
                         <PropertyColumn Title="Type" Property="x => x.Type.Value"/>
                         <PropertyColumn Title="Catégorie" Property="x => x.Category.Value"/>
                         <TemplateColumn Title="Sous catégorie">
@@ -35,6 +36,27 @@
                             </CellTemplate>
                         </TemplateColumn>
                     </Columns>
+                    <ChildRowContent>
+                        <MudStack Row="false" Spacing="0">
+                            <MudText Class="mark-one" Typo="Typo.h6" GutterBottom>Niveaux</MudText>
+                            <MudStack Class="px-2" Row="false" Spacing="0">
+                                @if (_skillTypeLevels[context.Item.Id].Any())
+                                {
+                                    @foreach (var typeLevel in _skillTypeLevels[context.Item.Id])
+                                    {
+                                        <MudStack Row Justify="Justify.FlexStart">
+                                            <MudText Class="mark-one"><MudChip>@typeLevel.Level</MudChip> @typeLevel.Value</MudText>
+                                        </MudStack>
+                                    }
+                                }
+                                else
+                                {
+                                    <MudAlert Class="mb-1" Severity="Severity.Normal">Aucun niveau défini pour ce type de compétence.</MudAlert>
+                                }
+                                
+                            </MudStack>
+                        </MudStack>
+                    </ChildRowContent>
                 </MudDataGrid>
             </MudItem>
         </MudGrid>

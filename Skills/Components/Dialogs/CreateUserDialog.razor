@@ -1,18 +1,22 @@
-@using Humanizer
-@using Skills.Models.Enums
 <MudDialog>
     <DialogContent>
         <MudIconButton Class="ml-n4" Icon="@IconsF.Close" Color="Color.Dark" OnClick="@(() => Dialog.Close())" />
         <MudStack Class="px-4 py-2" Row="false" Justify="Justify.Center">
-            <MudTextField T="string" @bind-Value="_name" Label="Nomination" Placeholder="Prénom Nom"/>
-            <MudTextField T="string" @bind-Value="_email" Label="Email" Placeholder="prénom.nom@sasp.fr" InputType="InputType.Email"/>
-            <MudTextField T="string" @bind-Value="_username" Label="Username" Placeholder="prénom.nom"/>
-            <MudSelect T="UserRole" @bind-Value="_role" Label="Rôle">
-                <MudSelectItem Value="UserRole.User">@UserRole.User.Humanize()</MudSelectItem>
-                <MudSelectItem Value="UserRole.Manager">@UserRole.Manager.Humanize()</MudSelectItem>
-                <MudSelectItem Value="UserRole.Admin">@UserRole.Admin.Humanize()</MudSelectItem>
-            </MudSelect>
-            <MudCheckBox T="bool" @bind-Value="_isDisabled" Label="Compte désactivé"/>
+            <MudStack Row Justify="Justify.Center">
+                <MudTextField T="string" @bind-Value="_name" Label="Nomination" Placeholder="Prénom Nom"/>
+                <MudTextField T="string" @bind-Value="_username" Label="Username" Placeholder="prénom.nom"/>
+            </MudStack>
+            <MudStack Row Justify="Justify.Center">
+                <MudTextField T="string" @bind-Value="_email" Label="Email" Placeholder="prénom.nom@sasp.fr" InputType="InputType.Email"/>
+            </MudStack>
+            <MudStack Row Justify="Justify.Center" AlignItems="AlignItems.Center">
+                <MudSelect T="UserRole" @bind-Value="_role" Label="Rôle" AnchorOrigin="Origin.BottomLeft" TransformOrigin="Origin.TopLeft">
+                    <MudSelectItem Value="UserRole.User">@UserRole.User.Humanize()</MudSelectItem>
+                    <MudSelectItem Value="UserRole.Manager">@UserRole.Manager.Humanize()</MudSelectItem>
+                    <MudSelectItem Value="UserRole.Admin">@UserRole.Admin.Humanize()</MudSelectItem>
+                </MudSelect>
+                <MudCheckBox T="bool" @bind-Value="_isDisabled" Label="Compte désactivé"/>
+            </MudStack>
         </MudStack>
     </DialogContent>
     <DialogActions>

@@ -2,6 +2,7 @@ using Humanizer;
 using Microsoft.AspNetCore.Components;
 using Microsoft.EntityFrameworkCore;
 using MudBlazor;
+using Skills.Components.Components;
 using Skills.Components.Dialogs;
 using Skills.Databases;
 using Skills.Extensions;
@@ -19,6 +20,8 @@ public partial class SkillsTypes : ComponentBase
     [Parameter] public SkillsManagement Manager { get; set; } = null!;
     [Parameter] public string Title { get; set; } = string.Empty;
 
+    private Dictionary<Guid, bool> _toggledPanes = new();
+    
     private List<SKillInfo> _types = new();
     private List<SKillInfo> _categories = new();
     private List<SKillInfo> _subcategories = new();
@@ -30,8 +33,13 @@ public partial class SkillsTypes : ComponentBase
     private MudTextField<string> _typeInput = null!;
     private MudTextField<string> _categoryInput = null!;
     private MudTextField<string> _subCategoryInput = null!;
-    
 
+    private string _levelZeroText = string.Empty;
+    private string _levelOneText = string.Empty;
+    private string _levelTwoText = string.Empty;
+    private string _levelThreeText = string.Empty;
+    private string _levelFourText = string.Empty;
+    
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
@@ -45,18 +53,22 @@ public partial class SkillsTypes : ComponentBase
         {
             case SkillDataType.Type:
             {
+                if (string.IsNullOrEmpty(_typeModel.Value)) return;
                 skillInfo.Value = _typeModel.Value;
                 await _typeInput.Clear();
+                _toggledPanes.Add(skillInfo.Id, false);
                 break;
             }
             case SkillDataType.Category:
             {
+                if (string.IsNullOrEmpty(_categoryModel.Value)) return;
                 skillInfo.Value = _categoryModel.Value;
                 await _categoryInput.Clear();
                 break;
             }
             case SkillDataType.SubCategory:
             {
+                if (string.IsNullOrEmpty(_subCategoryModel.Value)) return;
                 skillInfo.Value = _subCategoryModel.Value;
                 await _subCategoryInput.Clear();
                 break;
@@ -94,6 +106,7 @@ public partial class SkillsTypes : ComponentBase
         var result = await instance.Result;
         if (result.Data != null && (bool)result.Data)
         {
+            _toggledPanes.Remove(model.Id);
             var db = await Factory.CreateDbContextAsync();
             db.SkillsTypes.Remove(model);
             await db.SaveChangesAsync();
@@ -101,6 +114,51 @@ public partial class SkillsTypes : ComponentBase
             await RefreshDataAsync();
             await Manager.RefreshSkillsAsync();
         }
+    }
+
+    private async Task SetLevelAsync(SKillInfo model, int level)
+    {
+        // TODO: refactor this mess with either a dialog or a dynamic component
+        
+        var db = await Factory.CreateDbContextAsync();
+        var typeLevel = new TypeLevel
+        {
+            TypeId = model.Id,
+            Level = level
+        };
+        
+        switch (level)
+        {
+            case 0:
+            {
+                if (string.IsNullOrWhiteSpace(_levelZeroText)) return;
+                break;
+            }
+            case 1:
+            {
+                if (string.IsNullOrWhiteSpace(_levelZeroText)) return;
+                break;
+            }
+            case 2:
+            {
+                if (string.IsNullOrWhiteSpace(_levelZeroText)) return;
+                break;
+            }
+            case 3:
+            {
+                if (string.IsNullOrWhiteSpace(_levelZeroText)) return;
+                break;
+            }
+            case 4:
+            {
+                if (string.IsNullOrWhiteSpace(_levelZeroText)) return;
+                break;
+            }
+        }
+
+        db.TypesLevels.Add(typeLevel);
+        await db.SaveChangesAsync();
+        await db.DisposeAsync();
     }
     
     private async Task RefreshDataAsync()
@@ -110,6 +168,9 @@ public partial class SkillsTypes : ComponentBase
         _categories = db.SkillsTypes.AsNoTracking().Where(x => x.Type == SkillDataType.Category).ToList();
         _subcategories = db.SkillsTypes.AsNoTracking().Where(x => x.Type == SkillDataType.SubCategory).ToList();
         await db.DisposeAsync();
+        
+        _toggledPanes.Clear();
+        foreach(var type in _types) _toggledPanes.Add(type.Id, false);
     }
 
     private sealed class SkillTypeModel

@@ -15,16 +15,17 @@ public partial class SkillsMapping : ComponentBase
     [Inject] public ISnackbar Snackbar { get; set; } = null!;
     [Parameter] public SkillsManagement Manager { get; set; } = null!;
     [Parameter] public string Title { get; set; } = string.Empty;
-    
+
+    private Dictionary<Guid, List<TypeLevel>> _skillTypeLevels = new();
     private List<SkillModel> _models = new();
     private string _search = string.Empty;
 
     public Func<SkillModel, bool> QuickFilter => x =>
     {
-        if (x.Type != null && x.Type.Value.Contains(_search, StringComparison.OrdinalIgnoreCase)) return true;
-        if (x.Category != null && x.Category.Value.Contains(_search, StringComparison.OrdinalIgnoreCase)) return true;
+        if (x.Type.Value.Contains(_search, StringComparison.OrdinalIgnoreCase)) return true;
+        if (x.Category.Value.Contains(_search, StringComparison.OrdinalIgnoreCase)) return true;
         if (x.SubCategory != null && x.SubCategory.Value.Contains(_search, StringComparison.OrdinalIgnoreCase)) return true;
-        if (x.Description.Contains(_search, StringComparison.OrdinalIgnoreCase)) return true;
+        if (!string.IsNullOrWhiteSpace(x.Description) && x.Description.Contains(_search, StringComparison.OrdinalIgnoreCase)) return true;
 
         return false;
     };
@@ -101,5 +102,7 @@ public partial class SkillsMapping : ComponentBase
                                  .Include(x => x.Category)
                                  .Include(x => x.SubCategory)
                                  .ToListAsync();
+        
+        foreach(var model in _models) _skillTypeLevels.Add(model.Id, db.TypesLevels.AsNoTracking().Where(x => x.TypeId == model.TypeId).ToList());
     }
 }

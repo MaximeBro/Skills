@@ -6,7 +6,7 @@
         <MudStack Class="py-3 px-6" Justify="Justify.SpaceEvenly" Row="false" Spacing="0">
             <MudText Class="mark-one" GutterBottom>Attribution de compétence</MudText>
             <MudStack Class="px-4" Justify="Justify.SpaceEvenly" Row="false" Spacing="0">
-                <MudSelect T="Guid" @bind-Value="_selectedSkill" ToStringFunc="@SkillToString" Style="min-width: 450px!important;" Label="Compétence"
+                <MudSelect T="Guid" ValueChanged="@SelectedSkillChanged" ToStringFunc="@SkillToString" Style="min-width: 450px!important;" Label="Compétence"
                            AnchorOrigin="Origin.BottomLeft" TransformOrigin="Origin.TopLeft" Required>
                     @foreach (var skill in _skills)
                     {
@@ -22,11 +22,11 @@
                 </MudSelect>
                 <MudSelect T="int" @bind-Value="_rating" Style="min-width: 450px!important;" Label="Niveau"
                            AnchorOrigin="Origin.BottomLeft" TransformOrigin="Origin.TopLeft" Class="mt-4" Required>
-                    <MudSelectItem Value="0">0 → </MudSelectItem>
-                    <MudSelectItem Value="1">1 → </MudSelectItem>
-                    <MudSelectItem Value="2">2 → </MudSelectItem>
-                    <MudSelectItem Value="3">3 → </MudSelectItem>
-                    <MudSelectItem Value="4">4 → </MudSelectItem>
+                    <MudSelectItem Value="0"><MudChip>0</MudChip> @(_bindedLevels.FirstOrDefault(x => x.Level == 0)?.Value ?? string.Empty)</MudSelectItem>
+                    <MudSelectItem Value="1"><MudChip>1</MudChip> @(_bindedLevels.FirstOrDefault(x => x.Level == 1)?.Value ?? string.Empty)</MudSelectItem>
+                    <MudSelectItem Value="2"><MudChip>2</MudChip> @(_bindedLevels.FirstOrDefault(x => x.Level == 2)?.Value ?? string.Empty)</MudSelectItem>
+                    <MudSelectItem Value="3"><MudChip>3</MudChip> @(_bindedLevels.FirstOrDefault(x => x.Level == 3)?.Value ?? string.Empty)</MudSelectItem>
+                    <MudSelectItem Value="4"><MudChip>4</MudChip> @(_bindedLevels.FirstOrDefault(x => x.Level == 4)?.Value ?? string.Empty)</MudSelectItem>
                 </MudSelect>
             </MudStack>
         </MudStack>
@@ -46,6 +46,7 @@
     private int _rating = 0;
     private List<SkillModel> _skills = new();
     private Guid _selectedSkill;
+    private List<TypeLevel> _bindedLevels = new();
 
     private Func<Guid, string> SkillToString => x =>
     {
@@ -54,6 +55,16 @@
         
         return $"[{skill.Type.Value}] - {skill.Category.Value} - {skill.SubCategory?.Value} - {skill.Description}";
     };
+
+    private async Task SelectedSkillChanged(Guid skillId)
+    {
+        _selectedSkill = skillId;
+        var typeId = _skills.FirstOrDefault(x => x.Id == skillId)?.TypeId ?? default(Guid);
+        var db = await Factory.CreateDbContextAsync();
+        _bindedLevels = db.TypesLevels.AsNoTracking().Where(x => x.TypeId == typeId).ToList();
+        await db.DisposeAsync();
+        StateHasChanged();
+    }
 
     protected override async Task OnInitializedAsync()
     {

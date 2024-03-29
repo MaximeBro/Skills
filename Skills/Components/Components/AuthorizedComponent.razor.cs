@@ -6,7 +6,7 @@ using Skills.Extensions;
 using Skills.Models.Enums;
 using Skills.Services;
 
-namespace Skills.Components.Layout;
+namespace Skills.Components.Components;
 
 public partial class AuthorizedComponent : ComponentBase
 {

@@ -1,11 +1,15 @@
 using System.Security.Claims;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Authorization;
 using MudBlazor;
+using Skills.Components.Components;
 
 namespace Skills.Components.Layout;
 
-public partial class MenuProfile : AuthorizedComponent
+public partial class MenuProfile : ComponentBase
 {
+    [CascadingParameter] public Task<AuthenticationState> AuthenticationState { get; set; } = null!;
+    
     private ClaimsPrincipal _user = null!;
     private string _name = string.Empty;
     private string _email = string.Empty;

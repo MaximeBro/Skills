@@ -30,6 +30,10 @@ public partial class SkillsPage : ComponentBase
     private async Task RefreshDataAsync()
     {
         var db = await Factory.CreateDbContextAsync();
-        _models = await db.Skills.AsNoTracking().ToListAsync();
+        _models = await db.Skills.AsNoTracking()
+                                 .Include(x => x.Type)
+                                 .Include(x => x.Category)
+                                 .Include(x => x.SubCategory)
+                                 .ToListAsync();
     }
 }
