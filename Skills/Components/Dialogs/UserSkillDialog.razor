@@ -20,14 +20,23 @@
                         </MudSelectItem>
                     }
                 </MudSelect>
-                <MudSelect T="int" @bind-Value="_rating" Style="min-width: 450px!important;" Label="Niveau"
-                           AnchorOrigin="Origin.BottomLeft" TransformOrigin="Origin.TopLeft" Class="mt-4" Required>
-                    <MudSelectItem Value="0"><MudChip>0</MudChip> @(_bindedLevels.FirstOrDefault(x => x.Level == 0)?.Value ?? string.Empty)</MudSelectItem>
-                    <MudSelectItem Value="1"><MudChip>1</MudChip> @(_bindedLevels.FirstOrDefault(x => x.Level == 1)?.Value ?? string.Empty)</MudSelectItem>
+                <MudSelect T="int" @bind-Value="_rating" Label="Niveau" AnchorOrigin="Origin.BottomLeft" TransformOrigin="Origin.TopLeft" Class="mt-4 c-select" Required>
+                    <MudSelectItem Value="0">
+                        <MudChip>0</MudChip> @(_bindedLevels.FirstOrDefault(x => x.Level == 0)?.Value ?? string.Empty)
+                    </MudSelectItem>
+                    <MudSelectItem Value="1"><MudChip Class="flex-1">1</MudChip> @(_bindedLevels.FirstOrDefault(x => x.Level == 1)?.Value ?? string.Empty)</MudSelectItem>
                     <MudSelectItem Value="2"><MudChip>2</MudChip> @(_bindedLevels.FirstOrDefault(x => x.Level == 2)?.Value ?? string.Empty)</MudSelectItem>
                     <MudSelectItem Value="3"><MudChip>3</MudChip> @(_bindedLevels.FirstOrDefault(x => x.Level == 3)?.Value ?? string.Empty)</MudSelectItem>
                     <MudSelectItem Value="4"><MudChip>4</MudChip> @(_bindedLevels.FirstOrDefault(x => x.Level == 4)?.Value ?? string.Empty)</MudSelectItem>
                 </MudSelect>
+                <style>
+                    .c-select .mud-input-root-text {
+                        display: flex!important;
+                        align-items: center!important;
+                        padding-top: 9px!important;
+                        padding-bottom: 11px!important;
+                    }
+                </style>
             </MudStack>
         </MudStack>
     </DialogContent>

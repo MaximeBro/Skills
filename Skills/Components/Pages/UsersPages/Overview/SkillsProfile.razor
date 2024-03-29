@@ -24,10 +24,14 @@
                          Culture="@(new CultureInfo("fr-FR"))" Height="65vh" Virtualize OverscanCount="25" QuickFilter="@QuickFilter">
                 <ToolBarContent>
                     <MudText Class="mark-one">Compétences (attribuées)</MudText>
-                    <MudTooltip Class="ml-2" Placement="Placement.Bottom" Text="Ajouter une compétence" Arrow>
-                        <MudIconButton Class="ml-4" Icon="@IconsF.Add" Color="Color.Tertiary" OnClick="@(async() => await GrantSkillAsync())"
-                                       Style="border-radius: 6px!important; padding: 4px!important;"/>
-                    </MudTooltip>
+                    <AuthorizeView Roles="Admin, Manager">
+                        <Authorized>
+                            <MudTooltip Class="ml-2" Placement="Placement.Bottom" Text="Ajouter une compétence" Arrow>
+                                <MudIconButton Class="ml-4" Style="border-radius: 6px!important; padding: 4px!important;" Icon="@IconsF.Add" Color="Color.Tertiary" OnClick="@(async() => await GrantSkillAsync())"/>
+                            </MudTooltip>
+                        </Authorized>
+                    </AuthorizeView>
+                    
                     <MudSpacer/>
                     <MudTextField T="string" @bind-Value="_search" Placeholder="Rechercher" Adornment="Adornment.Start" AdornmentIcon="@IconsF.Search" />
                 </ToolBarContent>
@@ -53,16 +57,20 @@
                         </CellTemplate>
                     </TemplateColumn>
                     <PropertyColumn Title="Niveau" Property="x => x.Level" />
-                    <TemplateColumn Title="Actions" Filterable="false" Sortable="false">
-                        <CellTemplate>
-                            <MudTooltip Placement="Placement.Bottom" Text="Éditer" Arrow>
-                                <MudIconButton Icon="@IconsF.Edit" Size="Size.Small" Color="Color.Primary" OnClick="@(async () => await ManageSkillAsync(context.Item))"/>
-                            </MudTooltip>
-                            <MudTooltip Class="ml-2" Placement="Placement.Bottom" Text="Supprimer" Arrow>
-                                <MudIconButton Class="ml-4" Icon="fas fa-minus" Size="Size.Small" Color="Color.Error" OnClick="@(async () => await RevokeSkillAsync(context.Item))"/>
-                            </MudTooltip>
-                        </CellTemplate>    
-                    </TemplateColumn>
+                    <AuthorizeView Roles="Admin, Manager" Context="auth">
+                        <Authorized>
+                            <TemplateColumn Title="Actions" Filterable="false" Sortable="false">
+                                <CellTemplate>
+                                    <MudTooltip Placement="Placement.Bottom" Text="Éditer" Arrow>
+                                        <MudIconButton Icon="@IconsF.Edit" Size="Size.Small" Color="Color.Primary" OnClick="@(async () => await ManageSkillAsync(context.Item))"/>
+                                    </MudTooltip>
+                                    <MudTooltip Class="ml-2" Placement="Placement.Bottom" Text="Supprimer" Arrow>
+                                        <MudIconButton Class="ml-4" Icon="fas fa-minus" Size="Size.Small" Color="Color.Error" OnClick="@(async () => await RevokeSkillAsync(context.Item))"/>
+                                    </MudTooltip>
+                                </CellTemplate>
+                            </TemplateColumn>
+                        </Authorized>
+                    </AuthorizeView>
                 </Columns>
             </MudDataGrid>
         </MudItem>

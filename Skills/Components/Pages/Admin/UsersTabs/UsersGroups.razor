@@ -5,12 +5,15 @@
                 <MudStack Row="false">
                     <MudStack Row Justify="Justify.Center">
                         <MudText Class="mark-one">Groupes</MudText>
-                        <MudTooltip Class="ml-1" Placement="Placement.Bottom" Text="Créer un groupe" Arrow>
-                            <MudIconButton Icon="@IconsF.Add" Size="Size.Small" Class="mud-elevation-5 text-white ml-2" Style="@($"background: {ThemeManager.Get("success")};")"
-                                           OnClick="@(async () => await AddAsync())"/>
-                        </MudTooltip>
                     </MudStack>
-                    <MudStack Row="false" Class="px-3 py-1" Style="height: 50vh; max-height: 50vh; overflow-y: auto;">
+                    <EditForm Model="_inputModel" OnValidSubmit="@(async () => await AddAsync())">
+                        <MudStack Class="mb-1 px-6" Row Justify="Justify.Center">
+                            <MudTextField T="string" @bind-Value="_inputModel.Value" Label="Ajouter un groupe" Placeholder="R&D" Variant="Variant.Outlined"
+                                          Adornment="Adornment.End" AdornmentIcon="@IconsF.Check" AdornmentColor="Color.Tertiary"
+                                          OnAdornmentClick="@(async () => await AddAsync())" @ref="_groupInput" />
+                        </MudStack>
+                    </EditForm>
+                    <MudStack Row="false" Class="px-9 py-1" Style="height: 50vh; max-height: 50vh; overflow-y: auto;">
                         @foreach (var group in _groups)
                         {
                         <MudPaper Class="rounded mb-1 px-6 py-3" Outlined="false" Elevation="5">

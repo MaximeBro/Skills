@@ -6,7 +6,7 @@
                      CommittedItemChanges="OnEditDoneAsync" Class="mt-8" @ref="_grid">
             <ToolBarContent>
                 <MudTooltip Placement="Placement.Bottom" Text="Créer un utilisateur" Arrow>
-                    <MudIconButton Icon="@IconsF.Add" Color="Color.Tertiary" OnClick="@(async () => await CreateUserAsync())"/>
+                    <MudIconButton Style="border-radius: 6px!important; padding: 4px!important;" Icon="@IconsF.Add" Color="Color.Tertiary" OnClick="@(async () => await CreateUserAsync())"/>
                 </MudTooltip>
                 <MudTooltip Placement="Placement.Right" Text="Pour éditer, faites un clic gauche sur une ligne !" Arrow>
                     <MudIcon Class="ml-2 mt-1" Icon="@IconsF.Info" Color="Color.Info" />

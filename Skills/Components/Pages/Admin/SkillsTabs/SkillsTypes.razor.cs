@@ -26,9 +26,9 @@ public partial class SkillsTypes : ComponentBase
     private List<SKillInfo> _categories = new();
     private List<SKillInfo> _subcategories = new();
 
-    private SkillTypeModel _typeModel = new();
-    private SkillTypeModel _categoryModel = new();
-    private SkillTypeModel _subCategoryModel = new();
+    private SingleStringModel _typeModel = new();
+    private SingleStringModel _categoryModel = new();
+    private SingleStringModel _subCategoryModel = new();
 
     private MudTextField<string> _typeInput = null!;
     private MudTextField<string> _categoryInput = null!;
@@ -171,10 +171,5 @@ public partial class SkillsTypes : ComponentBase
         
         _toggledPanes.Clear();
         foreach(var type in _types) _toggledPanes.Add(type.Id, false);
-    }
-
-    private sealed class SkillTypeModel
-    {
-        public string Value { get; set; } = string.Empty;
     }
 }

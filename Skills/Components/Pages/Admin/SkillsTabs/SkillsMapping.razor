@@ -6,10 +6,10 @@
                              Culture="@(new CultureInfo("fr-FR"))" Height="70vh" Virtualize OverscanCount="25" QuickFilter="@QuickFilter">
                     <ToolBarContent>
                         <MudTooltip Placement="Placement.Bottom" Text="Importer (.xlsx)" Arrow>
-                            <MudIconButton Icon="@IconsFF.FileExcel" Color="Color.Tertiary" />
+                            <MudIconButton Style="border-radius: 6px!important; padding: 4px!important;" Icon="@IconsFF.FileExcel" Color="Color.Tertiary" />
                         </MudTooltip>
                         <MudTooltip Placement="Placement.Bottom" Text="Créer une compétence" Arrow>
-                            <MudIconButton Icon="@IconsF.Add" Color="Color.Tertiary" OnClick="@(() => CreateSkillAsync())"/>
+                            <MudIconButton Style="border-radius: 6px!important; padding: 4px!important;" Icon="@IconsF.Add" Color="Color.Tertiary" OnClick="@(() => CreateSkillAsync())"/>
                         </MudTooltip>
                         <MudSpacer/>
                         <MudTextField T="string" @bind-Value="_search" Immediate Adornment="Adornment.Start"

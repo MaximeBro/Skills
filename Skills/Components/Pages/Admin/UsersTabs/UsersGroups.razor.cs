@@ -18,6 +18,8 @@ public partial class UsersGroups : ComponentBase
     [Parameter] public UsersManagement Manager { get; set; } = null!;
 
     private List<GroupModel> _groups = new();
+    private MudTextField<string> _groupInput = null!;
+    private SingleStringModel _inputModel = new();
 
     protected override async Task OnInitializedAsync()
     {
@@ -26,12 +28,16 @@ public partial class UsersGroups : ComponentBase
 
     private async Task AddAsync()
     {
-        var instance = await DialogService.ShowAsync<GroupDialog>(string.Empty, Hardcoded.DialogOptions);
-        var result = await instance.Result;
-        if (result is { Data: GroupModel groupModel })
+        if (!string.IsNullOrWhiteSpace(_inputModel.Value))
         {
+            var group = new GroupModel
+            {
+                Name = _inputModel.Value
+            };
+
+            await  _groupInput.Clear();
             var db = await Factory.CreateDbContextAsync();
-            db.Groups.Add(groupModel);
+            db.Groups.Add(group);
             await db.SaveChangesAsync();
             await db.DisposeAsync();
             await RefreshDataAsync();
