@@ -17,6 +17,7 @@ public partial class SkillsProfile : ComponentBase
 
     private List<UserSkillModel> _userSkillsModels = new();
     private List<SkillModel> _userSkills = new();
+    private Dictionary<Guid, string> _selectedLevels = new();
 
     private string _search = string.Empty;
 
@@ -127,10 +128,12 @@ public partial class SkillsProfile : ComponentBase
                                                .ToListAsync();
         
         _userSkills = await db.Skills.AsNoTracking()
-                                     .Where(x => _userSkillsModels.Select(x => x.SkillId).Contains(x.Id))
+                                     .Where(x => _userSkillsModels.Select(y => y.SkillId).Contains(x.Id))
                                      .Include(x => x.Type)
                                      .Include(x => x.Category)
                                      .Include(x => x.SubCategory)
                                      .ToListAsync();
+        
+        foreach(var skill in _userSkills) _selectedLevels.Add(skill.Id, db.TypesLevels.AsNoTracking().FirstOrDefault(x => x.TypeId == skill.TypeId)?.Value ?? string.Empty);
     }
 }

@@ -15,7 +15,7 @@ public class SkillService(IConfiguration configuration, IDbContextFactory<Skills
     /// </summary>
     public async Task InitAsync()
     {
-        // var file = configuration["excel-file"];
+        // var file = configuration["skills-filename"];
         // var import = !string.IsNullOrWhiteSpace(configuration["import"]) && bool.Parse(configuration["import"]!);
         // if (import && !string.IsNullOrWhiteSpace(file))
         // {
