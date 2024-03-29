@@ -18,7 +18,6 @@
     [CascadingParameter] public MudDialogInstance Dialog { get; set; } = null!;
     [Inject] public ThemeManager ThemeManager { get; set; } = null!;
     [Inject] public NavigationManager NavManager { get; set; } = null!;
-
-    [DoesNotReturn]
+    
     private void RedirectToLoginPage() => NavManager.NavigateTo("/login", true);
 }

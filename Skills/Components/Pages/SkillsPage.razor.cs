@@ -14,10 +14,10 @@ public partial class SkillsPage : ComponentBase
 
     public Func<SkillModel, bool> QuickFilter => x =>
     {
-        if (x.Type != null && x.Type.Value.Contains(_search, StringComparison.OrdinalIgnoreCase)) return true;
-        if (x.Category != null && x.Category.Value.Contains(_search, StringComparison.OrdinalIgnoreCase)) return true;
+        if (x.Type.Value.Contains(_search, StringComparison.OrdinalIgnoreCase)) return true;
+        if (x.Category.Value.Contains(_search, StringComparison.OrdinalIgnoreCase)) return true;
         if (x.SubCategory != null && x.SubCategory.Value.Contains(_search, StringComparison.OrdinalIgnoreCase)) return true;
-        if (x.Description.Contains(_search, StringComparison.OrdinalIgnoreCase)) return true;
+        if (!string.IsNullOrWhiteSpace(x.Description) && x.Description.Contains(_search, StringComparison.OrdinalIgnoreCase)) return true;
 
         return false;
     };

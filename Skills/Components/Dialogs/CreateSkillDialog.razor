@@ -7,7 +7,7 @@
         <MudIconButton Class="ml-n4" Icon="@IconsF.Close" Color="Color.Dark" OnClick="@(() => Dialog.Close())" />
         <MudStack Class="px-4 py-2" Justify="Justify.SpaceEvenly" Row="false" Spacing="0">
             <MudStack Row Justify="Justify.Center">
-                <MudSelect T="SKillInfo" @bind-Value="_seletectedType" Label="Type" Required Style="min-width: 220px;"
+                <MudSelect T="SKillInfo" @bind-Value="_selectedType" Label="Type" Required Style="min-width: 220px;"
                            AnchorOrigin="Origin.BottomLeft" TransformOrigin="Origin.TopLeft">
                     @foreach (var type in _types)
                     {
@@ -15,7 +15,7 @@
                     }
                 </MudSelect>
 
-                <MudSelect T="SKillInfo" @bind-Value="_seletectedCategory" Label="Catégorie" Required Style="min-width: 220px;" 
+                <MudSelect T="SKillInfo" @bind-Value="_selectedCategory" Label="Catégorie" Required Style="min-width: 220px;" 
                            AnchorOrigin="Origin.BottomLeft" TransformOrigin="Origin.TopLeft">
                     @foreach (var category in _categories)
                     {
@@ -25,7 +25,7 @@
             </MudStack>
             
             <MudStack Row Justify="Justify.Center">
-                <MudSelect T="SKillInfo?" @bind-Value="_seletectedSubCategory" Label="Sous catégorie" Style="min-width: 220px;"
+                <MudSelect T="SKillInfo?" @bind-Value="_selectedSubCategory" Label="Sous catégorie" Style="min-width: 220px;"
                            AnchorOrigin="Origin.BottomLeft" TransformOrigin="Origin.TopLeft">
                     @foreach (var subcategory in _subcategories)
                     {
@@ -52,9 +52,9 @@
     private List<SKillInfo> _categories = new();
     private List<SKillInfo> _subcategories = new();
 
-    private SKillInfo _seletectedType;
-    private SKillInfo _seletectedCategory;
-    private SKillInfo? _seletectedSubCategory;
+    private SKillInfo _selectedType = null!;
+    private SKillInfo _selectedCategory = null!;
+    private SKillInfo? _selectedSubCategory;
 
     private string _desc = string.Empty;
     
@@ -70,12 +70,12 @@
     {
         var skill = new SkillModel
         {
-            TypeId = _seletectedType.Id,
-            CategoryId = _seletectedCategory.Id,
+            TypeId = _selectedType.Id,
+            CategoryId = _selectedCategory.Id,
             Description = _desc
         };
         
-        if (_seletectedSubCategory != null) skill.SubCategoryId = _seletectedSubCategory.Id;
+        if (_selectedSubCategory != null) skill.SubCategoryId = _selectedSubCategory.Id;
 
         Dialog.Close(skill);
     }

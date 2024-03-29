@@ -2,20 +2,15 @@ using System.Diagnostics.CodeAnalysis;
 using System.DirectoryServices.AccountManagement;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.EntityFrameworkCore;
-using MudBlazor;
-using Skills.Components.Dialogs;
 using Skills.Databases;
-using Skills.Extensions;
 using Skills.Models.Enums;
 
 namespace Skills.Services;
 
 [SuppressMessage("Interoperability", "CA1416:Valider la compatibilité de la plateforme")]
-public class ADAuthenticationService(IConfiguration configuration, IDbContextFactory<SkillsContext> factory, UserTokenHoldingService userTokenHoldingService,
-                                     IDialogService dialogService, NavigationManager navManager)
+public class ADAuthenticationService(IConfiguration configuration, IDbContextFactory<SkillsContext> factory, UserTokenHoldingService userTokenHoldingService)
 {
     public event NotAuthorizedEventHandler? OnNotAuthorized;
     public delegate Task NotAuthorizedEventHandler();

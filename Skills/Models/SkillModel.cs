@@ -7,10 +7,10 @@ public class SkillModel
     public List<UserSkillModel> UserSkills { get; set; } = new();
     
     public Guid TypeId { get; set; }
-    public SKillInfo Type { get; set; }
+    public SKillInfo Type { get; set; } = null!;
     
     public Guid CategoryId { get; set; }
-    public SKillInfo Category { get; set; }
+    public SKillInfo Category { get; set; } = null!;
     
     public Guid? SubCategoryId { get; set; }
     public SKillInfo? SubCategory { get; set; }

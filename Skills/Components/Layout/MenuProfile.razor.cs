@@ -14,7 +14,7 @@ public partial class MenuProfile : ComponentBase
     private string _name = string.Empty;
     private string _email = string.Empty;
 
-    private MudMenu _menu;
+    private MudMenu _menu = null!;
     
     protected override async Task OnInitializedAsync()
     {

@@ -16,11 +16,13 @@ public partial class UsersList : ComponentBase
     [Inject] public ISnackbar Snackbar { get; set; } = null!;
     [Parameter] public UsersManagement Manager { get; set; } = null!;
 
-    private MudDataGrid<UserModel> _grid;
+    private MudDataGrid<UserModel> _grid = null!;
     private List<UserModel> _users = new();
     private List<GroupModel> _groups = new();
     private string _search = string.Empty;
 
+    public Func<UserModel, string> DisabledColor => x => x.IsDisabled ? "color: orange;" : "color: inherit;";
+    
     public Func<UserModel, bool> QuickFilter => x =>
     {
         if (x.Name.Contains(_search, StringComparison.OrdinalIgnoreCase)) return true;

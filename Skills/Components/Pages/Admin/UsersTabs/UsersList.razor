@@ -41,7 +41,7 @@
                         </MudSelect>
                     </EditTemplate>
                 </TemplateColumn>
-                <PropertyColumn IsEditable="false" Title="Désactivé" Property="x => x.IsDisabled">
+                <PropertyColumn IsEditable="false" Title="Désactivé" Property="x => x.IsDisabled" CellStyleFunc="@DisabledColor">
                     <EditTemplate Context="row">
                         <MudCheckBox T="bool" @bind-Value="row.Item.IsDisabled" Label="Désactivé" />
                     </EditTemplate>

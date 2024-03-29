@@ -10,7 +10,7 @@ public partial class UsersOverview : ComponentBase
     [Inject] public IDbContextFactory<SkillsContext> Factory { get; set; } = null!;
     [Inject] public NavigationManager NavManager { get; set; } = null!;
 
-    [Parameter] public string Id { get; set; }
+    [Parameter] public string Id { get; set; } = null!;
     
     private UserModel _user = null!;
     
