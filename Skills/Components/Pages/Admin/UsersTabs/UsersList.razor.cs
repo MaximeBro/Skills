@@ -40,7 +40,7 @@ public partial class UsersList : ComponentBase
 
     private async Task CreateUserAsync()
     {
-        var instance = await DialogService.ShowAsync<CreateUserDialog>(string.Empty, Hardcoded.DialogOptions);
+        var instance = await DialogService.ShowAsync<UserDialog>(string.Empty, Hardcoded.DialogOptions);
         var result = await instance.Result;
         if (result is { Data: UserModel model })
         {
@@ -56,6 +56,37 @@ public partial class UsersList : ComponentBase
                 Snackbar.Add("Un utilisateur existe déjà avec cet identifiant !", Severity.Error);
             }
 
+            await db.DisposeAsync();
+            await RefreshDataAsync();
+        }
+    }
+
+    private async Task EditUserAsync(UserModel model)
+    {
+        var parameters = new DialogParameters<UserDialog> { { x => x.User, model } };
+        var instance = await DialogService.ShowAsync<UserDialog>(string.Empty, parameters, Hardcoded.DialogOptions);
+        var result = await instance.Result;
+        if (result is { Data: UserModel userModel })
+        {
+            var db = await Factory.CreateDbContextAsync();
+            var old = db.Users.AsTracking().FirstOrDefault(x => x.Id == model.Id);
+            if (old != null)
+            {
+                old.Name = userModel.Name;
+                old.Email = userModel.Email;
+                old.Username = userModel.Username;
+                old.Role = userModel.Role;
+                old.GroupId = userModel.GroupId;
+                old.IsDisabled = userModel.IsDisabled;
+                db.Users.Update(old);
+                await db.SaveChangesAsync();
+            }
+            else
+            {
+                Snackbar.Add("Utilisateur introuvable ! Ce compte a peut être été modifié ou supprimé entre temps.", Severity.Error);
+                return;
+            }
+            
             await db.DisposeAsync();
             await RefreshDataAsync();
         }
@@ -79,14 +110,13 @@ public partial class UsersList : ComponentBase
             await RefreshDataAsync(); 
         }
     }
-    
-    private async Task OnEditDoneAsync(UserModel model)
+
+    private async Task OnRowClickedAsync(DataGridRowClickEventArgs<UserModel> args)
     {
-        var db = await Factory.CreateDbContextAsync();
-        db.Users.Update(model);
-        await db.SaveChangesAsync();
-        await db.DisposeAsync();
-        await RefreshDataAsync();
+        if (args.MouseEventArgs.Detail == 2)
+        {
+            await EditUserAsync(args.Item);
+        }
     }
 
     public async Task RefreshDataAsync()

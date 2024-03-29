@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Components;
 using Microsoft.EntityFrameworkCore;
+using MudBlazor;
 using Skills.Databases;
 using Skills.Models;
 
@@ -8,6 +9,7 @@ namespace Skills.Components.Components;
 public partial class SkillTypeLevels : ComponentBase
 {
     [Inject] public IDbContextFactory<SkillsContext> Factory { get; set; } = null!;
+    [Inject] public ISnackbar Snackbar { get; set; } = null!;
     [Parameter] public SKillInfo Type { get; set; } = null!;
     
     private string _levelZeroText = string.Empty;
@@ -15,8 +17,7 @@ public partial class SkillTypeLevels : ComponentBase
     private string _levelTwoText = string.Empty;
     private string _levelThreeText = string.Empty;
     private string _levelFourText = string.Empty;
-
-
+    
     protected override async Task OnInitializedAsync()
     {
         await RefreshDataAsync();
@@ -43,6 +44,12 @@ public partial class SkillTypeLevels : ComponentBase
             });
         }
 
+        Snackbar.Add("Modification enregistrée !", Severity.Success, options =>
+        {
+            options.VisibleStateDuration = 1000;
+            options.ShowCloseIcon = false;
+            options.DuplicatesBehavior = SnackbarDuplicatesBehavior.Allow;
+        });
         await db.SaveChangesAsync();
         await db.DisposeAsync();
     }

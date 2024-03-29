@@ -115,51 +115,6 @@ public partial class SkillsTypes : ComponentBase
             await Manager.RefreshSkillsAsync();
         }
     }
-
-    private async Task SetLevelAsync(SKillInfo model, int level)
-    {
-        // TODO: refactor this mess with either a dialog or a dynamic component
-        
-        var db = await Factory.CreateDbContextAsync();
-        var typeLevel = new TypeLevel
-        {
-            TypeId = model.Id,
-            Level = level
-        };
-        
-        switch (level)
-        {
-            case 0:
-            {
-                if (string.IsNullOrWhiteSpace(_levelZeroText)) return;
-                break;
-            }
-            case 1:
-            {
-                if (string.IsNullOrWhiteSpace(_levelZeroText)) return;
-                break;
-            }
-            case 2:
-            {
-                if (string.IsNullOrWhiteSpace(_levelZeroText)) return;
-                break;
-            }
-            case 3:
-            {
-                if (string.IsNullOrWhiteSpace(_levelZeroText)) return;
-                break;
-            }
-            case 4:
-            {
-                if (string.IsNullOrWhiteSpace(_levelZeroText)) return;
-                break;
-            }
-        }
-
-        db.TypesLevels.Add(typeLevel);
-        await db.SaveChangesAsync();
-        await db.DisposeAsync();
-    }
     
     private async Task RefreshDataAsync()
     {

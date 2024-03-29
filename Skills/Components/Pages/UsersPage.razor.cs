@@ -48,30 +48,6 @@ public partial class UsersPage : ComponentBase
         await RefreshDataAsync();
     }
 
-    private async Task DeleteUserAsync(UserModel model)
-    {
-        var parameters = new DialogParameters<ConfirmDialog> { { x => x.Text, $"Voulez-vous vraiment supprimer le compte {model.Name} ? Cette action est irréversible !" } };
-        var instance = await DialogService.ShowAsync<ConfirmDialog>(string.Empty, parameters, Hardcoded.DialogOptions);
-        var result = await instance.Result;
-        if (result.Data != null && (bool)result.Data)
-        {
-            var db = await Factory.CreateDbContextAsync();
-            db.Users.Remove(model);
-            await db.SaveChangesAsync();
-            await db.DisposeAsync();
-
-            var email = _user.Identity?.Name ?? string.Empty;
-            if (email == model.Email)
-            {
-                NavManager.NavigateTo("MicrosoftIdentity/Account/SignOut", true);
-                return;
-            }
-        
-            await RefreshDataAsync();
-        
-        }
-    }
-
     private void OnRowClicked(DataGridRowClickEventArgs<UserModel> args)
     {
         if (args.MouseEventArgs.Detail == 2)

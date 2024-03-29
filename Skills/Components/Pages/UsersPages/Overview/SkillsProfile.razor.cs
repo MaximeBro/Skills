@@ -134,6 +134,7 @@ public partial class SkillsProfile : ComponentBase
                                      .Include(x => x.SubCategory)
                                      .ToListAsync();
         
-        foreach(var skill in _userSkills) _selectedLevels.Add(skill.Id, db.TypesLevels.AsNoTracking().FirstOrDefault(x => x.TypeId == skill.TypeId)?.Value ?? string.Empty);
+        _selectedLevels.Clear();
+        foreach(var skill in _userSkillsModels) _selectedLevels.Add(skill.SkillId, db.TypesLevels.AsNoTracking().FirstOrDefault(x => x.TypeId == skill.Skill!.TypeId && x.Level == skill.Level)?.Value ?? string.Empty);
     }
 }

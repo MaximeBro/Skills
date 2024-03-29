@@ -3,16 +3,20 @@
         <MudGrid Class="mt-8" Justify="Justify.Center">
             <MudItem xs="12">
                 <MudDataGrid T="SkillModel" Items="_models" Bordered Hover Outlined Filterable Striped SortMode="SortMode.Multiple" Dense FixedHeader
-                             Culture="@(new CultureInfo("fr-FR"))" Height="70vh" Virtualize OverscanCount="25" QuickFilter="@QuickFilter">
+                             Culture="@(new CultureInfo("fr-FR"))" Height="70vh" Virtualize OverscanCount="25" QuickFilter="@QuickFilter"
+                             RowClick="@OnRowClickedAsync">
                     <ToolBarContent>
                         <MudTooltip Placement="Placement.Bottom" Text="Importer (.xlsx)" Arrow>
                             <MudIconButton Style="border-radius: 6px!important; padding: 4px!important;" Icon="@IconsFF.FileExcel" Color="Color.Tertiary" />
                         </MudTooltip>
-                        <MudTooltip Placement="Placement.Bottom" Text="Créer une compétence" Arrow>
-                            <MudIconButton Style="border-radius: 6px!important; padding: 4px!important;" Icon="@IconsF.Add" Color="Color.Tertiary" OnClick="@(() => CreateSkillAsync())"/>
+                        <MudTooltip Class="ml-1" Placement="Placement.Bottom" Text="Créer une compétence" Arrow>
+                            <MudIconButton Class="ml-2" Style="border-radius: 6px!important; padding: 4px!important;" Icon="@IconsF.Add" Color="Color.Tertiary" OnClick="@(() => CreateSkillAsync())"/>
+                        </MudTooltip>
+                        <MudTooltip Placement="Placement.Right" Text="Pour éditer, faites un double clic sur une ligne !" Arrow>
+                            <MudIcon Class="ml-2 mt-1" Icon="@IconsF.Info" Color="Color.Info" />
                         </MudTooltip>
                         <MudSpacer/>
-                        <MudTextField T="string" @bind-Value="_search" Immediate Adornment="Adornment.Start"
+                        <MudTextField T="string" @bind-Value="_search" Immediate Adornment="Adornment.Start" Clearable
                                       AdornmentIcon="@IconsF.Search" Placeholder="Rechercher" Class="flex-grow-0 mr-8 mt-0" Style="width: 400px;"/>
                     </ToolBarContent>
                     <Columns>
@@ -42,7 +46,7 @@
                             <MudStack Class="px-2" Row="false" Spacing="0">
                                 @if (_skillTypeLevels[context.Item.Id].Any())
                                 {
-                                    @foreach (var typeLevel in _skillTypeLevels[context.Item.Id])
+                                    @foreach (var typeLevel in _skillTypeLevels[context.Item.Id].OrderBy(x => x.Level))
                                     {
                                         <MudStack Row Justify="Justify.FlexStart">
                                             <MudText Class="mark-one"><MudChip>@typeLevel.Level</MudChip> @typeLevel.Value</MudText>
@@ -53,7 +57,6 @@
                                 {
                                     <MudAlert Class="mb-1" Severity="Severity.Normal">Aucun niveau défini pour ce type de compétence.</MudAlert>
                                 }
-                                
                             </MudStack>
                         </MudStack>
                     </ChildRowContent>

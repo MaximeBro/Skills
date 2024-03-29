@@ -94,6 +94,14 @@ public partial class SkillsMapping : ComponentBase
         }
     }
 
+    private async Task OnRowClickedAsync(DataGridRowClickEventArgs<SkillModel> args)
+    {
+        if (args.MouseEventArgs.Detail == 2)
+        {
+            await EditSkillAsync(args.Item);
+        }
+    }
+
     public async Task RefreshDataAsync()
     {
         var db = await Factory.CreateDbContextAsync();
@@ -103,6 +111,7 @@ public partial class SkillsMapping : ComponentBase
                                  .Include(x => x.SubCategory)
                                  .ToListAsync();
         
+        _skillTypeLevels.Clear();
         foreach(var model in _models) _skillTypeLevels.Add(model.Id, db.TypesLevels.AsNoTracking().Where(x => x.TypeId == model.TypeId).ToList());
     }
 }

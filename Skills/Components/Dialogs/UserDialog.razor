@@ -1,0 +1,92 @@
+@using Microsoft.EntityFrameworkCore
+
+<MudDialog Class="pa-0 rounded">
+    <DialogContent>
+        <MudIconButton Class="ml-n4" Icon="@IconsF.Close" Color="Color.Dark" OnClick="@(() => Dialog.Close())" />
+        <MudStack Class="px-4 py-2" Justify="Justify.Center" Row="false">
+            <MudStack Row Justify="Justify.Center">
+                <MudTextField T="string" @bind-Value="_name" Label="Nomination" Placeholder="Prénom Nom" Required />
+                <MudTextField T="string" @bind-Value="_username" Label="Identifiant" Placeholder="prénom.nom" Required/>
+            </MudStack>
+            <MudStack Row Justify="Justify.Center">
+                <MudTextField T="string" @bind-Value="_email" Label="Email" Placeholder="prénom.nom@sasp.fr" InputType="InputType.Email" Required />
+            </MudStack>
+            <MudStack Row Justify="Justify.Center">
+                <MudSelect T="UserRole" @bind-Value="_role" Label="Rôle" Required AnchorOrigin="Origin.BottomLeft" TransformOrigin="Origin.TopLeft">
+                    <MudSelectItem Value="UserRole.User">@UserRole.User.Humanize()</MudSelectItem>
+                    <MudSelectItem Value="UserRole.Manager">@UserRole.Manager.Humanize()</MudSelectItem>
+                    <MudSelectItem Value="UserRole.Admin">@UserRole.Admin.Humanize()</MudSelectItem>                
+                </MudSelect>
+                <MudSelect T="Guid?" @bind-Value="_selectedGroup" Label="Groupe" ToStringFunc="@GroupToString" Clearable AnchorOrigin="Origin.BottomLeft" TransformOrigin="Origin.TopLeft">
+                    @foreach (var group in _availableGroups)
+                    {
+                        <MudSelectItem Value="(Guid?)group.Id">@group.Name</MudSelectItem>
+                    }
+                </MudSelect>
+            </MudStack>
+            <MudStack Class="mt-1" Row Justify="Justify.Center">
+                <MudCheckBox T="bool" @bind-Value="_isDisabled" Label="Désactivé" />
+            </MudStack>
+        </MudStack>
+    </DialogContent>
+    <DialogActions>
+        <MudButton Class="mark-one" Color="Color.Success" Variant="Variant.Text" OnClick="@Submit">Enregistrer</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    [Inject] public IDbContextFactory<SkillsContext> Factory { get; set; } = null!;
+    
+    [CascadingParameter] public MudDialogInstance Dialog { get; set; } = null!;
+    [Parameter] public UserModel? User { get; set; }
+
+    private string _name = string.Empty;
+    private string _email = string.Empty;
+    private string _username = string.Empty;
+    private UserRole _role;
+    private Guid? _selectedGroup;
+    private bool _isDisabled;
+
+    private List<GroupModel> _availableGroups = new();
+
+    private Func<Guid?, string> GroupToString => x =>
+    {
+        if (x.HasValue)
+        {
+            return _availableGroups.FirstOrDefault(y => y.Id == x.Value)?.Name ?? string.Empty;
+        }
+        
+        return string.Empty;
+    };
+    
+    protected override async Task OnInitializedAsync()
+    {
+        if (User != null)
+        {
+            _name = User.Name;
+            _email = User.Email;
+            _username = User.Username;
+            _role = User.Role;
+            _isDisabled = User.IsDisabled;
+            _selectedGroup = User.GroupId;
+        }
+        
+        var db = await Factory.CreateDbContextAsync();
+        _availableGroups = db.Groups.AsNoTracking().ToList();
+        await db.DisposeAsync();
+    }
+
+
+    private void Submit()
+    {
+        Dialog.Close(new UserModel
+        {
+            Name = _name,
+            Email = _email,
+            Username = _username,
+            Role = _role,
+            GroupId = _selectedGroup,
+            IsDisabled = _isDisabled
+        });
+    }
+}

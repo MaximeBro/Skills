@@ -16,13 +16,13 @@
             </MudTooltip>
             @if (_toggleIndex == 3)
             {
-                <MudTooltip Placement="Placement.Right" Text="Vous pouvez faire un double-clic sur une ligne pour ouvrir le profil d'un utilisateur !" Arrow>
+                <MudTooltip Placement="Placement.Right" Text="Vous pouvez faire un double clic sur une ligne pour ouvrir le profil d'un utilisateur !" Arrow>
                     <MudIcon Class="ml-3 mt-1" Icon="@IconsF.Info" Color="Color.Info" />
                 </MudTooltip>
             }
             <MudSpacer/>
             <div>
-                <MudTextField T="string" @bind-Value="_search" Class="mr-8 flex-shrink-0" Style="width: 400px;" Placeholder="Rechercher" Immediate
+                <MudTextField T="string" @bind-Value="_search" Class="mr-8 flex-shrink-0" Style="width: 400px;" Placeholder="Rechercher" Immediate Clearable
                               Adornment="Adornment.Start" AdornmentIcon="@IconsF.Search"/>
             </div>
         </MudToolBar>
