@@ -23,7 +23,8 @@ public class ThemeManager
         {
             _configuration["favicon"] ?? "YourBrandIcon.ico",
             _configuration["drawer-icon"] ?? "YourBrandIcon.ico",
-            _configuration["home-banner"] ?? "YourBrandBanner.png"
+            _configuration["home-banner"] ?? "YourBrandBanner.png",
+            _configuration["login-banner"] ?? string.Empty
         };
 
         foreach (var file in files)

@@ -66,7 +66,7 @@
                                         <MudIconButton Icon="@IconsF.Edit" Size="Size.Small" Color="Color.Primary" OnClick="@(async () => await ManageSkillAsync(context.Item))"/>
                                     </MudTooltip>
                                     <MudTooltip Class="ml-2" Placement="Placement.Bottom" Text="Supprimer" Arrow>
-                                        <MudIconButton Class="ml-4" Icon="fas fa-minus" Size="Size.Small" Color="Color.Error" OnClick="@(async () => await RevokeSkillAsync(context.Item))"/>
+                                        <MudIconButton Class="ml-4" Icon="@IconsF.Delete" Size="Size.Small" Color="Color.Error" OnClick="@(async () => await RevokeSkillAsync(context.Item))"/>
                                     </MudTooltip>
                                 </CellTemplate>
                             </TemplateColumn>

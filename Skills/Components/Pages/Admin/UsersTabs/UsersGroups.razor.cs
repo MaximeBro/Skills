@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Components;
 using Microsoft.EntityFrameworkCore;
 using MudBlazor;
+using Skills.Components.Components;
 using Skills.Components.Dialogs;
 using Skills.Databases;
 using Skills.Extensions;
@@ -9,12 +10,11 @@ using Skills.Services;
 
 namespace Skills.Components.Pages.Admin.UsersTabs;
 
-public partial class UsersGroups : ComponentBase
+public partial class UsersGroups : FullComponentBase
 {
     [Inject] public IDbContextFactory<SkillsContext> Factory { get; set; } = null!;
     [Inject] public IDialogService DialogService { get; set; } = null!;
     [Inject] public ISnackbar Snackbar { get; set; } = null!;
-    [Inject] public ThemeManager ThemeManager { get; set; } = null!;
     [Parameter] public UsersManagement Manager { get; set; } = null!;
 
     private List<GroupModel> _groups = new();

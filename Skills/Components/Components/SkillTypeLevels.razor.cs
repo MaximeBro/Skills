@@ -6,7 +6,7 @@ using Skills.Models;
 
 namespace Skills.Components.Components;
 
-public partial class SkillTypeLevels : ComponentBase
+public partial class SkillTypeLevels : FullComponentBase
 {
     [Inject] public IDbContextFactory<SkillsContext> Factory { get; set; } = null!;
     [Inject] public ISnackbar Snackbar { get; set; } = null!;

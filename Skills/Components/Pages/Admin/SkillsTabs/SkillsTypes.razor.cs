@@ -8,14 +8,12 @@ using Skills.Databases;
 using Skills.Extensions;
 using Skills.Models;
 using Skills.Models.Enums;
-using Skills.Services;
 
 namespace Skills.Components.Pages.Admin.SkillsTabs;
 
-public partial class SkillsTypes : ComponentBase
+public partial class SkillsTypes : FullComponentBase
 {
     [Inject] public IDbContextFactory<SkillsContext> Factory { get; set; } = null!;
-    [Inject] public ThemeManager ThemeManager { get; set; } = null!;
     [Inject] public IDialogService DialogService { get; set; } = null!;
     [Parameter] public SkillsManagement Manager { get; set; } = null!;
     [Parameter] public string Title { get; set; } = string.Empty;

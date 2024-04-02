@@ -1,9 +1,10 @@
 using Microsoft.AspNetCore.Components;
+using Skills.Components.Components;
 using Skills.Components.Pages.Admin.SkillsTabs;
 
 namespace Skills.Components.Pages.Admin;
 
-public partial class SkillsManagement : ComponentBase
+public partial class SkillsManagement : FullComponentBase
 {
     private SkillsMapping _skillsMapping = null!;
     

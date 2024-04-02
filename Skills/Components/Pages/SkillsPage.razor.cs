@@ -1,11 +1,12 @@
 using Microsoft.AspNetCore.Components;
 using Microsoft.EntityFrameworkCore;
+using Skills.Components.Components;
 using Skills.Databases;
 using Skills.Models;
 
 namespace Skills.Components.Pages;
 
-public partial class SkillsPage : ComponentBase
+public partial class SkillsPage : FullComponentBase
 {
     [Inject] public IDbContextFactory<SkillsContext> Factory { get; set; } = null!;
     

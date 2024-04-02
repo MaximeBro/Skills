@@ -1,8 +1,9 @@
 {
-    "name": "SASP",
+    "name": "SASP Services",
     "favicon": "sasp.ico",
     "drawer-icon": "banner.png",
     "home-banner": "banner.png",
+    "login-banner": "login-bg.jpeg",
     "appbar-background": "#013a63",
     "drawer-background": "#f9f7f3",
     "other-background": "#4e7cb0",

@@ -1,3 +1,5 @@
+@inherits FullComponentBase
+
 <MudStack Class="mt-n1 px-9 pb-8" Row="false" Spacing="0">
     <MudTextField T="string" @bind-Value="_levelZeroText" Adornment="Adornment.End" AdornmentIcon="@IconsF.Check" AdornmentColor="Color.Tertiary"
                   OnAdornmentClick="@(() => SaveAsync(0))" Style="border-radius: 0!important;" Label="Niveau 0" Variant="Variant.Filled" />

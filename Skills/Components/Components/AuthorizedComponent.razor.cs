@@ -8,7 +8,7 @@ using Skills.Services;
 
 namespace Skills.Components.Components;
 
-public partial class AuthorizedComponent : ComponentBase
+public partial class AuthorizedComponent : FullComponentBase
 {
     [CascadingParameter] public Task<AuthenticationState> AuthenticationState { get; set; } = null!; 
     [Inject] public ADAuthenticationService AuthenticationService { get; set; } = null!;

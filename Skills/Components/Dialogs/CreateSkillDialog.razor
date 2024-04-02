@@ -7,7 +7,7 @@
         <MudIconButton Class="ml-n4" Icon="@IconsF.Close" Color="Color.Dark" OnClick="@(() => Dialog.Close())" />
         <MudStack Class="px-4 py-2" Justify="Justify.SpaceEvenly" Row="false" Spacing="0">
             <MudStack Row Justify="Justify.Center">
-                <MudSelect T="SKillInfo" @bind-Value="_selectedType" Label="Type" Required Style="min-width: 220px;"
+                <MudSelect T="SKillInfo?" @bind-Value="_selectedType" Label="Type" Required Style="min-width: 220px;"
                            AnchorOrigin="Origin.BottomLeft" TransformOrigin="Origin.TopLeft">
                     @foreach (var type in _types)
                     {
@@ -15,7 +15,7 @@
                     }
                 </MudSelect>
 
-                <MudSelect T="SKillInfo" @bind-Value="_selectedCategory" Label="Catégorie" Required Style="min-width: 220px;" 
+                <MudSelect T="SKillInfo?" @bind-Value="_selectedCategory" Label="Catégorie" Required Style="min-width: 220px;" 
                            AnchorOrigin="Origin.BottomLeft" TransformOrigin="Origin.TopLeft">
                     @foreach (var category in _categories)
                     {
@@ -52,8 +52,8 @@
     private List<SKillInfo> _categories = new();
     private List<SKillInfo> _subcategories = new();
 
-    private SKillInfo _selectedType = null!;
-    private SKillInfo _selectedCategory = null!;
+    private SKillInfo? _selectedType;
+    private SKillInfo? _selectedCategory;
     private SKillInfo? _selectedSubCategory;
 
     private string _desc = string.Empty;
@@ -68,6 +68,12 @@
 
     private void Submit()
     {
+        if (_selectedType is null || _selectedCategory is null)
+        {
+            Snackbar.Add("Vous devez au moins sélectionner un type et une catégorie !", Severity.Error);
+            return;
+        }
+        
         var skill = new SkillModel
         {
             TypeId = _selectedType.Id,

@@ -1,3 +1,5 @@
+@inherits FullComponentBase
+
 <AuthorizeView Roles="@Roles" Context="authorized">
     <Authorized>
         <CascadingValue Name="Authorized" Value="@this" TValue="AuthorizedComponent">

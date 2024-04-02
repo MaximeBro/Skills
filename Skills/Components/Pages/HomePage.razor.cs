@@ -1,9 +1,7 @@
-using Microsoft.AspNetCore.Components;
-using Skills.Services;
+using Skills.Components.Components;
 
 namespace Skills.Components.Pages;
 
-public partial class HomePage : ComponentBase
+public partial class HomePage : FullComponentBase
 {
-    [Inject] public ThemeManager ThemeManager { get; set; } = null!;
 }

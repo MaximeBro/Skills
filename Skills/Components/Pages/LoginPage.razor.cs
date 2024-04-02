@@ -2,16 +2,16 @@ using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
 using MudBlazor;
+using Skills.Components.Components;
 using Skills.Services;
 
 using Timer = System.Timers.Timer;
 
 namespace Skills.Components.Pages;
 
-public partial class LoginPage : ComponentBase
+public partial class LoginPage : FullComponentBase
 {
     [CascadingParameter] public Task<AuthenticationState> AuthenticationState { get; set; } = null!;
-    [Inject] public ThemeManager ThemeManager { get; set; } = null!;
     [Inject] public ADAuthenticationService AuthenticationService { get; set; } = null!;
     [Inject] public NavigationManager NavManager { get; set; } = null!;
     [Inject] public ISnackbar Snackbar { get; set; } = null!;

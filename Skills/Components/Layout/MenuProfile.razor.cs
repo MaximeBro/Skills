@@ -6,7 +6,7 @@ using Skills.Components.Components;
 
 namespace Skills.Components.Layout;
 
-public partial class MenuProfile : ComponentBase
+public partial class MenuProfile : FullComponentBase
 {
     [CascadingParameter] public Task<AuthenticationState> AuthenticationState { get; set; } = null!;
     

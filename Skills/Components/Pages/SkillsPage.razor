@@ -1,31 +1,28 @@
 @page "/skills"
+@inherits FullComponentBase
 
-<AuthorizedComponent>
-    <Content>
-        <MudContainer MaxWidth="MaxWidth.ExtraLarge">
-            <MudText Class="mt-2 mark-one" Typo="Typo.h2" Align="Align.Center">Compétences</MudText>
-            <MudGrid Justify="Justify.Center">
-                <MudItem Class="mt-4" xs="12">
-                    <MudDataGrid T="SkillModel" Items="_models" Bordered Hover Outlined Filterable Striped SortMode="SortMode.Multiple" Dense FixedHeader
-                                 Culture="@(new CultureInfo("fr-FR"))" Height="70vh" Virtualize OverscanCount="25" QuickFilter="@QuickFilter">
-                        <ToolBarContent>
-                            <MudSpacer/>
-                            <MudTextField T="string" @bind-Value="_search" Immediate Adornment="Adornment.Start" Clearable
-                                          AdornmentIcon="@IconsF.Search" Placeholder="Rechercher" Class="flex-grow-0 mr-8 mt-0" Style="width: 400px;"/>
-                        </ToolBarContent>
-                        <Columns>
-                            <PropertyColumn Title="Type" Property="x => x.Type.Value"/>
-                            <PropertyColumn Title="Catégorie" Property="x => x.Category.Value"/>
-                            <TemplateColumn Title="Sous catégorie">
-                                <CellTemplate>
-                                    <MudText Typo="Typo.body2">@(context.Item.SubCategory?.Value ?? string.Empty)</MudText>
-                                </CellTemplate>
-                            </TemplateColumn>
-                            <PropertyColumn Title="Description" Property="x => x.Description"/>
-                        </Columns>
-                    </MudDataGrid>
-                </MudItem>
-            </MudGrid>
-        </MudContainer>
-    </Content>
-</AuthorizedComponent>
+<MudContainer MaxWidth="MaxWidth.ExtraLarge">
+    <MudText Class="mt-2 mark-one" Typo="Typo.h2" Align="Align.Center">Compétences</MudText>
+    <MudGrid Justify="Justify.Center">
+        <MudItem Class="mt-4" xs="12">
+            <MudDataGrid T="SkillModel" Items="_models" Bordered Hover Outlined Filterable Striped SortMode="SortMode.Multiple" Dense FixedHeader
+                         Culture="@(new CultureInfo("fr-FR"))" Height="70vh" Virtualize OverscanCount="25" QuickFilter="@QuickFilter">
+                <ToolBarContent>
+                    <MudSpacer/>
+                    <MudTextField T="string" @bind-Value="_search" Immediate Adornment="Adornment.Start" Clearable
+                                  AdornmentIcon="@IconsF.Search" Placeholder="Rechercher" Class="flex-grow-0 mr-8 mt-0" Style="width: 400px;"/>
+                </ToolBarContent>
+                <Columns>
+                    <PropertyColumn Title="Type" Property="x => x.Type.Value"/>
+                    <PropertyColumn Title="Catégorie" Property="x => x.Category.Value"/>
+                    <TemplateColumn Title="Sous catégorie">
+                        <CellTemplate>
+                            <MudText Typo="Typo.body2">@(context.Item.SubCategory?.Value ?? string.Empty)</MudText>
+                        </CellTemplate>
+                    </TemplateColumn>
+                    <PropertyColumn Title="Description" Property="x => x.Description"/>
+                </Columns>
+            </MudDataGrid>
+        </MudItem>
+    </MudGrid>
+</MudContainer>

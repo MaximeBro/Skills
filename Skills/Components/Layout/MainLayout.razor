@@ -22,18 +22,16 @@
         }
         else
         {
-            <MudButton Class="text-white hoverable mr-4" Href="/login" Variant="Variant.Text">Se connecter</MudButton>
+            <MudLink Class="mr-4" Href="/login" Underline="Underline.Hover" Style="text-decoration-color: #fff;">
+                <MudText Class="text-white">Se connecter</MudText>
+            </MudLink>
         }
     </MudAppBar>
     <MudDrawer Class="mud-drawer-fixed" @bind-Open="_docked" Variant="DrawerVariant.Temporary" ClipMode="DrawerClipMode.Always"
                Elevation="1" Style="@($"background: {ThemeManager.Get("drawer-background")}!important;")">
         <MudNavMenu Class="pa-2" Color="Color.Primary" Rounded Dense>
             <MudNavLink Class="mark-one" Href="/dashboard" Match="NavLinkMatch.All" Icon="@IconsF.Home">Accueil</MudNavLink>
-            <AuthorizeView Roles="Admin, Manager">
-                <Authorized>
-                    <MudNavLink Class="mark-one my-2" Href="/skills" Match="NavLinkMatch.All" Icon="@IconsF.Stars">Compétences</MudNavLink>
-                </Authorized>
-            </AuthorizeView>
+            <MudNavLink Class="mark-one my-2" Href="/skills" Match="NavLinkMatch.All" Icon="@IconsF.Stars">Compétences</MudNavLink>
             <AuthorizeView Roles="Admin, Manager, User">
                 <Authorized>
                     <MudNavLink Class="mark-one my-2" Href="/users" Match="NavLinkMatch.All" Icon="@IconsF.People">Utilisateurs</MudNavLink>

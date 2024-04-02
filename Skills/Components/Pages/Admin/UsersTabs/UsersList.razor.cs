@@ -2,6 +2,7 @@ using Humanizer;
 using Microsoft.AspNetCore.Components;
 using Microsoft.EntityFrameworkCore;
 using MudBlazor;
+using Skills.Components.Components;
 using Skills.Components.Dialogs;
 using Skills.Databases;
 using Skills.Extensions;
@@ -9,7 +10,7 @@ using Skills.Models;
 
 namespace Skills.Components.Pages.Admin.UsersTabs;
 
-public partial class UsersList : ComponentBase
+public partial class UsersList : FullComponentBase
 {
     [Inject] public IDbContextFactory<SkillsContext> Factory { get; set; } = null!;
     [Inject] public IDialogService DialogService { get; set; } = null!;

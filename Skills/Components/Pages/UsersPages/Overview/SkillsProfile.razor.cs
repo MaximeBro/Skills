@@ -56,6 +56,8 @@ public partial class SkillsProfile : ComponentBase
                     Level = model.Level
                 };
 
+                var user = db.Users.FirstOrDefault(x => x.Id == User.Id);
+
                 db.Userskills.Add(newModel);
                 await db.SaveChangesAsync();
                 await db.DisposeAsync();
@@ -121,6 +123,7 @@ public partial class SkillsProfile : ComponentBase
     {
         var db = await Factory.CreateDbContextAsync();
         _userSkillsModels = await db.Userskills.AsNoTracking()
+                                                .Where(x => x.UserId == User.Id)
                                                .Include(x => x.Skill).ThenInclude(x => x!.Type)
                                                .Include(x => x.Skill).ThenInclude(x => x!.Category)
                                                .Include(x => x.Skill).ThenInclude(x => x!.SubCategory)

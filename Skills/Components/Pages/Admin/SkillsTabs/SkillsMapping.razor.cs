@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Components;
 using Microsoft.EntityFrameworkCore;
 using MudBlazor;
+using Skills.Components.Components;
 using Skills.Components.Dialogs;
 using Skills.Databases;
 using Skills.Extensions;
@@ -8,7 +9,7 @@ using Skills.Models;
 
 namespace Skills.Components.Pages.Admin.SkillsTabs;
 
-public partial class SkillsMapping : ComponentBase
+public partial class SkillsMapping : FullComponentBase
 {
     [Inject] public IDbContextFactory<SkillsContext> Factory { get; set; } = null!;
     [Inject] public IDialogService DialogService { get; set; } = null!;
