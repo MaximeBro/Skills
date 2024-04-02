@@ -11,7 +11,7 @@
             <MudText Class="ml-2 text-white mark-one" Typo="Typo.h5">@ThemeManager.Get("name")</MudText>
         </MudLink>
         <MudSpacer/>
-        @if (_identity != null && _identity.IsAuthenticated)
+        @if (_identity is { IsAuthenticated: true })
         {
             <MudStack Class="mr-4" AlignItems="AlignItems.Center" Row>
                 <MudText Class="text-white mark-one"><MudIcon Class="mb-n1" Icon="@IconsF.Check" Color="Color.Info"/> Vous êtes connecté</MudText>
