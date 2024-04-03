@@ -1,5 +1,4 @@
 using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 using MudBlazor.Services;
 using Skills.Components;
@@ -8,8 +7,12 @@ using Skills.Extensions;
 using Skills.Services;
 
 var builder = WebApplication.CreateBuilder(args);
+var dataPath = new DirectoryInfo(Path.Combine(Directory.GetCurrentDirectory(), "/data/")).FullName;
 
-var dataPath = new DirectoryInfo(Path.Combine(builder.Environment.ContentRootPath, "../data/")).FullName;
+#if DEBUG
+dataPath = new DirectoryInfo(Path.Combine(builder.Environment.ContentRootPath, "../data/")).FullName;
+#endif
+
 builder.Configuration.AddJsonFile(Path.Combine(dataPath, "config/main.json"), optional: false, reloadOnChange: true);
 builder.Configuration.AddJsonFile(Path.Combine(dataPath, "config/skills.json"), optional: false, reloadOnChange: true);
 

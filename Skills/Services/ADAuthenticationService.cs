@@ -1,5 +1,4 @@
 using System.Diagnostics.CodeAnalysis;
-using System.DirectoryServices.AccountManagement;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Components.Authorization;
@@ -23,32 +22,32 @@ public class ADAuthenticationService(IConfiguration configuration, IDbContextFac
     
     public async Task<Guid?> TryLoginAsync(string username, string pwd)
     {
-        var context = new PrincipalContext(ContextType.Domain, configuration["ip"]);
-        var validated = context.ValidateCredentials(username, pwd);
-
-        if (validated)
-        {
-            var db = await factory.CreateDbContextAsync();
-            var user = await db.Users.AsNoTracking().FirstOrDefaultAsync(x => x.Email == $"{username}@sasp.fr");
-            if (user != null)
-            {
-                var claims = new []
-                {
-                    new Claim("name", user.Name),
-                    new Claim(ClaimTypes.Email, $"{username}@sasp.fr"),
-                    new Claim(ClaimTypes.Role, user.Role.ToString())
-                };
-                
-                var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
-                var claimsPrincipal = new ClaimsPrincipal(claimsIdentity);
-                var guid = Guid.NewGuid();
-                userTokenHoldingService.PendingIdentities.Add(guid, claimsPrincipal);
-                return guid;
-            }
-
-            return Guid.Empty; // The user is registered in the local AD but isn't saved in database yet
-        }
-
+        // var context = new PrincipalContext(ContextType.Domain, configuration["ip"]);
+        // var validated = context.ValidateCredentials(username, pwd);
+        //
+        // if (validated)
+        // {
+        //     var db = await factory.CreateDbContextAsync();
+        //     var user = await db.Users.AsNoTracking().FirstOrDefaultAsync(x => x.Email == $"{username}@sasp.fr");
+        //     if (user != null)
+        //     {
+        //         var claims = new []
+        //         {
+        //             new Claim("name", user.Name),
+        //             new Claim(ClaimTypes.Email, $"{username}@sasp.fr"),
+        //             new Claim(ClaimTypes.Role, user.Role.ToString())
+        //         };
+        //         
+        //         var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+        //         var claimsPrincipal = new ClaimsPrincipal(claimsIdentity);
+        //         var guid = Guid.NewGuid();
+        //         userTokenHoldingService.PendingIdentities.Add(guid, claimsPrincipal);
+        //         return guid;
+        //     }
+        //
+        //     return Guid.Empty; // The user is registered in the local AD but isn't saved in database yet
+        // }
+        //
         return null;
     }
 

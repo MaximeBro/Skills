@@ -1,21 +1,20 @@
-using System.Diagnostics.CodeAnalysis;
-using System.DirectoryServices.AccountManagement;
+using System.DirectoryServices;
+using LdapForNet;
+using LdapForNet.Native;
 using Microsoft.EntityFrameworkCore;
 using Skills.Databases;
-using Skills.Extensions;
 using Skills.Models.Enums;
 
 namespace Skills.Services;
 
 
-[SuppressMessage("Interoperability", "CA1416:Valider la compatibilité de la plateforme")]
 public class ActiveDirectoryService(IConfiguration configuration, IDbContextFactory<SkillsContext> factory)
 {
-    public readonly List<UserPrincipal> DirectoryEntries = new();
+    public readonly List<string> UsersEntries = new();
 
     public async Task InitAsync()
     {
-        DirectoryEntries.AddRange(GetActiveDirectoryUsers());
+        UsersEntries.AddRange(GetADUsers());
         await CheckUsersAsync();
         await SetRootsAsync();
     }
@@ -24,14 +23,53 @@ public class ActiveDirectoryService(IConfiguration configuration, IDbContextFact
     /// Retrieves all the users in the local AD.
     /// </summary>
     /// <returns>All the collaborators registered in the local AD.</returns>
-    private List<UserPrincipal> GetActiveDirectoryUsers()
+    private List<string> GetADUsers()
     {
-        var context = new PrincipalContext(ContextType.Domain, configuration["ip"]);
-        var searcher = new PrincipalSearcher(new UserPrincipal(context));
-        var results = searcher.FindAll().Cast<UserPrincipal>().ToList();
-        var collaborators = results.Where(x => !string.IsNullOrWhiteSpace(x.EmailAddress) && x.EmailAddress.EndsWith("@sasp.fr")).ToList();
+        try
+        {
+            var emails = new List<string>();
+            
+            var connection = new LdapConnection();
+            var ip = configuration.GetSection("DirectoryServices")["ip"];
+            connection.Connect(ip, 389);
+            connection.Bind(Native.LdapAuthType.Negotiate, new LdapCredential()
+            {
+                UserName = configuration.GetSection("DirectoryServices")["login"],
+                Password = configuration.GetSection("DirectoryServices")["password"]
+            });
+            
+            var searchBase = "dc=sasp,dc=local";
+            var searchFilter = "(objectClass=User)";
 
-        return collaborators;
+            var entries = connection.Search(searchBase, searchFilter, null, Native.LdapSearchScope.LDAP_SCOPE_SUB);
+            foreach (var entry in entries)
+            {
+                var directoryEntry = entry.ToDirectoryEntry();
+                var keys = directoryEntry.Attributes.Select(x => x.Name).ToList();
+                if (directoryEntry.Attributes.TryGetValue("mail", out var mail))
+                {
+                    var emailAddress = mail.GetValue<string>() ?? string.Empty;
+                    if (!string.IsNullOrWhiteSpace(emailAddress) && emailAddress.EndsWith("@sasp.fr"))
+                    {
+                        emails.Add(emailAddress);
+                    }
+                }
+
+                if (directoryEntry.Attributes.TryGetValue("displayName", out var name))
+                {
+                    
+                }
+            }
+            connection.Dispose();
+            return emails;
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine("An unexpected error occured about the local AD connection ! See inner exception below :");
+            Console.WriteLine(e);
+        }
+
+        return new();
     }
 
     /// <summary>
@@ -41,9 +79,9 @@ public class ActiveDirectoryService(IConfiguration configuration, IDbContextFact
     {
         var db = await factory.CreateDbContextAsync();
         var savedEmails = await db.Users.AsNoTracking().Select(x => x.Email).ToListAsync();
-        var toAdd = DirectoryEntries.Where(x => !savedEmails.Contains(x.EmailAddress, StringComparer.OrdinalIgnoreCase)).ToList();
+        var toAdd = UsersEntries.Where(x => !savedEmails.Contains(x, StringComparer.OrdinalIgnoreCase)).ToList();
 
-        await db.Users.AddRangeAsync(toAdd.ToUserModel());
+        // await db.Users.AddRange(toAdd);
         await db.SaveChangesAsync();
         await db.DisposeAsync();
     }
