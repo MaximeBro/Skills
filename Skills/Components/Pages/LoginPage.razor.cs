@@ -18,8 +18,6 @@ public partial class LoginPage : FullComponentBase
     
     private LoginModel _model = new();
     private bool _errorMessage;
-    private string _username = string.Empty;
-    private string _password = string.Empty;
 
     private bool _shown;
     public string PasswordIcon => _shown ? Icons.Material.Filled.Visibility : Icons.Material.Filled.VisibilityOff;
@@ -36,7 +34,8 @@ public partial class LoginPage : FullComponentBase
     
     private async Task TrySignInAsync()
     {
-        var guid = await AuthenticationService.TryLoginAsync(_username, _password);
+        if (string.IsNullOrWhiteSpace(_model.Username) || string.IsNullOrWhiteSpace(_model.Password)) return;
+        var guid = await AuthenticationService.TryLoginAsync(_model.Username, _model.Password);
         if (guid == Guid.Empty)
         {
             Snackbar.Add(

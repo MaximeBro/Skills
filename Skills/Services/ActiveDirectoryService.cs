@@ -1,21 +1,21 @@
-using System.Diagnostics.CodeAnalysis;
-using System.DirectoryServices.AccountManagement;
+using System.DirectoryServices.Protocols;
+using System.Net;
 using Microsoft.EntityFrameworkCore;
 using Skills.Databases;
 using Skills.Extensions;
 using Skills.Models.Enums;
+using SearchScope = System.DirectoryServices.Protocols.SearchScope;
 
 namespace Skills.Services;
 
 
-[SuppressMessage("Interoperability", "CA1416:Valider la compatibilité de la plateforme")]
 public class ActiveDirectoryService(IConfiguration configuration, IDbContextFactory<SkillsContext> factory)
 {
-    public readonly List<UserPrincipal> DirectoryEntries = new();
+    public readonly List<string> UsersEntries = new();
 
     public async Task InitAsync()
     {
-        DirectoryEntries.AddRange(GetActiveDirectoryUsers());
+        UsersEntries.AddRange(GetADUsers());
         await CheckUsersAsync();
         await SetRootsAsync();
     }
@@ -24,14 +24,49 @@ public class ActiveDirectoryService(IConfiguration configuration, IDbContextFact
     /// Retrieves all the users in the local AD.
     /// </summary>
     /// <returns>All the collaborators registered in the local AD.</returns>
-    private List<UserPrincipal> GetActiveDirectoryUsers()
+    private List<string> GetADUsers()
     {
-        var context = new PrincipalContext(ContextType.Domain, configuration["ip"]);
-        var searcher = new PrincipalSearcher(new UserPrincipal(context));
-        var results = searcher.FindAll().Cast<UserPrincipal>().ToList();
-        var collaborators = results.Where(x => !string.IsNullOrWhiteSpace(x.EmailAddress) && x.EmailAddress.EndsWith("@sasp.fr")).ToList();
+        try
+        {
+            var emails = new List<string>();
+            
+            var endpoint = new LdapDirectoryIdentifier(configuration.GetSection("DirectoryServices")["ip"], false, false);
+            var ldap = new LdapConnection(endpoint, new NetworkCredential(configuration.GetSection("DirectoryServices")["login"], configuration.GetSection("DirectoryServices")["password"]))
+            {
+                AuthType = AuthType.Negotiate
+            };
 
-        return collaborators;
+            ldap.SessionOptions.ProtocolVersion = 3;
+            ldap.SessionOptions.ReferralChasing = ReferralChasingOptions.None;
+            ldap.Timeout = TimeSpan.FromMinutes(1);
+            ldap.Bind();
+
+            var dn = "dc=sasp,dc=local";
+            var filter = "(objectClass=User)";
+            var request = new SearchRequest(dn, filter, SearchScope.Subtree);
+            var result = ldap.SendRequest(request);
+            if (result is SearchResponse response)
+            {
+                foreach (SearchResultEntry entry in response.Entries)
+                {
+                    if (entry.Attributes.Contains("mail"))
+                    {
+                        var email = entry.Attributes["mail"].GetValues(typeof(string))[0] as string;
+                        if (!string.IsNullOrWhiteSpace(email)) emails.Add(email);
+                    }
+                }
+            }
+            
+            ldap.Dispose();
+            return emails;
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine("An unexpected error occured about the local AD connection ! See inner exception below :");
+            Console.WriteLine(e);
+        }
+
+        return new();
     }
 
     /// <summary>
@@ -41,9 +76,9 @@ public class ActiveDirectoryService(IConfiguration configuration, IDbContextFact
     {
         var db = await factory.CreateDbContextAsync();
         var savedEmails = await db.Users.AsNoTracking().Select(x => x.Email).ToListAsync();
-        var toAdd = DirectoryEntries.Where(x => !savedEmails.Contains(x.EmailAddress, StringComparer.OrdinalIgnoreCase)).ToList();
+        var toAdd = UsersEntries.Where(x => !savedEmails.Contains(x, StringComparer.OrdinalIgnoreCase)).ToList();
 
-        await db.Users.AddRangeAsync(toAdd.ToUserModel());
+        await db.Users.AddRangeAsync(toAdd.ToUserModels());
         await db.SaveChangesAsync();
         await db.DisposeAsync();
     }

@@ -1,5 +1,6 @@
 using System.Diagnostics.CodeAnalysis;
-using System.DirectoryServices.AccountManagement;
+using System.DirectoryServices.Protocols;
+using System.Net;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Components.Authorization;
@@ -23,22 +24,27 @@ public class ADAuthenticationService(IConfiguration configuration, IDbContextFac
     
     public async Task<Guid?> TryLoginAsync(string username, string pwd)
     {
-        var context = new PrincipalContext(ContextType.Domain, configuration["ip"]);
-        var validated = context.ValidateCredentials(username, pwd);
-
-        if (validated)
+        try
         {
+            var endpoint =
+                new LdapDirectoryIdentifier(configuration.GetSection("DirectoryServices")["ip"], false, false);
+            var ldap = new LdapConnection(endpoint, new NetworkCredential(username, pwd))
+            {
+                AuthType = AuthType.Negotiate
+            };
+            ldap.Bind();
+
             var db = await factory.CreateDbContextAsync();
             var user = await db.Users.AsNoTracking().FirstOrDefaultAsync(x => x.Email == $"{username}@sasp.fr");
             if (user != null)
             {
-                var claims = new []
+                var claims = new[]
                 {
                     new Claim("name", user.Name),
                     new Claim(ClaimTypes.Email, $"{username}@sasp.fr"),
                     new Claim(ClaimTypes.Role, user.Role.ToString())
                 };
-                
+
                 var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
                 var claimsPrincipal = new ClaimsPrincipal(claimsIdentity);
                 var guid = Guid.NewGuid();
@@ -48,8 +54,11 @@ public class ADAuthenticationService(IConfiguration configuration, IDbContextFac
 
             return Guid.Empty; // The user is registered in the local AD but isn't saved in database yet
         }
-
-        return null;
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            return null;
+        }
     }
 
     public async Task<bool> IsAuthenticatedAsync(Task<AuthenticationState> stateTask)

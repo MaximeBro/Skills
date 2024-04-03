@@ -30,7 +30,6 @@
       <PackageReference Include="MiniExcel" Version="1.31.3" />
       <PackageReference Include="MudBlazor" Version="6.19.1" />
       <PackageReference Include="System.DirectoryServices" Version="8.0.0" />
-      <PackageReference Include="System.DirectoryServices.AccountManagement" Version="8.0.0" />
       <PackageReference Include="System.DirectoryServices.Protocols" Version="8.0.0" />
     </ItemGroup>
 
