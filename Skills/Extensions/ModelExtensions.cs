@@ -16,4 +16,14 @@ public static class ModelExtensions
     {
         return Enum.GetValues(@this.GetType()).Cast<Enum>().Where(@this.HasFlag);
     }
+
+    public static IEnumerable<UserModel> ToUserModels(this IEnumerable<string> @this)
+    {
+        return @this.ToList().ConvertAll(x => new UserModel
+        {
+            Email = x,
+            Username = x.Replace("@sasp.fr", string.Empty),
+            Name = $"{x.Replace("@sasp.fr", string.Empty).Split(".")[0].FirstCharToUpper()} {x.Replace("@sasp.fr", string.Empty).Split(".")[1].FirstCharToUpper()}"
+        });
+    }
 }

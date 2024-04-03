@@ -1,9 +1,10 @@
-using System.DirectoryServices;
-using LdapForNet;
-using LdapForNet.Native;
+using System.DirectoryServices.Protocols;
+using System.Net;
 using Microsoft.EntityFrameworkCore;
 using Skills.Databases;
+using Skills.Extensions;
 using Skills.Models.Enums;
+using SearchScope = System.DirectoryServices.Protocols.SearchScope;
 
 namespace Skills.Services;
 
@@ -29,38 +30,34 @@ public class ActiveDirectoryService(IConfiguration configuration, IDbContextFact
         {
             var emails = new List<string>();
             
-            var connection = new LdapConnection();
-            var ip = configuration.GetSection("DirectoryServices")["ip"];
-            connection.Connect(ip, 389);
-            connection.Bind(Native.LdapAuthType.Negotiate, new LdapCredential()
+            var endpoint = new LdapDirectoryIdentifier(configuration.GetSection("DirectoryServices")["ip"], false, false);
+            var ldap = new LdapConnection(endpoint, new NetworkCredential(configuration.GetSection("DirectoryServices")["login"], configuration.GetSection("DirectoryServices")["password"]))
             {
-                UserName = configuration.GetSection("DirectoryServices")["login"],
-                Password = configuration.GetSection("DirectoryServices")["password"]
-            });
-            
-            var searchBase = "dc=sasp,dc=local";
-            var searchFilter = "(objectClass=User)";
+                AuthType = AuthType.Negotiate
+            };
 
-            var entries = connection.Search(searchBase, searchFilter, null, Native.LdapSearchScope.LDAP_SCOPE_SUB);
-            foreach (var entry in entries)
+            ldap.SessionOptions.ProtocolVersion = 3;
+            ldap.SessionOptions.ReferralChasing = ReferralChasingOptions.None;
+            ldap.Timeout = TimeSpan.FromMinutes(1);
+            ldap.Bind();
+
+            var dn = "dc=sasp,dc=local";
+            var filter = "(objectClass=User)";
+            var request = new SearchRequest(dn, filter, SearchScope.Subtree);
+            var result = ldap.SendRequest(request);
+            if (result is SearchResponse response)
             {
-                var directoryEntry = entry.ToDirectoryEntry();
-                var keys = directoryEntry.Attributes.Select(x => x.Name).ToList();
-                if (directoryEntry.Attributes.TryGetValue("mail", out var mail))
+                foreach (SearchResultEntry entry in response.Entries)
                 {
-                    var emailAddress = mail.GetValue<string>() ?? string.Empty;
-                    if (!string.IsNullOrWhiteSpace(emailAddress) && emailAddress.EndsWith("@sasp.fr"))
+                    if (entry.Attributes.Contains("mail"))
                     {
-                        emails.Add(emailAddress);
+                        var email = entry.Attributes["mail"].GetValues(typeof(string))[0] as string;
+                        if (!string.IsNullOrWhiteSpace(email)) emails.Add(email);
                     }
                 }
-
-                if (directoryEntry.Attributes.TryGetValue("displayName", out var name))
-                {
-                    
-                }
             }
-            connection.Dispose();
+            
+            ldap.Dispose();
             return emails;
         }
         catch (Exception e)
@@ -81,7 +78,7 @@ public class ActiveDirectoryService(IConfiguration configuration, IDbContextFact
         var savedEmails = await db.Users.AsNoTracking().Select(x => x.Email).ToListAsync();
         var toAdd = UsersEntries.Where(x => !savedEmails.Contains(x, StringComparer.OrdinalIgnoreCase)).ToList();
 
-        // await db.Users.AddRange(toAdd);
+        await db.Users.AddRangeAsync(toAdd.ToUserModels());
         await db.SaveChangesAsync();
         await db.DisposeAsync();
     }
