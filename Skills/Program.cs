@@ -7,12 +7,13 @@ using Skills.Extensions;
 using Skills.Services;
 
 var builder = WebApplication.CreateBuilder(args);
-var dataPath = new DirectoryInfo(Path.Combine(Directory.GetCurrentDirectory(), "/data/")).FullName;
+builder.WebHost.UseUrls("https://localhost:5000", "http://localhost:5001");
 
-#if DEBUG
-dataPath = new DirectoryInfo(Path.Combine(builder.Environment.ContentRootPath, "../data/")).FullName;
-#endif
 
+var dataPath = new DirectoryInfo(Path.Combine(builder.Environment.ContentRootPath, "../data")).FullName;
+
+// var dataPath = new DirectoryInfo(Path.Combine(builder.Environment.WebRootPath, "../data")).FullName;
+Console.WriteLine($"DATA PATH ROUTING -> {dataPath}");
 builder.Configuration.AddJsonFile(Path.Combine(dataPath, "config/main.json"), optional: false, reloadOnChange: true);
 builder.Configuration.AddJsonFile(Path.Combine(dataPath, "config/skills.json"), optional: false, reloadOnChange: true);
 
@@ -68,9 +69,7 @@ app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode();
 
 var themeManager = app.Services.GetRequiredService<ThemeManager>();
-var skillServices = app.Services.GetRequiredService<SkillService>();
 await themeManager.InitAsync();
-await skillServices.InitAsync();
 
 await RunMigrationAsync<SkillsContext>(app);
 
