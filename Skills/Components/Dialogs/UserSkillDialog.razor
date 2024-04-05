@@ -13,7 +13,7 @@
                         <MudSelectItem Value="skill.Id">
                             <MudStack Row="false" Spacing="0">
                                 <MudText Class="mark-one">
-                                    [@skill.Type.Value] - @skill.Category.Value - @skill.SubCategory?.Value
+                                    [@skill.TypeInfo.Value] - @skill.CategoryInfo.Value - @skill.SubCategoryInfo?.Value
                                     <MudText Class="mark-one" Typo="Typo.body2">@skill.Description</MudText>
                                 </MudText>
                             </MudStack>
@@ -60,7 +60,7 @@
         var skill = _skills.FirstOrDefault(y => y.Id == x);
         if (skill is null) return string.Empty;
         
-        return $"[{skill.Type.Value}] - {skill.Category.Value} - {skill.SubCategory?.Value} - {skill.Description}";
+        return $"[{skill.TypeInfo.Value}] - {skill.CategoryInfo.Value} - {skill.SubCategoryInfo?.Value} - {skill.Description}";
     };
 
     private async Task SelectedSkillChanged(Guid skillId)

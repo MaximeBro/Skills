@@ -99,6 +99,26 @@ namespace Skills.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "TypesLevels",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "TEXT", nullable: false),
+                    TypeId = table.Column<Guid>(type: "TEXT", nullable: false),
+                    Level = table.Column<int>(type: "INTEGER", nullable: false),
+                    Value = table.Column<string>(type: "TEXT", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_TypesLevels", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_TypesLevels_SkillsTypes_TypeId",
+                        column: x => x.TypeId,
+                        principalTable: "SkillsTypes",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Userskills",
                 columns: table => new
                 {
@@ -144,6 +164,11 @@ namespace Skills.Migrations
                 column: "TypeId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_TypesLevels_TypeId",
+                table: "TypesLevels",
+                column: "TypeId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Users_GroupId",
                 table: "Users",
                 column: "GroupId");
@@ -157,6 +182,9 @@ namespace Skills.Migrations
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropTable(
+                name: "TypesLevels");
+
             migrationBuilder.DropTable(
                 name: "Userskills");
 

@@ -4,30 +4,30 @@
     <MudContainer MaxWidth="MaxWidth.ExtraLarge">
         <MudGrid Class="mt-8" Justify="Justify.Center">
             <MudItem xs="12">
-                <MudDataGrid T="SkillModel" Items="_models" Bordered Hover Outlined Filterable Striped SortMode="SortMode.Multiple" Dense FixedHeader
+                <MudDataGrid T="AbstractSkillModel" Items="_models" Bordered Hover Outlined Filterable Striped SortMode="SortMode.Multiple" Dense FixedHeader
                              Culture="@(new CultureInfo("fr-FR"))" Height="70vh" Virtualize OverscanCount="25" QuickFilter="@QuickFilter"
                              RowClick="@OnRowClickedAsync">
                     <ToolBarContent>
-                        <MudTooltip Placement="Placement.Bottom" Text="Importer (.xlsx)" Arrow>
-                            <MudIconButton Style="border-radius: 6px!important; padding: 4px!important;" Icon="@IconsFF.FileExcel" Color="Color.Tertiary" />
-                        </MudTooltip>
                         <MudTooltip Class="ml-1" Placement="Placement.Bottom" Text="Créer une compétence" Arrow>
-                            <MudIconButton Class="ml-2" Style="border-radius: 6px!important; padding: 4px!important;" Icon="@IconsF.Add" Color="Color.Tertiary" OnClick="@(() => CreateSkillAsync())"/>
+                            <MudIconButton Class="ml-2" Style="border-radius: 6px!important; padding: 4px!important;" Icon="@IconsF.AccountTree" Color="Color.Tertiary" OnClick="@(() => CreateSkillAsync())"/>
+                        </MudTooltip>
+                        <MudTooltip Class="ml-1" Placement="Placement.Top" Text="Créer un soft-skill" Arrow>
+                            <MudIconButton Class="ml-2" Style="border-radius: 6px!important; padding: 4px!important;" Icon="@IconsF.Handshake" Color="Color.Tertiary" OnClick="@(() => CreateSoftSkillAsync())"/>
                         </MudTooltip>
                         <MudTooltip Placement="Placement.Right" Text="Pour éditer, faites un double clic sur une ligne !" Arrow>
-                            <MudIcon Class="ml-2 mt-1" Icon="@IconsF.Info" Color="Color.Info" />
+                            <MudIcon Class="ml-3 mt-1" Icon="@IconsF.Info" Color="Color.Info" />
                         </MudTooltip>
                         <MudSpacer/>
                         <MudTextField T="string" @bind-Value="_search" Immediate Adornment="Adornment.Start" Clearable
                                       AdornmentIcon="@IconsF.Search" Placeholder="Rechercher" Class="flex-grow-0 mr-8 mt-0" Style="width: 400px;"/>
                     </ToolBarContent>
                     <Columns>
-                        <HierarchyColumn T="SkillModel" />
-                        <PropertyColumn Title="Type" Property="x => x.Type.Value"/>
-                        <PropertyColumn Title="Catégorie" Property="x => x.Category.Value"/>
+                        <HierarchyColumn T="AbstractSkillModel" />
+                        <PropertyColumn Title="Type" Property="x => x.Type"/>
+                        <PropertyColumn Title="Catégorie" Property="x => x.Category"/>
                         <TemplateColumn Title="Sous catégorie">
                             <CellTemplate>
-                                <MudText Typo="Typo.body2">@(context.Item.SubCategory?.Value ?? string.Empty)</MudText>
+                                <MudText Typo="Typo.body2">@(context.Item.SubCategory ?? string.Empty)</MudText>
                             </CellTemplate>
                         </TemplateColumn>
                         <PropertyColumn Title="Description" Property="x => x.Description"/>
@@ -51,7 +51,16 @@
                                     @foreach (var typeLevel in _skillTypeLevels[context.Item.Id].OrderBy(x => x.Level))
                                     {
                                         <MudStack Row Justify="Justify.FlexStart">
-                                            <MudText Class="mark-one"><MudChip>@typeLevel.Level</MudChip> @typeLevel.Value</MudText>
+                                            <MudText Class="mark-one" Typo="Typo.body2"><MudChip Size="Size.Small" Style="font-weight: bold!important;">@typeLevel.Level</MudChip> @typeLevel.Value</MudText>
+                                        </MudStack>
+                                    }
+                                }
+                                else if (_softSkillTypeLevels[context.Item.Id].Any())
+                                {
+                                    @foreach (var typeLevel in _softSkillTypeLevels[context.Item.Id].OrderBy(x => x.Level))
+                                    {
+                                        <MudStack Row Justify="Justify.FlexStart">
+                                            <MudText Class="mark-one" Typo="Typo.body2"><MudChip Size="Size.Small" Style="font-weight: bold!important;">@typeLevel.Level</MudChip> @typeLevel.Value</MudText>
                                         </MudStack>
                                     }
                                 }

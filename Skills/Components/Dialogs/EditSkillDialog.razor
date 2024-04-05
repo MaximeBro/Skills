@@ -65,9 +65,9 @@
         _categories = db.SkillsTypes.AsNoTracking().Where(x => x.Type == SkillDataType.Category).ToList();
         _subcategories = db.SkillsTypes.AsNoTracking().Where(x => x.Type == SkillDataType.SubCategory).ToList();
         
-        _selectedType = Model.Type;
-        _selectedCategory = Model.Category;
-        _selectedSubCategory = Model.SubCategory;
+        _selectedType = Model.TypeInfo;
+        _selectedCategory = Model.CategoryInfo;
+        _selectedSubCategory = Model.SubCategoryInfo;
         _desc = Model.Description ?? string.Empty;
 
         await db.DisposeAsync();

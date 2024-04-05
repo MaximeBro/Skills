@@ -113,6 +113,11 @@ public partial class SkillsTypes : FullComponentBase
             await Manager.RefreshSkillsAsync();
         }
     }
+
+    public async Task RefreshSkillsAsync()
+    {
+        await Manager.RefreshSkillsAsync();
+    }
     
     private async Task RefreshDataAsync()
     {

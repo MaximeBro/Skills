@@ -25,10 +25,10 @@ public partial class SkillsProfile : ComponentBase
     {
         if (x.Skill != null)
         {
-            if (x.Skill.Type.Value.Contains(_search, StringComparison.OrdinalIgnoreCase)) return true;
-            if (x.Skill.Category.Value.Contains(_search, StringComparison.OrdinalIgnoreCase)) return true;
-            if (x.Skill.SubCategory != null && x.Skill.SubCategory.Value.Contains(_search, StringComparison.OrdinalIgnoreCase)) return true;
-            if (x.Skill.Description != null && x.Skill.Description.Contains(_search, StringComparison.OrdinalIgnoreCase)) return true;
+            if (!string.IsNullOrWhiteSpace(x.Skill.Type) && x.Skill.Type.Contains(_search, StringComparison.OrdinalIgnoreCase)) return true;
+            if (!string.IsNullOrWhiteSpace(x.Skill.Category) && x.Skill.Category.Contains(_search, StringComparison.OrdinalIgnoreCase)) return true;
+            if (!string.IsNullOrWhiteSpace(x.Skill.SubCategory) && x.Skill.SubCategory.Contains(_search, StringComparison.OrdinalIgnoreCase)) return true;
+            if (!string.IsNullOrWhiteSpace(x.Skill.Description) && x.Skill.Description.Contains(_search, StringComparison.OrdinalIgnoreCase)) return true;
         } 
         
         return false;
@@ -124,9 +124,7 @@ public partial class SkillsProfile : ComponentBase
         var db = await Factory.CreateDbContextAsync();
         _userSkillsModels = await db.Userskills.AsNoTracking()
                                                 .Where(x => x.UserId == User.Id)
-                                               .Include(x => x.Skill).ThenInclude(x => x!.Type)
-                                               .Include(x => x.Skill).ThenInclude(x => x!.Category)
-                                               .Include(x => x.Skill).ThenInclude(x => x!.SubCategory)
+                                               .Include(x => x.Skill).ThenInclude(x => x!.TypeInfo)
                                                .Include(x => x.User).ThenInclude(x => x!.Group)
                                                .ToListAsync();
         
