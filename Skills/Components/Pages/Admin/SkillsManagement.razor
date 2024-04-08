@@ -5,7 +5,7 @@
     <Content>
         <MudTabs Centered Color="Color.Primary" ActivePanelIndex="0">
             <SkillsMapping @ref="_skillsMapping" Title="Mapping" Manager="@this" />
-            <SkillsTypes Title="Types" Manager="@this" />
+            <SkillsTypes @ref="_skillsTypes" Title="Types" Manager="@this" />
         </MudTabs>
     </Content>
 </AuthorizedComponent>

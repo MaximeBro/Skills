@@ -11,7 +11,7 @@ using Skills.Databases;
 namespace Skills.Migrations
 {
     [DbContext(typeof(SkillsContext))]
-    [Migration("20240327095850_Init")]
+    [Migration("20240405071505_Init")]
     partial class Init
     {
         /// <inheritdoc />
@@ -88,6 +88,29 @@ namespace Skills.Migrations
                     b.HasIndex("TypeId");
 
                     b.ToTable("Skills");
+                });
+
+            modelBuilder.Entity("Skills.Models.TypeLevel", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("Level")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<Guid>("TypeId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Value")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TypeId");
+
+                    b.ToTable("TypesLevels");
                 });
 
             modelBuilder.Entity("Skills.Models.UserModel", b =>
@@ -170,6 +193,17 @@ namespace Skills.Migrations
                     b.Navigation("Group");
 
                     b.Navigation("SubCategory");
+
+                    b.Navigation("Type");
+                });
+
+            modelBuilder.Entity("Skills.Models.TypeLevel", b =>
+                {
+                    b.HasOne("Skills.Models.SKillInfo", "Type")
+                        .WithMany()
+                        .HasForeignKey("TypeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Type");
                 });

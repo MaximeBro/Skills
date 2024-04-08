@@ -1,21 +1,22 @@
-using System.DirectoryServices.Protocols;
-using System.Net;
+using System.Diagnostics.CodeAnalysis;
+using System.DirectoryServices;
 using Microsoft.EntityFrameworkCore;
 using Skills.Databases;
 using Skills.Extensions;
+using Skills.Models;
 using Skills.Models.Enums;
-using SearchScope = System.DirectoryServices.Protocols.SearchScope;
 
 namespace Skills.Services;
 
 
+[SuppressMessage("Interoperability", "CA1416:Valider la compatibilité de la plateforme")]
 public class ActiveDirectoryService(IConfiguration configuration, IDbContextFactory<SkillsContext> factory)
 {
-    public readonly List<string> UsersEntries = new();
+    public readonly List<UserModel> DirectoryEntries = new();
 
     public async Task InitAsync()
     {
-        UsersEntries.AddRange(GetADUsers());
+        DirectoryEntries.AddRange(GetActiveDirectoryUsers());
         await CheckUsersAsync();
         await SetRootsAsync();
     }
@@ -24,49 +25,37 @@ public class ActiveDirectoryService(IConfiguration configuration, IDbContextFact
     /// Retrieves all the users in the local AD.
     /// </summary>
     /// <returns>All the collaborators registered in the local AD.</returns>
-    private List<string> GetADUsers()
+    private List<UserModel> GetActiveDirectoryUsers()
     {
         try
         {
-            var emails = new List<string>();
-            
-            var endpoint = new LdapDirectoryIdentifier(configuration.GetSection("DirectoryServices")["ip"], false, false);
-            var ldap = new LdapConnection(endpoint, new NetworkCredential(configuration.GetSection("DirectoryServices")["login"], configuration.GetSection("DirectoryServices")["password"]))
+            var collaborators = new List<UserModel>();
+            var entry = new DirectoryEntry("LDAP://sasp.local", configuration.GetSection("DirectoryServices")["login"], configuration.GetSection("DirectoryServices")["password"]);
+            var searcher = new DirectorySearcher(entry, "(objectClass=user)");
+            var users = searcher.FindAll().Cast<SearchResult>().ToList();
+            foreach (var user in users.Where(x => x.Properties.Contains("mail")).ToList())
             {
-                AuthType = AuthType.Negotiate
-            };
-
-            ldap.SessionOptions.ProtocolVersion = 3;
-            ldap.SessionOptions.ReferralChasing = ReferralChasingOptions.None;
-            ldap.Timeout = TimeSpan.FromMinutes(1);
-            ldap.Bind();
-
-            var dn = "dc=sasp,dc=local";
-            var filter = "(objectClass=User)";
-            var request = new SearchRequest(dn, filter, SearchScope.Subtree);
-            var result = ldap.SendRequest(request);
-            if (result is SearchResponse response)
-            {
-                foreach (SearchResultEntry entry in response.Entries)
+                var directoryEntry = user.GetDirectoryEntry();
+                var flags = Convert.ToInt32(directoryEntry.Properties["userAccountControl"][0]?.ToString() ?? string.Empty);
+                
+                var model = new UserModel
                 {
-                    if (entry.Attributes.Contains("mail"))
-                    {
-                        var email = entry.Attributes["mail"].GetValues(typeof(string))[0] as string;
-                        if (!string.IsNullOrWhiteSpace(email)) emails.Add(email);
-                    }
-                }
+                    Email = directoryEntry.Properties["mail"].Value?.ToString() ?? string.Empty,
+                    IsDisabled = Convert.ToBoolean(flags & 0x00000002) // 0x00000002 == ACCOUNT_DISABLED
+                };
+                model.Username = model.Email.Replace("@sasp.fr", String.Empty);
+                model.Name = $"{model.Email.Replace("@sasp.fr", string.Empty).Split(".")[0].FirstCharToUpper()} {model.Email.Replace("@sasp.fr", string.Empty).Split(".")[1].FirstCharToUpper()}";
+                collaborators.Add(model);
             }
-            
-            ldap.Dispose();
-            return emails;
+            return collaborators;
         }
         catch (Exception e)
-        {
-            Console.WriteLine("An unexpected error occured about the local AD connection ! See inner exception below :");
+        {   // Do not remove those prints because they're used to debug AD requests errors !
             Console.WriteLine(e);
+            Console.WriteLine("///////////////////////// AD DEBUGGING /////////////////////////");
+            Console.WriteLine(e.InnerException);
+            throw;
         }
-
-        return new();
     }
 
     /// <summary>
@@ -76,9 +65,9 @@ public class ActiveDirectoryService(IConfiguration configuration, IDbContextFact
     {
         var db = await factory.CreateDbContextAsync();
         var savedEmails = await db.Users.AsNoTracking().Select(x => x.Email).ToListAsync();
-        var toAdd = UsersEntries.Where(x => !savedEmails.Contains(x, StringComparer.OrdinalIgnoreCase)).ToList();
-
-        await db.Users.AddRangeAsync(toAdd.ToUserModels());
+        var toAdd = DirectoryEntries.Where(x => !savedEmails.Contains(x.Email, StringComparer.OrdinalIgnoreCase)).ToList();
+        
+        await db.Users.AddRangeAsync(toAdd);
         await db.SaveChangesAsync();
         await db.DisposeAsync();
     }

@@ -39,17 +39,17 @@
                     <HierarchyColumn T="UserSkillModel" />
                     <TemplateColumn Title="Type">
                         <CellTemplate>
-                            <MudText Class="mark-one">@(context.Item.Skill?.Type.Value ?? string.Empty)</MudText>
+                            <MudText Class="mark-one">@(context.Item.Skill?.Type ?? string.Empty)</MudText>
                         </CellTemplate>
                     </TemplateColumn>
                     <TemplateColumn Title="Catégorie">
                         <CellTemplate>
-                            <MudText Class="mark-one">@(context.Item.Skill?.Category.Value ?? string.Empty)</MudText>
+                            <MudText Class="mark-one">@(context.Item.Skill?.Category ?? string.Empty)</MudText>
                         </CellTemplate>
                     </TemplateColumn>
                     <TemplateColumn Title="Sous catégorie">
                         <CellTemplate>
-                            <MudText Class="mark-one">@(context.Item.Skill?.SubCategory?.Value ?? string.Empty)</MudText>
+                            <MudText Class="mark-one">@(context.Item.Skill?.SubCategory ?? string.Empty)</MudText>
                         </CellTemplate>
                     </TemplateColumn>
                     <TemplateColumn Title="Description">
@@ -78,7 +78,7 @@
                         <MudText Style="font-weight: bold;" GutterBottom>Niveau sélectionné</MudText>
                         <MudStack Class="px-2" Row Spacing="0">
                             <MudText Class="mark-one">
-                                <MudChip>@context.Item.Level</MudChip> @_selectedLevels[context.Item.SkillId]
+                                <MudChip Size="Size.Small" Style="font-weight: bold;">@context.Item.Level</MudChip> @_selectedLevels[context.Item.SkillId]
                             </MudText>
                         </MudStack>
                     </MudStack>

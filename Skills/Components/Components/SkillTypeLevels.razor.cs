@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Components;
 using Microsoft.EntityFrameworkCore;
 using MudBlazor;
+using Skills.Components.Pages.Admin.SkillsTabs;
 using Skills.Databases;
 using Skills.Models;
 
@@ -10,6 +11,7 @@ public partial class SkillTypeLevels : FullComponentBase
 {
     [Inject] public IDbContextFactory<SkillsContext> Factory { get; set; } = null!;
     [Inject] public ISnackbar Snackbar { get; set; } = null!;
+    [Parameter] public SkillsTypes Parent { get; set; } = null!;
     [Parameter] public SKillInfo Type { get; set; } = null!;
     
     private string _levelZeroText = string.Empty;
@@ -52,6 +54,7 @@ public partial class SkillTypeLevels : FullComponentBase
         });
         await db.SaveChangesAsync();
         await db.DisposeAsync();
+        await Parent.RefreshSkillsAsync();
     }
 
     private string GetValueOf(int level)

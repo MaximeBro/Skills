@@ -7,12 +7,13 @@ using Skills.Extensions;
 using Skills.Services;
 
 var builder = WebApplication.CreateBuilder(args);
-var dataPath = new DirectoryInfo(Path.Combine(Directory.GetCurrentDirectory(), "/data/")).FullName;
+builder.WebHost.UseUrls("https://localhost:5000", "http://localhost:5001");
 
-#if DEBUG
-dataPath = new DirectoryInfo(Path.Combine(builder.Environment.ContentRootPath, "../data/")).FullName;
-#endif
 
+var dataPath = new DirectoryInfo(Path.Combine(builder.Environment.ContentRootPath, "../data")).FullName;
+
+// var dataPath = new DirectoryInfo(Path.Combine(builder.Environment.WebRootPath, "../data")).FullName;
+Console.WriteLine($"DATA PATH ROUTING -> {dataPath}");
 builder.Configuration.AddJsonFile(Path.Combine(dataPath, "config/main.json"), optional: false, reloadOnChange: true);
 builder.Configuration.AddJsonFile(Path.Combine(dataPath, "config/skills.json"), optional: false, reloadOnChange: true);
 
@@ -68,15 +69,15 @@ app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode();
 
 var themeManager = app.Services.GetRequiredService<ThemeManager>();
-var skillServices = app.Services.GetRequiredService<SkillService>();
 await themeManager.InitAsync();
-await skillServices.InitAsync();
 
 await RunMigrationAsync<SkillsContext>(app);
 
-// This service needs migrations to be performed before its InitAsync method is called because it may produce requests on the SkillsContext !
+// These services need migrations to be performed before their InitAsync method is called because it may produce requests on the SkillsContext !
 var adService = app.Services.GetRequiredService<ActiveDirectoryService>();
+var skillService = app.Services.GetRequiredService<SkillService>();
 await adService.InitAsync();
+await skillService.InitAsync();
 
 await app.RunAsync();
 return;

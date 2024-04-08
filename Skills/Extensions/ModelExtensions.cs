@@ -1,4 +1,5 @@
 using System.Diagnostics.CodeAnalysis;
+using System.DirectoryServices.AccountManagement;
 using Skills.Models;
 
 namespace Skills.Extensions;
@@ -17,13 +18,31 @@ public static class ModelExtensions
         return Enum.GetValues(@this.GetType()).Cast<Enum>().Where(@this.HasFlag);
     }
 
-    public static IEnumerable<UserModel> ToUserModels(this IEnumerable<string> @this)
+    /// <summary>
+    /// Converts a <see cref="UserPrincipal"/> into a <see cref="UserModel"/> with the name and email of the user.
+    /// </summary>
+    /// <param name="this">The <see cref="UserPrincipal"/> to convert.</param>
+    /// <returns>The converted user.</returns>
+    [SuppressMessage("Interoperability", "CA1416:Valider la compatibilité de la plateforme")]
+    public static UserModel ToUserModel(this UserPrincipal @this)
     {
-        return @this.ToList().ConvertAll(x => new UserModel
+        return new UserModel
         {
-            Email = x,
-            Username = x.Replace("@sasp.fr", string.Empty),
-            Name = $"{x.Replace("@sasp.fr", string.Empty).Split(".")[0].FirstCharToUpper()} {x.Replace("@sasp.fr", string.Empty).Split(".")[1].FirstCharToUpper()}"
-        });
+            Name = $"{@this.EmailAddress.Replace("@sasp.fr", string.Empty).Split(".")[0].FirstCharToUpper()} {@this.EmailAddress.Replace("@sasp.fr", string.Empty).Split(".")[1].FirstCharToUpper()}",
+            Email = @this.EmailAddress,
+            Username = @this.EmailAddress.Replace("@sasp.fr", string.Empty),
+            IsDisabled = @this.Enabled != null && (bool)!@this.Enabled
+        };
+    }
+    
+    /// <summary>
+    /// Converts a list of <see cref="UserPrincipal"/> into a list of <see cref="UserModel"/> with the name and email of each user.
+    /// </summary>
+    /// <param name="this">The list of <see cref="UserPrincipal"/> to convert.</param>
+    /// <returns>The converted users as a new list.</returns>
+    [SuppressMessage("Interoperability", "CA1416:Valider la compatibilité de la plateforme")]
+    public static List<UserModel> ToUserModel(this List<UserPrincipal> @this)
+    {
+        return @this.Select(x => x.ToUserModel()).ToList();
     }
 }

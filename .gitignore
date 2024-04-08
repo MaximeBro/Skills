@@ -401,3 +401,7 @@ FodyWeavers.xsd
 global.json
 
 Skills/pub/
+
+pub/
+
+data/db/
