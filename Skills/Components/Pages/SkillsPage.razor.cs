@@ -10,6 +10,8 @@ public partial class SkillsPage : FullComponentBase
 {
     [Inject] public IDbContextFactory<SkillsContext> Factory { get; set; } = null!;
     
+    private Dictionary<Guid, List<TypeLevel>> _skillTypeLevels = new();
+    private Dictionary<Guid, List<SoftTypeLevel>> _softSkillTypeLevels = new();
     private List<AbstractSkillModel> _models = new();
     private string _search = string.Empty;
 
@@ -31,19 +33,32 @@ public partial class SkillsPage : FullComponentBase
     private async Task RefreshDataAsync()
     {
         var db = await Factory.CreateDbContextAsync();
-        var models = await db.Skills.AsNoTracking()
-                                 .Include(x => x.TypeInfo)
-                                 .Include(x => x.CategoryInfo)
-                                 .Include(x => x.SubCategoryInfo)
-                                 .ToListAsync();
+        var skillModels = await db.Skills.AsNoTracking()
+            .Include(x => x.TypeInfo)
+            .Include(x => x.CategoryInfo)
+            .Include(x => x.SubCategoryInfo)
+            .ToListAsync();
 
-        foreach (var model in models)
+        var softSkillsModels = await db.SoftSkills.AsNoTracking()
+            .Include(x => x.TypeInfo)
+            .ToListAsync();
+
+        foreach (var model in skillModels)
         {
             model.Type = model.TypeInfo.Value;
             model.Category = model.CategoryInfo.Value;
             model.SubCategory = model.SubCategoryInfo?.Value ?? string.Empty;
         }
 
-        _models = new List<AbstractSkillModel>(models);
+        foreach (var model in softSkillsModels) model.Type = model.TypeInfo.Value;
+
+        _models.Clear();
+        _models.AddRange(new List<AbstractSkillModel>(skillModels));
+        _models.AddRange(new List<AbstractSkillModel>(softSkillsModels));
+
+        _skillTypeLevels.Clear();
+        _softSkillTypeLevels.Clear();
+        foreach (var model in _models) _skillTypeLevels.Add(model.Id, db.TypesLevels.AsNoTracking().Where(x => x.TypeId == model.TypeId).ToList());
+        foreach (var model in _models) _softSkillTypeLevels.Add(model.Id, db.SoftTypesLevels.AsNoTracking().Where(x => x.SkillId == model.Id).ToList());
     }
 }

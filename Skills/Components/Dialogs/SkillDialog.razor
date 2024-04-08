@@ -5,7 +5,7 @@
         <MudIconButton Class="ml-n4" Icon="@IconsF.Close" Color="Color.Dark" OnClick="@(() => Dialog.Close())" />
         <MudStack Class="px-4 py-2" Justify="Justify.SpaceEvenly" Row="false" Spacing="0">
             <MudStack Row Justify="Justify.Center">
-                <MudSelect T="SKillInfo?" @bind-Value="_selectedType" Label="Type" Required Style="min-width: 220px;"
+                <MudSelect T="SKillInfo?" @bind-Value="_selectedType" Label="Type" Required Style="min-width: 220px;" ToStringFunc="@(skill => skill?.Value ?? string.Empty)"
                            AnchorOrigin="Origin.BottomLeft" TransformOrigin="Origin.TopLeft">
                     @foreach (var type in _types)
                     {
@@ -13,7 +13,7 @@
                     }
                 </MudSelect>
 
-                <MudSelect T="SKillInfo?" @bind-Value="_selectedCategory" Label="Catégorie" Required Style="min-width: 220px;" 
+                <MudSelect T="SKillInfo?" @bind-Value="_selectedCategory" Label="Catégorie" Required Style="min-width: 220px;" ToStringFunc="@(skill => skill?.Value ?? string.Empty)"
                            AnchorOrigin="Origin.BottomLeft" TransformOrigin="Origin.TopLeft">
                     @foreach (var category in _categories)
                     {
@@ -23,7 +23,7 @@
             </MudStack>
             
             <MudStack Row Justify="Justify.Center">
-                <MudSelect T="SKillInfo?" @bind-Value="_selectedSubCategory" Label="Sous catégorie" Style="min-width: 220px;"
+                <MudSelect T="SKillInfo?" @bind-Value="_selectedSubCategory" Label="Sous catégorie" Style="min-width: 220px;" ToStringFunc="@(skill => skill?.Value ?? string.Empty)"
                            AnchorOrigin="Origin.BottomLeft" TransformOrigin="Origin.TopLeft">
                     @foreach (var subcategory in _subcategories)
                     {
@@ -45,6 +45,7 @@
 
     [Inject] public IDbContextFactory<SkillsContext> Factory { get; set; } = null!;
     [Inject] public ISnackbar Snackbar { get; set; } = null!;
+    [Parameter] public SkillModel? Model { get; set; }
 
     private List<SKillInfo> _types = new();
     private List<SKillInfo> _categories = new();
@@ -59,9 +60,17 @@
     protected override async Task OnInitializedAsync()
     {
         var db = await Factory.CreateDbContextAsync();
-        _types = db.SkillsTypes.AsNoTracking().Where(x => x.Type == SkillDataType.Type).ToList();
+        _types = db.SkillsTypes.AsNoTracking().Where(x => x.Type == SkillDataType.Type && x.Value != "Soft-Skill").ToList();
         _categories = db.SkillsTypes.AsNoTracking().Where(x => x.Type == SkillDataType.Category).ToList();
         _subcategories = db.SkillsTypes.AsNoTracking().Where(x => x.Type == SkillDataType.SubCategory).ToList();
+
+        if (Model != null)
+        {
+            _selectedType = Model.TypeInfo;
+            _selectedCategory = Model.CategoryInfo;
+            _selectedSubCategory = Model.SubCategoryInfo;
+            _desc = Model.Description ?? string.Empty;
+        }
     }
 
     private void Submit()

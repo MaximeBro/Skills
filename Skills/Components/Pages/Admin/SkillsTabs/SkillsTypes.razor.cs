@@ -122,7 +122,7 @@ public partial class SkillsTypes : FullComponentBase
     private async Task RefreshDataAsync()
     {
         var db = await Factory.CreateDbContextAsync();
-        _types = db.SkillsTypes.AsNoTracking().Where(x => x.Type == SkillDataType.Type).ToList();
+        _types = db.SkillsTypes.AsNoTracking().Where(x => x.Type == SkillDataType.Type && x.Value != "Soft-Skill").ToList();
         _categories = db.SkillsTypes.AsNoTracking().Where(x => x.Type == SkillDataType.Category).ToList();
         _subcategories = db.SkillsTypes.AsNoTracking().Where(x => x.Type == SkillDataType.SubCategory).ToList();
         await db.DisposeAsync();

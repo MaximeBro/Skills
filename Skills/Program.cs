@@ -73,9 +73,11 @@ await themeManager.InitAsync();
 
 await RunMigrationAsync<SkillsContext>(app);
 
-// This service needs migrations to be performed before its InitAsync method is called because it may produce requests on the SkillsContext !
+// These services need migrations to be performed before their InitAsync method is called because it may produce requests on the SkillsContext !
 var adService = app.Services.GetRequiredService<ActiveDirectoryService>();
+var skillService = app.Services.GetRequiredService<SkillService>();
 await adService.InitAsync();
+await skillService.InitAsync();
 
 await app.RunAsync();
 return;

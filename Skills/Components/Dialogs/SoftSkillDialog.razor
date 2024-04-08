@@ -1,0 +1,87 @@
+@using Microsoft.EntityFrameworkCore
+
+<MudDialog>
+    <DialogContent>
+        <MudIconButton Class="ml-n4" Icon="@IconsF.Close" Color="Color.Dark" OnClick="@(() => Dialog.Close())" />
+        <MudStack Class="px-4 py-2" Justify="Justify.SpaceEvenly" Row="false" Spacing="0">
+            <MudStack Row Justify="Justify.Center">
+                <MudTextField T="string" Label="Type" Text="Soft-Skill" Disabled />
+                <MudTextField T="string" @bind-Value="_desc" Label="Description" Style="min-width: 220px;" />
+            </MudStack>
+            <MudStack Class="mt-6" Row="false" Justify="Justify.Center" Spacing="0">
+                <MudText Style="font-weight: bold;">Niveaux</MudText>
+                <MudStack Class="px-2" Row Justify="Justify.Center">
+                    <MudTextField T="string" @bind-Value="_level0" Class="ma-0" Label="Niveau 0" Variant="Variant.Text" />
+                    <MudTextField T="string" @bind-Value="_level1" Class="ma-0" Label="Niveau 1" Variant="Variant.Text" />
+                </MudStack>
+                <MudStack Class="px-2" Row Justify="Justify.Center">
+                    <MudTextField T="string" @bind-Value="_level2" Class="ma-0" Label="Niveau 2" Variant="Variant.Text" />
+                    <MudTextField T="string" @bind-Value="_level3" Class="ma-0" Label="Niveau 3" Variant="Variant.Text" />
+                </MudStack>
+                <MudStack Class="px-2" Row Justify="Justify.Center">
+                    <MudTextField T="string" @bind-Value="_level4" Class="ma-0" Label="Niveau 4" Variant="Variant.Text" />
+                </MudStack>
+            </MudStack>
+        </MudStack>
+    </DialogContent>
+    <DialogActions>
+        <MudButton Class="mark-one" Color="Color.Success" Variant="Variant.Text" OnClick="@Submit">Enregistrer</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    [CascadingParameter] public MudDialogInstance Dialog { get; set; } = null!;
+
+    [Inject] public IDbContextFactory<SkillsContext> Factory { get; set; } = null!;
+    [Parameter] public SoftSkillEditModel? Model { get; set; }
+
+    private string _level0 = string.Empty;
+    private string _level1 = string.Empty;
+    private string _level2 = string.Empty;
+    private string _level3 = string.Empty;
+    private string _level4 = string.Empty;
+    
+    private Guid _skillId;
+    private string _desc = string.Empty;
+    
+    protected override async Task OnInitializedAsync()
+    {
+        var db = await Factory.CreateDbContextAsync();
+        _skillId = db.SkillsTypes.AsNoTracking().First(x => x.Type == SkillDataType.Type && x.Value == "Soft-Skill").Id;
+        await db.DisposeAsync();
+
+        if (Model != null)
+        {
+            _desc = Model.SoftSkill.Description ?? string.Empty;
+            _level0 = Model.Levels.FirstOrDefault(x => x.Level == 0)?.Value ?? string.Empty;
+            _level1 = Model.Levels.FirstOrDefault(x => x.Level == 1)?.Value ?? string.Empty;
+            _level2 = Model.Levels.FirstOrDefault(x => x.Level == 2)?.Value ?? string.Empty;
+            _level3 = Model.Levels.FirstOrDefault(x => x.Level == 3)?.Value ?? string.Empty;
+            _level4 = Model.Levels.FirstOrDefault(x => x.Level == 4)?.Value ?? string.Empty;
+        }
+        StateHasChanged();
+    }
+
+    private void Submit()
+    {
+        var levels = new List<SoftTypeLevel>();
+        if(!string.IsNullOrWhiteSpace(_level0)) levels.Add(new SoftTypeLevel { Level = 0, Value = _level0 });
+        if(!string.IsNullOrWhiteSpace(_level1)) levels.Add(new SoftTypeLevel { Level = 1, Value = _level1 });
+        if(!string.IsNullOrWhiteSpace(_level2)) levels.Add(new SoftTypeLevel { Level = 2, Value = _level2 });
+        if(!string.IsNullOrWhiteSpace(_level3)) levels.Add(new SoftTypeLevel { Level = 3, Value = _level3 });
+        if(!string.IsNullOrWhiteSpace(_level4)) levels.Add(new SoftTypeLevel { Level = 4, Value = _level4 });
+        
+        var softSkill = new SoftSkillModel
+        {
+            TypeId = _skillId,
+            Description = _desc
+        };
+
+        var editModel = new SoftSkillEditModel
+        {
+            SoftSkill = softSkill,
+            Levels = levels
+        };
+        Dialog.Close(editModel);
+    }
+}

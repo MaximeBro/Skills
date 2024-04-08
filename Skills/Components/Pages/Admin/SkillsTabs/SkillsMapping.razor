@@ -34,7 +34,7 @@
                         <TemplateColumn Title="Actions" Sortable="false" Filterable="false">
                             <CellTemplate Context="row">
                                 <MudTooltip Placement="Placement.Bottom" Text="Éditer" Arrow>
-                                    <MudIconButton Icon="@IconsF.Edit" Size="Size.Small" Color="Color.Primary" OnClick="@(() => EditSkillAsync(row.Item))"/>
+                                    <MudIconButton Icon="@IconsF.Edit" Size="Size.Small" Color="Color.Primary" OnClick="@(() => EditModelAsync(row.Item))"/>
                                 </MudTooltip>
                                 <MudTooltip Class="ml-2" Placement="Placement.Bottom" Text="Supprimer" Arrow>
                                     <MudIconButton Class="ml-4" Icon="@IconsF.Delete" Size="Size.Small" Color="Color.Error" OnClick="@(() => DeleteSkillAsync(row.Item))"/>
