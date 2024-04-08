@@ -1,0 +1,56 @@
+<MudDialog>
+    <DialogContent>
+        <MudIconButton Class="ml-n4" Icon="@IconsF.Close" Color="Color.Dark" OnClick="@(() => Dialog.Close())" />
+        <MudStack Class="px-4 py-2" Justify="Justify.SpaceEvenly" Row="false" Spacing="0">
+            <MudStack Row Justify="Justify.Center" AlignItems="AlignItems.Center" Style="min-width: 300px!important;">
+                <MudFileUpload T="IBrowserFile?" FilesChanged="@UploadFiles">
+                    <ButtonTemplate>
+                        <MudFab HtmlTag="label"
+                                Color="Color.Success"
+                                StartIcon="@IconsF.AttachFile"
+                                Size="Size.Medium"
+                                for="@context.Id" />
+                    </ButtonTemplate>
+                </MudFileUpload>
+                @if (string.IsNullOrWhiteSpace(_fileName))
+                {
+                    <MudText Class="mark-one ml-2" Style="font-style: italic!important;">Importez un fichier .xlsx</MudText>
+                }
+                else
+                {
+                    <MudText Class="ml-4 mark-one" Style="font-weight: bold!important; text-decoration: underline;">@_fileName</MudText>
+                }
+            </MudStack>
+        </MudStack>
+    </DialogContent>
+    <DialogActions>
+        <MudButton Class="mark-one" Color="Color.Success" Variant="Variant.Text" OnClick="@Submit">Enregistrer</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    [CascadingParameter] public MudDialogInstance Dialog { get; set; } = null!;
+    [Inject] public ISnackbar Snackbar { get; set; } = null!;
+
+    private IBrowserFile? _selectedFile;
+    private string _fileName = string.Empty;
+
+    private void UploadFiles(IBrowserFile? file)
+    {
+        _selectedFile = file;
+        _fileName = file?.Name ?? string.Empty;
+        StateHasChanged();
+    }
+
+    private void Submit()
+    {
+        if (_selectedFile != null)
+        {
+            Dialog.Close(_selectedFile);
+        }
+        else
+        {
+            Snackbar.Add("Veuillez sélectionner un fichier Excel avant de valider l'import.", Severity.Error);
+        }
+    }
+}

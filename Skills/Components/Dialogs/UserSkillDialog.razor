@@ -1,7 +1,8 @@
 @using Microsoft.EntityFrameworkCore
+@using Microsoft.EntityFrameworkCore.Metadata.Conventions
 @using Skills.Databases
 
-<MudDialog Class="pa-0 rounded-lg">
+<MudDialog>
     <DialogContent>
         <MudStack Class="py-3 px-6" Justify="Justify.SpaceEvenly" Row="false" Spacing="0">
             <MudText Class="mark-one" GutterBottom>Attribution de compétence</MudText>
@@ -13,20 +14,33 @@
                         <MudSelectItem Value="skill.Id">
                             <MudStack Row="false" Spacing="0">
                                 <MudText Class="mark-one">
-                                    [@skill.TypeInfo.Value] - @skill.CategoryInfo.Value - @skill.SubCategoryInfo?.Value
+                                    @skill.ToStringNoDesc()
                                     <MudText Class="mark-one" Typo="Typo.body2">@skill.Description</MudText>
                                 </MudText>
                             </MudStack>
                         </MudSelectItem>
                     }
                 </MudSelect>
-                <MudSelect T="int" @bind-Value="_rating" Label="Niveau" AnchorOrigin="Origin.BottomLeft" TransformOrigin="Origin.TopLeft" Class="mt-4 c-select" Required>
-                    <MudSelectItem Value="0"><MudChip>0</MudChip> @(_bindedLevels.FirstOrDefault(x => x.Level == 0)?.Value ?? string.Empty)</MudSelectItem>
-                    <MudSelectItem Value="1"><MudChip>1</MudChip> @(_bindedLevels.FirstOrDefault(x => x.Level == 1)?.Value ?? string.Empty)</MudSelectItem>
-                    <MudSelectItem Value="2"><MudChip>2</MudChip> @(_bindedLevels.FirstOrDefault(x => x.Level == 2)?.Value ?? string.Empty)</MudSelectItem>
-                    <MudSelectItem Value="3"><MudChip>3</MudChip> @(_bindedLevels.FirstOrDefault(x => x.Level == 3)?.Value ?? string.Empty)</MudSelectItem>
-                    <MudSelectItem Value="4"><MudChip>4</MudChip> @(_bindedLevels.FirstOrDefault(x => x.Level == 4)?.Value ?? string.Empty)</MudSelectItem>
-                </MudSelect>
+                @if (_isSoftSkill)
+                {
+                    <MudSelect T="int" @bind-Value="_selectedLevel" Label="Niveau" AnchorOrigin="Origin.BottomLeft" TransformOrigin="Origin.TopLeft" Class="mt-4 c-select" Required>
+                        <MudSelectItem Value="0"><MudChip>0</MudChip> @(_bindedSoftLevels.FirstOrDefault(x => x.Level == 0)?.Value ?? string.Empty)</MudSelectItem>
+                        <MudSelectItem Value="1"><MudChip>1</MudChip> @(_bindedSoftLevels.FirstOrDefault(x => x.Level == 1)?.Value ?? string.Empty)</MudSelectItem>
+                        <MudSelectItem Value="2"><MudChip>2</MudChip> @(_bindedSoftLevels.FirstOrDefault(x => x.Level == 2)?.Value ?? string.Empty)</MudSelectItem>
+                        <MudSelectItem Value="3"><MudChip>3</MudChip> @(_bindedSoftLevels.FirstOrDefault(x => x.Level == 3)?.Value ?? string.Empty)</MudSelectItem>
+                        <MudSelectItem Value="4"><MudChip>4</MudChip> @(_bindedSoftLevels.FirstOrDefault(x => x.Level == 4)?.Value ?? string.Empty)</MudSelectItem>
+                    </MudSelect>
+                }
+                else
+                {
+                    <MudSelect T="int" @bind-Value="_selectedLevel" Label="Niveau" AnchorOrigin="Origin.BottomLeft" TransformOrigin="Origin.TopLeft" Class="mt-4 c-select" Required>
+                        <MudSelectItem Value="0"><MudChip>0</MudChip> @(_bindedLevels.FirstOrDefault(x => x.Level == 0)?.Value ?? string.Empty)</MudSelectItem>
+                        <MudSelectItem Value="1"><MudChip>1</MudChip> @(_bindedLevels.FirstOrDefault(x => x.Level == 1)?.Value ?? string.Empty)</MudSelectItem>
+                        <MudSelectItem Value="2"><MudChip>2</MudChip> @(_bindedLevels.FirstOrDefault(x => x.Level == 2)?.Value ?? string.Empty)</MudSelectItem>
+                        <MudSelectItem Value="3"><MudChip>3</MudChip> @(_bindedLevels.FirstOrDefault(x => x.Level == 3)?.Value ?? string.Empty)</MudSelectItem>
+                        <MudSelectItem Value="4"><MudChip>4</MudChip> @(_bindedLevels.FirstOrDefault(x => x.Level == 4)?.Value ?? string.Empty)</MudSelectItem>
+                    </MudSelect>
+                }
                 <style>
                     .c-select .mud-input-root-text {
                         display: flex!important;
@@ -50,42 +64,69 @@
     
     [Parameter] public UserSkillModel? UserSkill { get; set; }
 
-    private int _rating = 0;
-    private List<SkillModel> _skills = new();
+    private int _selectedLevel = 0;
+    private List<AbstractSkillModel> _skills = new();
     private Guid _selectedSkill;
     private List<TypeLevel> _bindedLevels = new();
+    private List<SoftTypeLevel> _bindedSoftLevels = new();
+
+    private bool _isSoftSkill = false;
 
     private Func<Guid, string> SkillToString => x =>
     {
         var skill = _skills.FirstOrDefault(y => y.Id == x);
         if (skill is null) return string.Empty;
-        
-        return $"[{skill.TypeInfo.Value}] - {skill.CategoryInfo.Value} - {skill.SubCategoryInfo?.Value} - {skill.Description}";
+
+        return skill.ToString();
     };
 
     private async Task SelectedSkillChanged(Guid skillId)
     {
         _selectedSkill = skillId;
         await RefreshLevelsAsync(skillId);
+        await RefreshIsSoftSkillAsync(skillId);
+    }
+
+    private async Task RefreshIsSoftSkillAsync(Guid skillId)
+    {
+        var db = await Factory.CreateDbContextAsync();
+        _isSoftSkill = db.SoftSkills.AsNoTracking().Select(x => x.Id).Contains(skillId);
+        await db.DisposeAsync();
     }
 
     protected override async Task OnInitializedAsync()
     {
         var db = await Factory.CreateDbContextAsync();
-        _skills = await db.Skills.AsNoTracking()
-                                 .Include(x => x.Type)
-                                 .Include(x => x.Category)
-                                 .Include(x => x.SubCategory)
+        var skills = await db.Skills.AsNoTracking()
+                                 .Include(x => x.TypeInfo)
+                                 .Include(x => x.CategoryInfo)
+                                 .Include(x => x.SubCategoryInfo)
                                  .ToListAsync();
+        
+        var softSkills = await db.SoftSkills.AsNoTracking()
+            .Include(x => x.TypeInfo)
+            .ToListAsync();
+
+        foreach (var model in softSkills) model.Type = model.TypeInfo.Value;
+        foreach (var model in skills)
+        {
+            model.Type = model.TypeInfo.Value;
+            model.Category = model.CategoryInfo.Value;
+            model.SubCategory = model.SubCategoryInfo?.Value ?? string.Empty;
+        }
+
+        _skills.AddRange(new List<AbstractSkillModel>(skills));
+        _skills.AddRange(new List<AbstractSkillModel>(softSkills));
         
         if (UserSkill != null)
         {
             _selectedSkill = UserSkill.SkillId;
-            _rating = UserSkill.Level;
+            _selectedLevel = UserSkill.Level;
         }
         
         await db.DisposeAsync();
         await RefreshLevelsAsync(_selectedSkill);
+        await RefreshIsSoftSkillAsync(_selectedSkill);
     }
 
     private async Task RefreshLevelsAsync(Guid skillId)
@@ -93,6 +134,7 @@
         var typeId = _skills.FirstOrDefault(x => x.Id == skillId)?.TypeId ?? default(Guid);
         var db = await Factory.CreateDbContextAsync();
         _bindedLevels = db.TypesLevels.AsNoTracking().Where(x => x.TypeId == typeId).ToList();
+        _bindedSoftLevels = db.SoftTypesLevels.AsNoTracking().Where(x => x.SkillId == skillId).ToList();
         await db.DisposeAsync();
         StateHasChanged();
     }
@@ -105,6 +147,6 @@
             return;
         }
         
-        Dialog.Close(new UserSkillModel { SkillId = _selectedSkill, Level = _rating });
+        Dialog.Close(new UserSkillModel { SkillId = _selectedSkill, Level = _selectedLevel });
     }
 }

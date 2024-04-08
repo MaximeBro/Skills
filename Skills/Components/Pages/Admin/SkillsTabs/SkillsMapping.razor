@@ -8,21 +8,28 @@
                              Culture="@(new CultureInfo("fr-FR"))" Height="70vh" Virtualize OverscanCount="25" QuickFilter="@QuickFilter"
                              RowClick="@OnRowClickedAsync">
                     <ToolBarContent>
-                        <MudTooltip Class="ml-1" Placement="Placement.Bottom" Text="Créer une compétence" Arrow>
-                            <MudIconButton Class="ml-2" Style="border-radius: 6px!important; padding: 4px!important;" Icon="@IconsF.AccountTree" Color="Color.Tertiary" OnClick="@(() => CreateSkillAsync())"/>
+                        <MudText Class="mark-one" Style="font-weight: bold!important">Actions</MudText>
+                        <MudTooltip Class="ml-2" Placement="Placement.Bottom" Text="Purge des compétences" Arrow>
+                            <MudIconButton Class="ml-4 hover-red" Style="border-radius: 6px!important; padding: 4px!important;" Icon="@IconsF.Delete" Color="Color.Dark" OnClick="@(() => PurgeSkillsAsync())"/>
                         </MudTooltip>
-                        <MudTooltip Class="ml-1" Placement="Placement.Top" Text="Créer un soft-skill" Arrow>
-                            <MudIconButton Class="ml-2" Style="border-radius: 6px!important; padding: 4px!important;" Icon="@IconsF.Handshake" Color="Color.Tertiary" OnClick="@(() => CreateSoftSkillAsync())"/>
+                        <MudTooltip Class="ml-2" Placement="Placement.Top" Text="Importer des compétences" Arrow>
+                            <MudIconButton Class="ml-4" Style="border-radius: 6px!important; padding: 4px!important;" Icon="@IconsFF.FileExcel" Color="Color.Tertiary" OnClick="@(() => ImportSkillsAsync())"/>
+                        </MudTooltip>
+                        <MudTooltip Class="ml-2" Placement="Placement.Bottom" Text="Créer une compétence" Arrow>
+                            <MudIconButton Class="ml-4" Style="border-radius: 6px!important; padding: 4px!important;" Icon="@IconsF.AccountTree" Color="Color.Tertiary" OnClick="@(() => CreateSkillAsync())"/>
+                        </MudTooltip>
+                        <MudTooltip Class="ml-2" Placement="Placement.Top" Text="Créer un soft-skill" Arrow>
+                            <MudIconButton Class="ml-4" Style="border-radius: 6px!important; padding: 4px!important;" Icon="@IconsF.Handshake" Color="Color.Tertiary" OnClick="@(() => CreateSoftSkillAsync())"/>
                         </MudTooltip>
                         <MudTooltip Placement="Placement.Right" Text="Pour éditer, faites un double clic sur une ligne !" Arrow>
-                            <MudIcon Class="ml-3 mt-1" Icon="@IconsF.Info" Color="Color.Info" />
+                            <MudIcon Class="ml-5 mt-1" Icon="@IconsF.Info" Color="Color.Info"/>
                         </MudTooltip>
                         <MudSpacer/>
                         <MudTextField T="string" @bind-Value="_search" Immediate Adornment="Adornment.Start" Clearable
                                       AdornmentIcon="@IconsF.Search" Placeholder="Rechercher" Class="flex-grow-0 mr-8 mt-0" Style="width: 400px;"/>
                     </ToolBarContent>
                     <Columns>
-                        <HierarchyColumn T="AbstractSkillModel" />
+                        <HierarchyColumn T="AbstractSkillModel"/>
                         <PropertyColumn Title="Type" Property="x => x.Type"/>
                         <PropertyColumn Title="Catégorie" Property="x => x.Category"/>
                         <TemplateColumn Title="Sous catégorie">
@@ -76,3 +83,15 @@
         </MudGrid>
     </MudContainer>
 </MudTabPanel>
+@if (_loading)
+{
+    <MudOverlay Absolute DarkBackground Visible LockScroll ZIndex="1400" AutoClose="false" Style="height: 100vh; width: 100vw;">
+        <MudStack Row="false" Color="Color.Default" Justify="Justify.Center" AlignItems="AlignItems.Center" Spacing="0">
+            <MudStack Row AlignItems="AlignItems.Center">
+                <MudText Class="mark-one mr-3 z-9999" Align="Align.Center">Chargement en cours...</MudText>
+                <MudProgressCircular Class="z-9999" Indeterminate Color="Color.Default"/>
+            </MudStack>
+            <MudText Class="mark-one mt-2 z-9999" Color="Color.Default" Align="Align.Center" Style="font-weight: bold!important;">Ne rafraîchissez pas la page !</MudText>
+        </MudStack>
+    </MudOverlay>
+}

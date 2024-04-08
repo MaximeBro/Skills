@@ -35,5 +35,15 @@
 /* Appbar */
 
 /* Shared */
-
+.z-9999 { z-index: 9999!important; }
 /* Shared */
+
+
+/* Icons */
+
+.hover-red:hover svg {
+    color: #F44336!important;
+    transition: .5s ease-in-out!important;
+}
+
+/* Icons */

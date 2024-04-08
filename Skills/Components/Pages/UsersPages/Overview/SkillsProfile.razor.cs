@@ -16,7 +16,7 @@ public partial class SkillsProfile : ComponentBase
     [Parameter] public UserModel User { get; set; } = null!;
 
     private List<UserSkillModel> _userSkillsModels = new();
-    private List<SkillModel> _userSkills = new();
+    private List<AbstractSkillModel> _userSkills = new();
     private Dictionary<Guid, string> _selectedLevels = new();
 
     private string _search = string.Empty;
@@ -123,19 +123,43 @@ public partial class SkillsProfile : ComponentBase
     {
         var db = await Factory.CreateDbContextAsync();
         _userSkillsModels = await db.Userskills.AsNoTracking()
-                                                .Where(x => x.UserId == User.Id)
+                                               .Where(x => x.UserId == User.Id)
                                                .Include(x => x.Skill).ThenInclude(x => x!.TypeInfo)
                                                .Include(x => x.User).ThenInclude(x => x!.Group)
                                                .ToListAsync();
         
-        _userSkills = await db.Skills.AsNoTracking()
-                                     .Where(x => _userSkillsModels.Select(y => y.SkillId).Contains(x.Id))
-                                     .Include(x => x.Type)
-                                     .Include(x => x.Category)
-                                     .Include(x => x.SubCategory)
-                                     .ToListAsync();
+        var skillModels = await db.Skills.AsNoTracking()
+                                                       .Where(x => _userSkillsModels.Select(y => y.SkillId).Contains(x.Id))
+                                                       .Include(x => x.TypeInfo)
+                                                       .Include(x => x.CategoryInfo)
+                                                       .Include(x => x.SubCategoryInfo)
+                                                       .ToListAsync();
+
+        var softSkillsModels = await db.SoftSkills.AsNoTracking()
+                                                                   .Where(x => _userSkillsModels.Select(y => y.SkillId).Contains(x.Id))
+                                                                   .Include(x => x.TypeInfo)
+                                                                   .ToListAsync();
+        
+        foreach (var model in softSkillsModels) model.Type = model.TypeInfo.Value;
+        foreach (var model in skillModels)
+        {
+            model.Type = model.TypeInfo.Value;
+            model.Category = model.CategoryInfo.Value;
+            model.SubCategory = model.SubCategoryInfo?.Value ?? string.Empty;
+        }
         
         _selectedLevels.Clear();
-        foreach(var skill in _userSkillsModels) _selectedLevels.Add(skill.SkillId, db.TypesLevels.AsNoTracking().FirstOrDefault(x => x.TypeId == skill.Skill!.TypeId && x.Level == skill.Level)?.Value ?? string.Empty);
+        foreach(var skill in _userSkillsModels)
+        {
+            var value = db.TypesLevels.AsNoTracking().FirstOrDefault(x => x.TypeId == skill.Skill!.TypeId && x.Level == skill.Level)?.Value ??
+                              db.SoftTypesLevels.AsNoTracking().FirstOrDefault(x => x.SkillId == skill.SkillId && x.Level == skill.Level)?.Value;
+            _selectedLevels.Add(skill.SkillId, value ?? string.Empty);
+        }
+        
+        _userSkills.Clear();
+        _userSkills.AddRange(new List<AbstractSkillModel>(skillModels));
+        _userSkills.AddRange(new List<AbstractSkillModel>(softSkillsModels));
+
+        foreach (var userSkill in _userSkillsModels) userSkill.Skill = _userSkills.FirstOrDefault(x => x.Id == userSkill.SkillId);
     }
 }

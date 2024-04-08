@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.EntityFrameworkCore;
 using MudBlazor;
 using Skills.Components.Components;
@@ -7,12 +8,14 @@ using Skills.Databases;
 using Skills.Extensions;
 using Skills.Models;
 using Skills.Models.Enums;
+using Skills.Services;
 
 namespace Skills.Components.Pages.Admin.SkillsTabs;
 
 public partial class SkillsMapping : FullComponentBase
 {
     [Inject] public IDbContextFactory<SkillsContext> Factory { get; set; } = null!;
+    [Inject] public SkillService SkillService { get; set; } = null!;
     [Inject] public IDialogService DialogService { get; set; } = null!;
     [Inject] public ISnackbar Snackbar { get; set; } = null!;
     [Parameter] public SkillsManagement Manager { get; set; } = null!;
@@ -22,6 +25,7 @@ public partial class SkillsMapping : FullComponentBase
     private Dictionary<Guid, List<SoftTypeLevel>> _softSkillTypeLevels = new();
     private List<AbstractSkillModel> _models = new();
     private string _search = string.Empty;
+    private bool _loading;
 
     public Func<AbstractSkillModel, bool> QuickFilter => x =>
     {
@@ -63,7 +67,7 @@ public partial class SkillsMapping : FullComponentBase
         if (result is { Data: SoftSkillEditModel model })
         {
             var db = await Factory.CreateDbContextAsync();
-            var type = db.SkillsTypes.AsNoTracking().First(x => x.Type == SkillDataType.Type && x.Value == "Soft-Skill");
+            var type = db.SkillsTypes.AsNoTracking().First(x => x.Type == SkillDataType.Type && x.Value == "SOFT-SKILL");
             var softSkill = new SoftSkillModel { TypeId = type.Id, Description = model.SoftSkill.Description };
             db.SoftSkills.Add(softSkill);
             foreach (var level in model.Levels) level.SkillId = softSkill.Id;
@@ -185,24 +189,84 @@ public partial class SkillsMapping : FullComponentBase
         }
     }
 
+    private async Task PurgeSkillsAsync()
+    {
+        var parameters = new DialogParameters<ConfirmDialog> { { x => x.Text, $"Voulez-vous vraiment supprimer toutes les compétences et tous les types de la base ? Cette action est irréversible !" } };
+        var instance = await DialogService.ShowAsync<ConfirmDialog>(string.Empty, parameters, Hardcoded.DialogOptions);
+        var result = await instance.Result;
+        if (result.Data != null && (bool)result.Data)
+        {
+            _loading = true;
+            StateHasChanged();
+            await SkillService.PurgeAllAsync();
+            await RefreshDataAsync();
+            await Manager.RefreshSkillsTypesAsync();
+            _loading = false;
+            StateHasChanged();
+        }
+    }
+
+    private async Task ImportSkillsAsync()
+    {
+        var instance = await DialogService.ShowAsync<ImportSkillsDialog>(string.Empty, Hardcoded.DialogOptions);
+        var result = await instance.Result;
+        if (result is { Data: IBrowserFile file })
+        {
+            var stream = file.OpenReadStream();
+            _loading = true;
+            StateHasChanged();
+            var response = await SkillService.ImportXlsxAsync(stream, "A1");
+            switch (response.Key)
+            {
+                case ImportState.Cancelled:
+                {
+                    Snackbar.Add(response.Value, Severity.Warning);
+                    break;
+                }
+                
+                case ImportState.Crashed:
+                {
+                    Snackbar.Add(response.Value, Severity.Error);
+                    break;
+                }
+                
+                case ImportState.Skipped:
+                {
+                    Snackbar.Add(response.Value, Severity.Info);
+                    break;
+                }
+                
+                case ImportState.Successful:
+                {
+                    await RefreshDataAsync();
+                    await Manager.RefreshSkillsTypesAsync();
+                    Snackbar.Add(response.Value, Severity.Success);
+                    break;
+                }
+            }
+            _loading = false;
+            StateHasChanged();
+        }
+    }
+
     private async Task OnRowClickedAsync(DataGridRowClickEventArgs<AbstractSkillModel> args)
     {
         if (args.MouseEventArgs.Detail == 2)
         {
-            if (args.Item.Type == "Soft-Skill")
+            if (args.Item.Type == "SOFT-SKILL")
             {
-                await EditSkillAsync(args.Item);
+                await EditSoftSkillAsync(args.Item);
             }
             else
             {
-                await EditSoftSkillAsync(args.Item);
+                await EditSkillAsync(args.Item);
             }
         }
     }
 
     private async Task EditModelAsync(AbstractSkillModel model)
     {
-        if (model.Type == "Soft-Skill")
+        if (model.Type == "SOFT-SKILL")
         {
             await EditSoftSkillAsync(model);
         }
@@ -214,25 +278,11 @@ public partial class SkillsMapping : FullComponentBase
 
     public async Task RefreshDataAsync()
     {
+        _loading = true;
         var db = await Factory.CreateDbContextAsync();
-        var skillModels = await db.Skills.AsNoTracking()
-            .Include(x => x.TypeInfo)
-            .Include(x => x.CategoryInfo)
-            .Include(x => x.SubCategoryInfo)
-            .ToListAsync();
+        var skillModels = await db.Skills.AsNoTracking().ToListAsync();
 
-        var softSkillsModels = await db.SoftSkills.AsNoTracking()
-            .Include(x => x.TypeInfo)
-            .ToListAsync();
-
-        foreach (var model in skillModels)
-        {
-            model.Type = model.TypeInfo.Value;
-            model.Category = model.CategoryInfo.Value;
-            model.SubCategory = model.SubCategoryInfo?.Value ?? string.Empty;
-        }
-
-        foreach (var model in softSkillsModels) model.Type = model.TypeInfo.Value;
+        var softSkillsModels = await db.SoftSkills.AsNoTracking().ToListAsync();
 
         _models.Clear();
         _models.AddRange(new List<AbstractSkillModel>(skillModels));
@@ -242,5 +292,7 @@ public partial class SkillsMapping : FullComponentBase
         _softSkillTypeLevels.Clear();
         foreach (var model in _models) _skillTypeLevels.Add(model.Id, db.TypesLevels.AsNoTracking().Where(x => x.TypeId == model.TypeId).ToList());
         foreach (var model in _models) _softSkillTypeLevels.Add(model.Id, db.SoftTypesLevels.AsNoTracking().Where(x => x.SkillId == model.Id).ToList());
+        _loading = false;
+        StateHasChanged();
     }
 }
