@@ -20,14 +20,20 @@
         @* Skills *@
         <MudItem Class="px-16" xs="12">
             
-            <MudDataGrid T="UserSkillModel" Items="_userSkillsModels" Bordered Hover Outlined Filterable Striped SortMode="SortMode.Multiple" Dense FixedHeader
-                         Culture="@(new CultureInfo("fr-FR"))" Height="65vh" Virtualize OverscanCount="25" QuickFilter="@QuickFilter">
+            <MudDataGrid T="UserSkillModel" Items="_userSkillsModels" Bordered Hover Outlined Filterable Striped SortMode="SortMode.Multiple" Dense FixedHeader ReadOnly="false"
+                         Culture="@(new CultureInfo("fr-FR"))" Height="65vh" Virtualize OverscanCount="25" QuickFilter="@QuickFilter" EditMode="DataGridEditMode.Cell">
                 <ToolBarContent>
                     <MudText Class="mark-one">Compétences (attribuées)</MudText>
                     <AuthorizeView Roles="Admin, Manager">
                         <Authorized>
-                            <MudTooltip Class="ml-2" Placement="Placement.Bottom" Text="Ajouter une compétence" Arrow>
-                                <MudIconButton Class="ml-4" Style="border-radius: 6px!important; padding: 4px!important;" Icon="@IconsF.Add" Color="Color.Tertiary" OnClick="@(async() => await GrantSkillAsync())"/>
+                            <MudTooltip Class="ml-2" Placement="Placement.Bottom" Text="Exporter compétences" Arrow>
+                                <MudIconButton Class="ml-4" Style="border-radius: 6px!important; padding: 4px!important;" Icon="@IconsFF.FileExcel" Color="Color.Tertiary" OnClick="@(async() => await ExportSkillsAsync())"/>
+                            </MudTooltip>
+                            <MudTooltip Class="ml-1" Placement="Placement.Top" Text="Importer des compétences" Arrow>
+                                <MudIconButton Class="ml-2" Style="border-radius: 6px!important; padding: 4px!important;" Icon="@IconsF.UploadFile" Color="Color.Secondary" OnClick="@(async() => await ImportSkillsAsync())"/>
+                            </MudTooltip>
+                            <MudTooltip Class="ml-1" Placement="Placement.Bottom" Text="Gérer les compétences" Arrow>
+                                <MudIconButton Class="ml-2" Style="border-radius: 6px!important; padding: 4px!important;" Icon="@IconsF.Checklist" Color="Color.Tertiary" OnClick="@(async() => await ManageSkillsAsync())"/>
                             </MudTooltip>
                         </Authorized>
                     </AuthorizeView>
@@ -37,37 +43,47 @@
                 </ToolBarContent>
                 <Columns>
                     <HierarchyColumn T="UserSkillModel" />
-                    <TemplateColumn Title="Type">
+                    <TemplateColumn Title="Type" IsEditable="false">
                         <CellTemplate>
                             <MudText Class="mark-one">@(context.Item.Skill?.Type ?? string.Empty)</MudText>
                         </CellTemplate>
                     </TemplateColumn>
-                    <TemplateColumn Title="Catégorie">
+                    <TemplateColumn Title="Catégorie" IsEditable="false">
                         <CellTemplate>
                             <MudText Class="mark-one">@(context.Item.Skill?.Category ?? string.Empty)</MudText>
                         </CellTemplate>
                     </TemplateColumn>
-                    <TemplateColumn Title="Sous catégorie">
+                    <TemplateColumn Title="Sous catégorie" IsEditable="false">
                         <CellTemplate>
                             <MudText Class="mark-one">@(context.Item.Skill?.SubCategory ?? string.Empty)</MudText>
                         </CellTemplate>
                     </TemplateColumn>
-                    <TemplateColumn Title="Description">
+                    <TemplateColumn Title="Description" IsEditable="false">
                         <CellTemplate>
                             <MudText Class="mark-one">@(context.Item.Skill?.Description ?? string.Empty)</MudText>
                         </CellTemplate>
                     </TemplateColumn>
-                    <PropertyColumn Title="Niveau" Property="x => x.Level"/>
+                    <PropertyColumn Title="Niveau" Property="x => x.Level" IsEditable>
+                        <EditTemplate>
+                            <MudSelect T="int" Value="context.Item.Level" ValueChanged="@(async(value) => await LevelChangedAsync(value, context.Item))" 
+                                       AnchorOrigin="Origin.BottomLeft" TransformOrigin="Origin.TopLeft" Immediate>
+                                <MudSelectItem Value="0">0</MudSelectItem>
+                                <MudSelectItem Value="1">1</MudSelectItem>
+                                <MudSelectItem Value="2">2</MudSelectItem>
+                                <MudSelectItem Value="3">3</MudSelectItem>
+                                <MudSelectItem Value="4">4</MudSelectItem>
+                            </MudSelect>
+                        </EditTemplate>
+                    </PropertyColumn>
                     <AuthorizeView Roles="Admin, Manager" Context="auth">
                         <Authorized>
-                            <TemplateColumn Title="Actions" Filterable="false" Sortable="false">
+                            <TemplateColumn Title="Actions" Filterable="false" Sortable="false" IsEditable="false">
                                 <CellTemplate>
-                                    <MudTooltip Placement="Placement.Bottom" Text="Éditer" Arrow>
-                                        <MudIconButton Icon="@IconsF.Edit" Size="Size.Small" Color="Color.Primary" OnClick="@(async () => await ManageSkillAsync(context.Item))"/>
-                                    </MudTooltip>
-                                    <MudTooltip Class="ml-2" Placement="Placement.Bottom" Text="Supprimer" Arrow>
-                                        <MudIconButton Class="ml-4" Icon="@IconsF.Delete" Size="Size.Small" Color="Color.Error" OnClick="@(async () => await RevokeSkillAsync(context.Item))"/>
-                                    </MudTooltip>
+                                    <MudStack Row Justify="Justify.Center" AlignItems="AlignItems.Center">
+                                        <MudTooltip Placement="Placement.Bottom" Text="Supprimer" Arrow>
+                                            <MudIconButton Icon="@IconsF.Delete" Size="Size.Small" Color="Color.Error" OnClick="@(async () => await RevokeSkillAsync(context.Item))"/>
+                                        </MudTooltip>
+                                    </MudStack>
                                 </CellTemplate>
                             </TemplateColumn>
                         </Authorized>
@@ -76,10 +92,27 @@
                 <ChildRowContent>
                     <MudStack Row="false" Spacing="0">
                         <MudText Style="font-weight: bold;" GutterBottom>Niveau sélectionné</MudText>
-                        <MudStack Class="px-2" Row Spacing="0">
-                            <MudText Class="mark-one">
-                                <MudChip Size="Size.Small" Style="font-weight: bold;">@context.Item.Level</MudChip> @_selectedLevels[context.Item.SkillId]
-                            </MudText>
+                        <MudStack Class="px-2" Row Spacing="5" AlignItems="AlignItems.Center">
+                            @{
+                                var levelInd = 0;
+                                foreach (var level in _rowSkillLevels[context.Item.SkillId])
+                                {
+                                    var val = levelInd;
+                                    if (level == _selectedLevels[context.Item.SkillId])
+                                    {
+                                        <MudText Class="mark-one" Color="Color.Tertiary" Style="font-weight: bold!important;">
+                                            <MudChip Color="Color.Tertiary" Size="Size.Small" Style="font-weight: bold;">@val</MudChip> @level
+                                        </MudText>
+                                    }
+                                    else
+                                    {
+                                        <MudText Class="mark-one">
+                                            <MudChip Size="Size.Small" Style="font-weight: bold;">@val</MudChip> @level
+                                        </MudText>
+                                    }
+                                    levelInd++;
+                                }
+                            }
                         </MudStack>
                     </MudStack>
                 </ChildRowContent>

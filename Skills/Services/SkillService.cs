@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Mvc.TagHelpers;
 using Microsoft.EntityFrameworkCore;
 using MiniExcelLibs;
 using MiniExcelLibs.Attributes;
@@ -205,6 +206,101 @@ public class SkillService(IConfiguration configuration, IDbContextFactory<Skills
         await InitAsync(); // Add back the Soft-Skill type (hardcoded skill type, required for the global app)
     }
 
+    public async Task<Stream> ExportUserSkillAsync(Dictionary<AbstractSkillModel, int> data, UserModel user)
+    {
+        var values = new List<Dictionary<string, object>>();
+        values.Add(new Dictionary<string, object>
+        {
+            { "Column1", user.Username }, 
+            { "Column2", string.Empty },
+            { "Column3", string.Empty },
+            { "Column4", string.Empty },
+            { "Column5", string.Empty },
+        });
+        
+        var headers = new Dictionary<string, object>();
+        headers.Add("Column1", "Type");
+        headers.Add("Column2", "Catégorie");
+        headers.Add("Column3", "Sous catégorie");
+        headers.Add("Column4", "Description");
+        headers.Add("Column5", "Niveau");
+        values.Add(headers);
+
+        foreach (var skill in data)
+        {
+            var row = new Dictionary<string, object>();
+            row.Add("Column1", skill.Key.Type ?? string.Empty);
+            row.Add("Column2", skill.Key.Category ?? string.Empty);
+            row.Add("Column3", skill.Key.SubCategory ?? string.Empty);
+            row.Add("Column4", skill.Key.Description ?? string.Empty);
+            row.Add("Column5", skill.Value == 0 ? string.Empty : skill.Value);
+            values.Add(row);
+        }
+
+        var memoryStream = new MemoryStream();
+        memoryStream.SaveAs(values, false);
+        memoryStream.Seek(0, SeekOrigin.Begin);
+        return memoryStream;
+    }
+
+    public async Task<KeyValuePair<ImportState, string>> ImportUserSkillAsync(Stream stream, string startCell, UserModel user)
+    {
+        var ms = new MemoryStream();
+        await stream.CopyToAsync(ms);
+        ms.Position = 0;
+
+        await stream.DisposeAsync();
+
+        var rows = await ms.QueryAsync<UserSkillRowModel>(null, ExcelType.XLSX, startCell);
+        if (rows is null) return new KeyValuePair<ImportState, string>(ImportState.Cancelled, "Le fichier n'a pas pu être importé à cause d'un mauvais format ou le nom des colonnes n'est pas respecté.");
+
+        var db = await factory.CreateDbContextAsync();
+        var userSkills = db.Userskills.Where(x => x.UserId == user.Id).ToList();
+        foreach (var row in rows)
+        {
+            row.Category = string.IsNullOrWhiteSpace(row.Category) ? null : row.Category;
+            row.SubCategory = string.IsNullOrWhiteSpace(row.SubCategory) ? null : row.SubCategory;
+            row.Description = string.IsNullOrWhiteSpace(row.Description) ? null : row.Description;
+            
+            AbstractSkillModel? skill = db.Skills.FirstOrDefault(x => x.Type == row.Type && x.Category == row.Category && x.SubCategory == row.SubCategory && x.Description == row.Description) ??
+                                        db.SoftSkills.FirstOrDefault(x => x.Type == row.Type && x.Category == row.Category && x.SubCategory == row.SubCategory && x.Description == row.Description)
+                                        as AbstractSkillModel;
+            
+            if (int.TryParse(row.Level, out var level) && level >= 0)
+            {
+                if (skill != null)
+                {
+                    var userSkill = userSkills.FirstOrDefault(x => x.UserId == user.Id && x.SkillId == skill.Id);
+                    if (userSkill != null)
+                    {
+                        userSkill.Level = level;
+                        db.Userskills.Update(userSkill);
+                        await db.SaveChangesAsync();
+                    }
+                    else
+                    {
+                        db.Userskills.Add(new UserSkillModel
+                        {
+                            UserId = user.Id,
+                            SkillId = skill.Id,
+                            IsSoftSkill = skill.Type == "Soft-Type",
+                            Level = level
+                        });
+                        await db.SaveChangesAsync();
+                    }
+                }
+                else
+                {
+                    return new KeyValuePair<ImportState, string>(ImportState.Cancelled, $"Le skill [{row.Type}] - {row.Category} - {row.SubCategory} - {row.Description} n'a pas été trouvé dans la base de données !");
+                }   
+            }
+        }
+        await db.DisposeAsync();
+        await ms.DisposeAsync(); // If we dispose it earlier we won't be able to enumerate over the excelfile rows
+
+        return new KeyValuePair<ImportState, string>(ImportState.Successful, "Données importées avec succès !");
+    }
+
     /// <summary>
     /// Class used for xlsx deserialization.
     /// </summary>
@@ -218,5 +314,14 @@ public class SkillService(IConfiguration configuration, IDbContextFactory<Skills
         [ExcelColumn(Name = "Niveau 2")] public string Lvl2 { get; set; } = string.Empty;
         [ExcelColumn(Name = "Niveau 3")] public string Lvl3 { get; set; } = string.Empty;
         [ExcelColumn(Name = "Niveau 4")] public string Lvl4 { get; set; } = string.Empty;
+    }
+    
+    private sealed class UserSkillRowModel
+    {
+        [ExcelColumn(Name = "Type")] public string Type { get; set; } = string.Empty;
+        [ExcelColumn(Name = "Catégorie")] public string? Category { get; set; }
+        [ExcelColumn(Name = "Sous catégorie")] public string? SubCategory { get; set; }
+        [ExcelColumn(Name = "Description")] public string? Description { get; set; }
+        [ExcelColumn(Name = "Niveau")] public string Level { get; set; } = string.Empty;
     }
 }

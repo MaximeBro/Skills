@@ -1,0 +1,32 @@
+@page "/skill-users/{Id:guid}"
+@inherits FullComponentBase
+
+@if (_skill is null) return;
+<MudContainer MaxWidth="MaxWidth.ExtraLarge">
+    <MudBreadcrumbs Items="_breadcrumbs">
+    </MudBreadcrumbs>
+    <MudText Class="mt-4 mark-one" Typo="Typo.h4" Align="Align.Center">@_skill.ToStringNoDesc()</MudText>
+    <MudText Class="mark-one" Typo="Typo.h5" Align="Align.Center" Style="font-weight: bold!important;">@_skill.Description</MudText>
+    <MudGrid Justify="Justify.Center">
+        <MudItem Class="mt-10" xs="12">
+            <MudStack Class="flex-grow-1" Row Justify="Justify.Center">
+                <MudPaper Elevation="3">
+                    <MudList Dense Clickable>
+                        <MudListSubheader>
+                            <MudText Class="mark-one bold" Typo="Typo.body1">Utilisateurs</MudText>
+                        </MudListSubheader>
+                        @foreach (var user in _users)
+                        {
+                            <MudListItem>
+                                <MudStack Row AlignItems="AlignItems.Center">
+                                    <MudChip Class="bold" Color="Color.Dark">@user.Level</MudChip>
+                                    <MudText Class="mark-one" Typo="Typo.h6">@user.User!.Name</MudText>
+                                </MudStack>
+                            </MudListItem>
+                        }
+                    </MudList>
+                </MudPaper>
+            </MudStack>
+        </MudItem>
+    </MudGrid>
+</MudContainer>

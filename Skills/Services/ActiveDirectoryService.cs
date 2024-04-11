@@ -16,7 +16,6 @@ public class ActiveDirectoryService(IConfiguration configuration, IDbContextFact
 
     public async Task InitAsync()
     {
-        DirectoryEntries.AddRange(GetActiveDirectoryUsers());
         await CheckUsersAsync();
         await SetRootsAsync();
     }
@@ -25,7 +24,7 @@ public class ActiveDirectoryService(IConfiguration configuration, IDbContextFact
     /// Retrieves all the users in the local AD.
     /// </summary>
     /// <returns>All the collaborators registered in the local AD.</returns>
-    private List<UserModel> GetActiveDirectoryUsers()
+    private void SetActiveDirectoryUsers()
     {
         try
         {
@@ -47,7 +46,8 @@ public class ActiveDirectoryService(IConfiguration configuration, IDbContextFact
                 model.Name = $"{model.Email.Replace("@sasp.fr", string.Empty).Split(".")[0].FirstCharToUpper()} {model.Email.Replace("@sasp.fr", string.Empty).Split(".")[1].FirstCharToUpper()}";
                 collaborators.Add(model);
             }
-            return collaborators;
+            DirectoryEntries.Clear();
+            DirectoryEntries.AddRange(collaborators);
         }
         catch (Exception e)
         {   // Do not remove those prints because they're used to debug AD requests errors !
@@ -61,14 +61,23 @@ public class ActiveDirectoryService(IConfiguration configuration, IDbContextFact
     /// <summary>
     /// Retrieves all the users in the DirectoryEntries and inserts missing ones in the app db.
     /// </summary>
-    private async Task CheckUsersAsync()
+    public async Task CheckUsersAsync()
     {
+        SetActiveDirectoryUsers();
         var db = await factory.CreateDbContextAsync();
         var savedEmails = await db.Users.AsNoTracking().Select(x => x.Email).ToListAsync();
         var toAdd = DirectoryEntries.Where(x => !savedEmails.Contains(x.Email, StringComparer.OrdinalIgnoreCase)).ToList();
         
         await db.Users.AddRangeAsync(toAdd);
         await db.SaveChangesAsync();
+        await db.DisposeAsync();
+    }
+
+    public async Task PurgeUsersAsync()
+    {
+        DirectoryEntries.Clear();
+        var db = await factory.CreateDbContextAsync();
+        await db.Users.ExecuteDeleteAsync();
         await db.DisposeAsync();
     }
 

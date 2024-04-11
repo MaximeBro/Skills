@@ -19,6 +19,13 @@ public static class ModelExtensions
     }
 
     /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="this">Any <see cref="UserModel"/></param>
+    /// <returns></returns>
+    public static string GetTrigramme(this UserModel @this) => $"{@this.Name[0]}{@this.Name.Split(" ")[1].Substring(0, 2)}".ToUpper();
+
+    /// <summary>
     /// Converts a <see cref="UserPrincipal"/> into a <see cref="UserModel"/> with the name and email of the user.
     /// </summary>
     /// <param name="this">The <see cref="UserPrincipal"/> to convert.</param>

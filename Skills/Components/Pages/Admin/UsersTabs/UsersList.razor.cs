@@ -7,12 +7,14 @@ using Skills.Components.Dialogs;
 using Skills.Databases;
 using Skills.Extensions;
 using Skills.Models;
+using Skills.Services;
 
 namespace Skills.Components.Pages.Admin.UsersTabs;
 
 public partial class UsersList : FullComponentBase
 {
     [Inject] public IDbContextFactory<SkillsContext> Factory { get; set; } = null!;
+    [Inject] public ActiveDirectoryService ADService { get; set; } = null!;
     [Inject] public IDialogService DialogService { get; set; } = null!;
     [Inject] public ISnackbar Snackbar { get; set; } = null!;
     [Parameter] public UsersManagement Manager { get; set; } = null!;
@@ -21,6 +23,7 @@ public partial class UsersList : FullComponentBase
     private List<UserModel> _users = new();
     private List<GroupModel> _groups = new();
     private string _search = string.Empty;
+    private bool _loading;
 
     public Func<UserModel, string> DisabledColor => x => x.IsDisabled ? "color: orange;" : "color: inherit;";
     
@@ -117,6 +120,38 @@ public partial class UsersList : FullComponentBase
         if (args.MouseEventArgs.Detail == 2)
         {
             await EditUserAsync(args.Item);
+        }
+    }
+
+    private async Task ResyncUsersFromLocalADAsync()
+    {
+        var parameters = new DialogParameters<ConfirmDialog> { { x => x.Text, "Cette action va récupérer tous les comptes utilisateurs de l'AD local et ajouter ceux qui manquent à la base de données de Skills. Voulez-vous effectuer cette action ?" } };
+        var instance = await DialogService.ShowAsync<ConfirmDialog>(string.Empty, parameters, Hardcoded.DialogOptions);
+        var result = await instance.Result;
+        if (result.Data != null && (bool)result.Data)
+        {
+            _loading = true;
+            StateHasChanged();
+            await ADService.CheckUsersAsync();
+            await RefreshDataAsync();
+            _loading = false;
+            StateHasChanged();
+        }
+    }
+
+    private async Task PurgeUsersAsync()
+    {
+        var parameters = new DialogParameters<ConfirmDialog> { { x => x.Text, "Cette action va supprimer tous les utilisateurs de la base. Ajoutez de nouveau au moins un compte avant de vous déconnecter ou fermer le navigateur car votre comtpe va également être supprimé pendant le processus. Voulez-vous effectuer cette action ?" } };
+        var instance = await DialogService.ShowAsync<ConfirmDialog>(string.Empty, parameters, Hardcoded.DialogOptions);
+        var result = await instance.Result;
+        if (result.Data != null && (bool)result.Data)
+        {
+            _loading = true;
+            StateHasChanged();
+            await ADService.PurgeUsersAsync();
+            await RefreshDataAsync();
+            _loading = false;
+            StateHasChanged();
         }
     }
 

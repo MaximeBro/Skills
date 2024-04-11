@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Components;
 using Microsoft.EntityFrameworkCore;
+using MudBlazor;
 using Skills.Components.Components;
 using Skills.Databases;
 using Skills.Models;
@@ -9,6 +10,7 @@ namespace Skills.Components.Pages;
 public partial class SkillsPage : FullComponentBase
 {
     [Inject] public IDbContextFactory<SkillsContext> Factory { get; set; } = null!;
+    [Inject] public NavigationManager NavManager { get; set; } = null!;
     
     private Dictionary<Guid, List<TypeLevel>> _skillTypeLevels = new();
     private Dictionary<Guid, List<SoftTypeLevel>> _softSkillTypeLevels = new();
@@ -30,27 +32,19 @@ public partial class SkillsPage : FullComponentBase
         await RefreshDataAsync();
     }
 
+    private void OnRowClicked(DataGridRowClickEventArgs<AbstractSkillModel> args)
+    {
+        if (args.MouseEventArgs.Detail == 2)
+        {
+            NavManager.NavigateTo($"/skill-users/{args.Item.Id}");
+        }
+    }
+
     private async Task RefreshDataAsync()
     {
         var db = await Factory.CreateDbContextAsync();
-        var skillModels = await db.Skills.AsNoTracking()
-            .Include(x => x.TypeInfo)
-            .Include(x => x.CategoryInfo)
-            .Include(x => x.SubCategoryInfo)
-            .ToListAsync();
-
-        var softSkillsModels = await db.SoftSkills.AsNoTracking()
-            .Include(x => x.TypeInfo)
-            .ToListAsync();
-
-        foreach (var model in skillModels)
-        {
-            model.Type = model.TypeInfo.Value;
-            model.Category = model.CategoryInfo.Value;
-            model.SubCategory = model.SubCategoryInfo?.Value ?? string.Empty;
-        }
-
-        foreach (var model in softSkillsModels) model.Type = model.TypeInfo.Value;
+        var skillModels = await db.Skills.AsNoTracking().ToListAsync();
+        var softSkillsModels = await db.SoftSkills.AsNoTracking().ToListAsync();
 
         _models.Clear();
         _models.AddRange(new List<AbstractSkillModel>(skillModels));
@@ -60,5 +54,6 @@ public partial class SkillsPage : FullComponentBase
         _softSkillTypeLevels.Clear();
         foreach (var model in _models) _skillTypeLevels.Add(model.Id, db.TypesLevels.AsNoTracking().Where(x => x.TypeId == model.TypeId).ToList());
         foreach (var model in _models) _softSkillTypeLevels.Add(model.Id, db.SoftTypesLevels.AsNoTracking().Where(x => x.SkillId == model.Id).ToList());
+        StateHasChanged();
     }
 }

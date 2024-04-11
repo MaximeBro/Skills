@@ -1,10 +1,14 @@
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.JSInterop;
 using MudBlazor;
 using Skills.Components.Dialogs;
 using Skills.Databases;
 using Skills.Extensions;
 using Skills.Models;
+using Skills.Models.Enums;
+using Skills.Services;
 
 namespace Skills.Components.Pages.UsersPages.Overview;
 
@@ -13,11 +17,14 @@ public partial class SkillsProfile : ComponentBase
     [Inject] public IDbContextFactory<SkillsContext> Factory { get; set; } = null!;
     [Inject] public IDialogService DialogService { get; set; } = null!;
     [Inject] public ISnackbar Snackbar { get; set; } = null!;
+    [Inject] public IJSRuntime JsRuntime { get; set; } = null!;
+    [Inject] public SkillService SkillService { get; set; } = null!;
     [Parameter] public UserModel User { get; set; } = null!;
 
     private List<UserSkillModel> _userSkillsModels = new();
     private List<AbstractSkillModel> _userSkills = new();
     private Dictionary<Guid, string> _selectedLevels = new();
+    private Dictionary<Guid, List<string>> _rowSkillLevels = new();
 
     private string _search = string.Empty;
 
@@ -39,58 +46,45 @@ public partial class SkillsProfile : ComponentBase
         await RefreshDataAsync();
     }
 
-    private async Task GrantSkillAsync()
+    private async Task ManageSkillsAsync()
     {
-        var instance = await DialogService.ShowAsync<UserSkillDialog>(string.Empty, Hardcoded.DialogOptions);
+        var parameters = new DialogParameters<ManageSkillsDialog> { { x => x.User, User } };
+        var instance = await DialogService.ShowAsync<ManageSkillsDialog>(string.Empty, parameters, Hardcoded.DialogOptions);
         var result = await instance.Result;
-        if (result is { Data: UserSkillModel model })
-        {
-            await RefreshDataAsync();
-            if (_userSkillsModels.FirstOrDefault(x => x.SkillId == model.SkillId) is null)
-            {
-                var db = await Factory.CreateDbContextAsync();
-                var newModel = new UserSkillModel
-                {
-                    UserId = User.Id,
-                    SkillId = model.SkillId,
-                    Level = model.Level
-                };
-
-                var user = db.Users.FirstOrDefault(x => x.Id == User.Id);
-
-                db.Userskills.Add(newModel);
-                await db.SaveChangesAsync();
-                await db.DisposeAsync();
-                await RefreshDataAsync();
-            }
-            else
-            {
-                Snackbar.Add("Cet utilisateur possède déjà cette compétence !", Severity.Error);
-                return;
-            }
-        }
-    }
-
-    private async Task ManageSkillAsync(UserSkillModel userSkill)
-    {
-        var parameters = new DialogParameters<UserSkillDialog> { { x => x.UserSkill, userSkill } };
-        var instance = await DialogService.ShowAsync<UserSkillDialog>(string.Empty, parameters, Hardcoded.DialogOptions);
-        var result = await instance.Result;
-        if (result is { Data: UserSkillModel model })
+        if (result is { Data: IEnumerable<AbstractSkillModel> skills })
         {
             var db = await Factory.CreateDbContextAsync();
-            db.Userskills.Remove(userSkill);
-            db.Userskills.Add(new UserSkillModel
-            {
-                UserId = User.Id,
-                SkillId = model.SkillId,
-                Level = model.Level
-            });
+            var ownedSkills = db.Userskills.Where(x => x.UserId == User.Id).ToList(); // Current assigned skills, before the update
+            var oldOwnedSkills = ownedSkills.Where(x => !skills.Select(y => y.Id).Contains(x.SkillId)).ToList(); 
+            var newOwnedSkills = skills.Where(x => !ownedSkills.Select(y => y.SkillId).Contains(x.Id)).ToList();
+            
+            db.Userskills.RemoveRange(oldOwnedSkills); // Removes old skill that are no longer assigned to the user
+            db.Userskills.AddRange(newOwnedSkills.Select(x => new UserSkillModel { UserId = User.Id, SkillId = x.Id, Level = 0 })); // Adds new skills to the user
             
             await db.SaveChangesAsync();
             await db.DisposeAsync();
             await RefreshDataAsync();
         }
+    }
+
+    private async Task LevelChangedAsync(int level, UserSkillModel model)
+    {
+        var db = await Factory.CreateDbContextAsync();
+        if (db.Userskills.Any(x => x.UserId == User.Id && x.SkillId == model.SkillId))
+        {
+            model.Level = level;
+            db.Userskills.Update(model);
+            await db.SaveChangesAsync();
+            Snackbar.Add("Modification enregistrée !", Severity.Success, options =>
+            {
+                options.VisibleStateDuration = 1000;
+                options.ShowCloseIcon = false;
+                options.DuplicatesBehavior = SnackbarDuplicatesBehavior.Allow;
+            });
+        }
+        
+        await db.DisposeAsync();
+        await RefreshDataAsync();
     }
     
     private async Task RevokeSkillAsync(UserSkillModel model)
@@ -116,6 +110,71 @@ public partial class SkillsProfile : ComponentBase
             }
             
             await RefreshDataAsync();
+        }
+    }
+
+    private async Task ExportSkillsAsync()
+    {
+        var db = await Factory.CreateDbContextAsync();
+
+        List<AbstractSkillModel> skills = new();
+        skills.AddRange(db.Skills.AsNoTracking().ToList());
+        skills.AddRange(db.SoftSkills.AsNoTracking().ToList());
+
+        var data = new Dictionary<AbstractSkillModel, int>();
+        foreach (var skill in skills)
+        {
+            int level = 0;
+            var ownedSkill = _userSkillsModels.FirstOrDefault(x => x.SkillId == skill.Id);
+            if (ownedSkill != null)
+            {
+                level = ownedSkill.Level;
+            }
+            
+            data.Add(skill, level);
+        }
+        await db.DisposeAsync();
+        
+        var stream = await SkillService.ExportUserSkillAsync(data, User);
+        using var streamRef = new DotNetStreamReference(stream);
+        await JsRuntime.InvokeVoidAsync("downloadFileFromStream", $"Compétences_{User.Username}.xlsx", streamRef);
+    }
+
+    private async Task ImportSkillsAsync()
+    {
+        var instance = await DialogService.ShowAsync<ImportSkillsDialog>(string.Empty, Hardcoded.DialogOptions);
+        var result = await instance.Result;
+        if (result is { Data: IBrowserFile file })
+        {
+            var stream = file.OpenReadStream();
+            var response = await SkillService.ImportUserSkillAsync(stream, "A2", User);
+            switch (response.Key)
+            {
+                case ImportState.Cancelled:
+                {
+                    Snackbar.Add(response.Value, Severity.Warning);
+                    break;
+                }
+                
+                case ImportState.Crashed:
+                {
+                    Snackbar.Add(response.Value, Severity.Error);
+                    break;
+                }
+                
+                case ImportState.Skipped:
+                {
+                    Snackbar.Add(response.Value, Severity.Info);
+                    break;
+                }
+                
+                case ImportState.Successful:
+                {
+                    await RefreshDataAsync();
+                    Snackbar.Add(response.Value, Severity.Success);
+                    break;
+                }
+            }
         }
     }
     
@@ -149,11 +208,15 @@ public partial class SkillsProfile : ComponentBase
         }
         
         _selectedLevels.Clear();
+        _rowSkillLevels.Clear();
         foreach(var skill in _userSkillsModels)
         {
             var value = db.TypesLevels.AsNoTracking().FirstOrDefault(x => x.TypeId == skill.Skill!.TypeId && x.Level == skill.Level)?.Value ??
                               db.SoftTypesLevels.AsNoTracking().FirstOrDefault(x => x.SkillId == skill.SkillId && x.Level == skill.Level)?.Value;
             _selectedLevels.Add(skill.SkillId, value ?? string.Empty);
+            var skillLevels = skill.IsSoftSkill ? db.SoftTypesLevels.Where(x => x.SkillId == skill.SkillId).OrderBy(x => x.Level).Select(x => x.Value).ToList() : 
+                                                            db.TypesLevels.Where(x => x.TypeId == skill.Skill!.TypeId).OrderBy(x => x.Level).Select(x => x.Value).ToList();
+            _rowSkillLevels.Add(skill.SkillId, skillLevels);
         }
         
         _userSkills.Clear();
@@ -161,5 +224,6 @@ public partial class SkillsProfile : ComponentBase
         _userSkills.AddRange(new List<AbstractSkillModel>(softSkillsModels));
 
         foreach (var userSkill in _userSkillsModels) userSkill.Skill = _userSkills.FirstOrDefault(x => x.Id == userSkill.SkillId);
+        StateHasChanged();
     }
 }

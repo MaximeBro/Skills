@@ -6,10 +6,17 @@
                      Culture="@(new CultureInfo("fr-FR"))" Height="70vh" Virtualize OverscanCount="25" QuickFilter="@QuickFilter"
                      RowClick="@OnRowClickedAsync" Class="mt-8" @ref="_grid">
             <ToolBarContent>
-                <MudTooltip Placement="Placement.Bottom" Text="Créer un utilisateur" Arrow>
-                    <MudIconButton Style="border-radius: 6px!important; padding: 4px!important;" Icon="@IconsF.Add" Color="Color.Tertiary" OnClick="@(async () => await CreateUserAsync())"/>
+                <MudText Class="mark-one" Style="font-weight: bold!important">Actions</MudText>
+                <MudTooltip Class="ml-2" Placement="Placement.Bottom" Text="Purge des utilisateurs" Arrow>
+                    <MudIconButton Class="ml-4 hover-red" Style="border-radius: 6px!important; padding: 4px!important;" Icon="@IconsF.Delete" Color="Color.Dark" OnClick="@(() => PurgeUsersAsync())"/>
                 </MudTooltip>
-                <MudTooltip Placement="Placement.Right" Text="Pour éditer, faites un double clic sur une ligne !" Arrow>
+                <MudTooltip Class="ml-1" Placement="Placement.Top" Text="Synchroniser avec l'AD local" Arrow>
+                    <MudIconButton Class="ml-2" Style="border-radius: 6px!important; padding: 4px!important;" Icon="@IconsF.CloudSync" Color="Color.Tertiary" OnClick="@(async () => await ResyncUsersFromLocalADAsync())"/>
+                </MudTooltip>
+                <MudTooltip Class="ml-1" Placement="Placement.Bottom" Text="Créer un utilisateur" Arrow>
+                    <MudIconButton Class="ml-2" Style="border-radius: 6px!important; padding: 4px!important;" Icon="@IconsF.Add" Color="Color.Tertiary" OnClick="@(async () => await CreateUserAsync())"/>
+                </MudTooltip>
+                <MudTooltip Class="ml-1" Placement="Placement.Right" Text="Pour éditer, faites un double clic sur une ligne !" Arrow>
                     <MudIcon Class="ml-2 mt-1" Icon="@IconsF.Info" Color="Color.Info" />
                 </MudTooltip>
                 <MudSpacer/>
@@ -61,3 +68,16 @@
         </MudDataGrid>
     </MudContainer>
 </MudTabPanel>
+
+@if (_loading)
+{
+    <MudOverlay Absolute DarkBackground Visible LockScroll ZIndex="1400" AutoClose="false" Style="height: 100vh; width: 100vw;">
+        <MudStack Row="false" Color="Color.Default" Justify="Justify.Center" AlignItems="AlignItems.Center" Spacing="0">
+            <MudStack Row AlignItems="AlignItems.Center">
+                <MudText Class="mark-one mr-3 z-9999" Align="Align.Center">Chargement en cours...</MudText>
+                <MudProgressCircular Class="z-9999" Indeterminate Color="Color.Default"/>
+            </MudStack>
+            <MudText Class="mark-one mt-2 z-9999" Color="Color.Default" Align="Align.Center" Style="font-weight: bold!important;">Ne rafraîchissez pas la page !</MudText>
+        </MudStack>
+    </MudOverlay>
+}

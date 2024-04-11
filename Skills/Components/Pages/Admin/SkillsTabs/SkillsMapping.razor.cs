@@ -280,7 +280,11 @@ public partial class SkillsMapping : FullComponentBase
     {
         _loading = true;
         var db = await Factory.CreateDbContextAsync();
-        var skillModels = await db.Skills.AsNoTracking().ToListAsync();
+        var skillModels = await db.Skills.AsNoTracking()
+                                                       .Include(x => x.TypeInfo) // Includes are use for edition, don't delete them !
+                                                       .Include(x => x.CategoryInfo)
+                                                       .Include(x => x.SubCategoryInfo)
+                                                       .ToListAsync();
 
         var softSkillsModels = await db.SoftSkills.AsNoTracking().ToListAsync();
 

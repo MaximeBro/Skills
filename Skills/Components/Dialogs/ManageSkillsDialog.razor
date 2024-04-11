@@ -1,0 +1,86 @@
+@using Microsoft.EntityFrameworkCore
+
+<MudDialog>
+    <DialogContent>
+        <MudIconButton Class="ml-n4" Icon="@IconsF.Close" Color="Color.Dark" OnClick="@(() => Dialog.Close())" />
+        <MudStack Class="px-4 py-2" Justify="Justify.SpaceEvenly" Row="false" Spacing="0">
+            <MudTextField T="string" @bind-Value="_search" Class="flex-shrink-0" Style="width: 400px;" Placeholder="Rechercher" Immediate Clearable
+                          Adornment="Adornment.Start" AdornmentIcon="@IconsF.Search" />
+            <MudStack Row="false" Class="py-6" Style="max-height: 400px; overflow-y: scroll;">
+                @foreach (var skill in _userSkills.Where(QuickFilter).OrderByDescending(x => x.Value))
+                {
+                    <MudStack Class="mb-1" Row AlignItems="AlignItems.Center" Spacing="0">
+                        <MudTooltip Placement="Placement.Left" Text="@($"{(skill.Value ? "Révoquer" : "Attribuer")}")" Arrow>
+                            <MudCheckBox T="bool" Value="skill.Value" ValueChanged="@((check) => OnCheckChanged(check, skill.Key))" UnCheckedIcon="@IconsF.Add" checkedIcon="fas fa-minus"
+                                         Color="Color.Error" UnCheckedColor="Color.Tertiary" Size="Size.Small"/>
+                        </MudTooltip>
+                        <MudPaper Class="mx-3 px-4 py-2 flex-grow-1" Elevation="4">
+                            <MudStack Row="false" Spacing="0">
+                                <MudText>@skill.Key.ToStringNoDesc()</MudText>
+                                <MudText>@skill.Key.Description</MudText>
+                            </MudStack>
+                        </MudPaper>
+                    </MudStack>
+                }
+            </MudStack>
+            <MudTooltip Class="mt-6" Placement="Placement.Bottom" Arrow>
+                <TooltipContent>
+                    <MudText Class="mark-one"><strong>@_userSkills.Where(x => x.Value).Count()</strong> compétences attribuées</MudText>
+                    <MudText Class="mark-one"><strong>@_userSkills.Count()</strong> compétences disponibles</MudText>
+                </TooltipContent>
+                <ChildContent>
+                    <MudIcon Class="mt-4 mb-n6" Icon="@IconsF.Info" Color="Color.Dark" />
+                </ChildContent>
+            </MudTooltip>
+        </MudStack>
+    </DialogContent>
+    <DialogActions>
+        <MudButton Class="mark-one" Color="Color.Success" Variant="Variant.Filled" OnClick="@Submit">Enregistrer</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    [CascadingParameter] public MudDialogInstance Dialog { get; set; } = null!;
+
+    [Inject] public IDbContextFactory<SkillsContext> Factory { get; set; } = null!;
+    [Inject] public ISnackbar Snackbar { get; set; } = null!;
+    [Parameter] public UserModel User { get; set; } = null!;
+
+    private Dictionary<AbstractSkillModel, bool> _userSkills = new();
+
+    private string _search = string.Empty;
+
+    private Func<KeyValuePair<AbstractSkillModel, bool>, bool> QuickFilter => x =>
+    {
+        if (!string.IsNullOrWhiteSpace(x.Key.Type) && x.Key.Type.Contains(_search, StringComparison.OrdinalIgnoreCase)) return true;
+        if (!string.IsNullOrWhiteSpace(x.Key.Category) && x.Key.Category.Contains(_search, StringComparison.OrdinalIgnoreCase)) return true;
+        if (!string.IsNullOrWhiteSpace(x.Key.SubCategory) && x.Key.SubCategory.Contains(_search, StringComparison.OrdinalIgnoreCase)) return true;
+        if (!string.IsNullOrWhiteSpace(x.Key.Description) && x.Key.Description.Contains(_search, StringComparison.OrdinalIgnoreCase)) return true;
+            
+        return false;
+    };
+    
+    protected override async Task OnInitializedAsync()
+    {
+        var db = await Factory.CreateDbContextAsync();
+        var ownedSkills = db.Userskills.Where(x => x.UserId == User.Id).ToList();
+        
+        var allSkills = new List<AbstractSkillModel>();
+        allSkills.AddRange(db.Skills.AsNoTracking().ToList());
+        allSkills.AddRange(db.SoftSkills.AsNoTracking().ToList());
+        foreach (var skill in allSkills)
+        {
+            _userSkills.Add(skill, ownedSkills.Select(x => x.SkillId).Contains(skill.Id)); // Sets if the user already has the iterated skill
+        }
+        
+        await db.DisposeAsync();
+    }
+
+    private void OnCheckChanged(bool check, AbstractSkillModel skill)
+    {
+        _userSkills[skill] = check;
+        StateHasChanged();
+    }
+
+    private void Submit() => Dialog.Close(_userSkills.Where(x => x.Value).Select(x => x.Key));
+}
