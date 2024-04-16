@@ -4,16 +4,20 @@
         @* User information *@
         <MudItem Class="px-16" xs="12">
             <MudStack Row>
+                <MudBreadcrumbs Items="_breadcrumbs"/>
+                <MudSpacer />
                 <MudPaper Class="my-4 px-4 py-3" Elevation="2">
                     <MudStack Row AlignItems="AlignItems.Center">
                         <MudAvatar Color="Color.Dark">@User.Name[0].ToString().ToUpper()</MudAvatar>
                         <MudStack Row="false" Spacing="0">
                             <MudText Class="mark-one">@User.Name</MudText>
                             <MudText Class="mark-one">@User.Email</MudText>
+                            <MudLink Href="@($"tel:{@User.PhoneNumber}")" Color="Color.Inherit">
+                                <MudText Class="mark-one" Typo="Typo.body2">@User.PhoneNumber</MudText>
+                            </MudLink>
                         </MudStack>
                     </MudStack>
                 </MudPaper>
-                <MudSpacer/>
             </MudStack>
         </MudItem>
 
@@ -91,26 +95,23 @@
                 </Columns>
                 <ChildRowContent>
                     <MudStack Row="false" Spacing="0">
-                        <MudText Style="font-weight: bold;" GutterBottom>Niveau sélectionné</MudText>
+                        <MudText Class="bold" GutterBottom>Niveau sélectionné</MudText>
                         <MudStack Class="px-2" Row Spacing="5" AlignItems="AlignItems.Center">
                             @{
-                                var levelInd = 0;
-                                foreach (var level in _rowSkillLevels[context.Item.SkillId])
+                                foreach (var level in _rowSkillLevels[context.Item.SkillId].OrderBy(x => x.Level))
                                 {
-                                    var val = levelInd;
-                                    if (level == _selectedLevels[context.Item.SkillId])
+                                    if (_selectedLevels[context.Item.SkillId] != null && level.Level == _selectedLevels[context.Item.SkillId]!      .Level)
                                     {
-                                        <MudText Class="mark-one" Color="Color.Tertiary" Style="font-weight: bold!important;">
-                                            <MudChip Color="Color.Tertiary" Size="Size.Small" Style="font-weight: bold;">@val</MudChip> @level
+                                        <MudText Class="mark-one bold" Color="Color.Tertiary">
+                                            <MudChip Class="bold" Color="Color.Tertiary" Size="Size.Small">@level.Level</MudChip> @level.Value
                                         </MudText>
                                     }
                                     else
                                     {
                                         <MudText Class="mark-one">
-                                            <MudChip Size="Size.Small" Style="font-weight: bold;">@val</MudChip> @level
+                                            <MudChip Class="bold" Size="Size.Small">@level.Level</MudChip> @level.Value
                                         </MudText>
                                     }
-                                    levelInd++;
                                 }
                             }
                         </MudStack>

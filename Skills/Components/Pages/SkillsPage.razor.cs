@@ -11,7 +11,8 @@ public partial class SkillsPage : FullComponentBase
 {
     [Inject] public IDbContextFactory<SkillsContext> Factory { get; set; } = null!;
     [Inject] public NavigationManager NavManager { get; set; } = null!;
-    
+
+    private List<BreadcrumbItem> _breadcrumbs = new();
     private Dictionary<Guid, List<TypeLevel>> _skillTypeLevels = new();
     private Dictionary<Guid, List<SoftTypeLevel>> _softSkillTypeLevels = new();
     private List<AbstractSkillModel> _models = new();
@@ -29,6 +30,8 @@ public partial class SkillsPage : FullComponentBase
 
     protected override async Task OnInitializedAsync()
     {
+        _breadcrumbs.Add(new BreadcrumbItem("Accueil", "/"));
+        _breadcrumbs.Add(new BreadcrumbItem("Compétences", null, true));
         await RefreshDataAsync();
     }
 

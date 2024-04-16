@@ -19,12 +19,45 @@ public static class ModelExtensions
     }
 
     /// <summary>
-    /// 
+    /// Creates the trigramme of a user using its Name property.
     /// </summary>
-    /// <param name="this">Any <see cref="UserModel"/></param>
-    /// <returns></returns>
+    /// <param name="this">Any <see cref="UserModel"/>.</param>
+    /// <returns>The calculated trigramme of the given user.</returns>
     public static string GetTrigramme(this UserModel @this) => $"{@this.Name[0]}{@this.Name.Split(" ")[1].Substring(0, 2)}".ToUpper();
 
+    /// <summary>
+    /// Creates an "abstract" version of this <see cref="TypeLevel"/>.
+    /// </summary>
+    /// <param name="this">Any <see cref="TypeLevel"/>.</param>
+    /// <returns>A <see cref="CommonTypeModel"/>.</returns>
+    public static CommonTypeModel ToAbstract(this TypeLevel @this)
+    {
+        return new CommonTypeModel
+        {
+            Id = @this.Id,
+            ParentId = @this.TypeId,
+            Level = @this.Level,
+            Value = @this.Value,
+            IsSoftLevel = false
+        };
+    }
+    
+    /// <summary>
+    /// Creates an "abstract" version of this <see cref="SoftTypeLevel"/>.
+    /// </summary>
+    /// <param name="this">Any <see cref="SoftTypeLevel"/>.</param>
+    public static CommonTypeModel ToAbstract(this SoftTypeLevel @this)
+    {
+        return new CommonTypeModel
+        {
+            Id = @this.Id,
+            ParentId = @this.SkillId,
+            Level = @this.Level,
+            Value = @this.Value,
+            IsSoftLevel = false
+        };
+    }
+    
     /// <summary>
     /// Converts a <see cref="UserPrincipal"/> into a <see cref="UserModel"/> with the name and email of the user.
     /// </summary>

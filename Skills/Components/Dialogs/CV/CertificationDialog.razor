@@ -1,0 +1,56 @@
+@using Skills.Models.CV
+<MudDialog>
+    <DialogContent>
+        <MudIconButton Class="ml-n4" Icon="@IconsF.Close" Color="Color.Dark" OnClick="@(() => Dialog.Close())"/>
+        <MudStack Class="px-4 py-2" Justify="Justify.SpaceEvenly" Row="false" Spacing="0">
+            <MudStack Row>
+                <MudTextField T="string" @bind-Value="_title" Label="Nom de la formation" Style="width: 400px;"/>
+                <MudTextField T="string" @bind-Value="_authority" Label="Autorité de délivrance"/>
+            </MudStack>
+            <MudStack Row>
+                <MudSelect T="int" @bind-Value="_year" Label="Année" AnchorOrigin="Origin.BottomLeft" TransformOrigin="Origin.TopLeft">
+                    @for (int i = DateTime.Now.Year; i >= 1950; i--)
+                    {
+                        var value = i;
+                        <MudSelectItem Value="value">@value</MudSelectItem>
+                    }
+                </MudSelect>
+                <MudTextField T="string" @bind-Value="_duration" Label="Durée" />
+            </MudStack>
+        </MudStack>
+    </DialogContent>
+    <DialogActions>
+        <MudButton Class="mark-one" Color="Color.Success" Variant="Variant.Filled" OnClick="@Submit">Enregistrer</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    [CascadingParameter] public MudDialogInstance Dialog { get; set; } = null!;
+    [Parameter] public CvCertificationInfo? CvCertification { get; set; }
+
+    private int _year;
+    private string _title = string.Empty;
+    private string _authority = string.Empty;
+    private string _duration = string.Empty;
+
+    protected override void OnInitialized()
+    {
+        if (CvCertification != null)
+        {
+            _year = CvCertification.Year;
+            _title = CvCertification.Title;
+            _authority = CvCertification.Supplier;
+            _duration = CvCertification.Duration;
+        }
+        else
+        {
+            _year = DateTime.Now.Year;
+        }
+    }
+
+    private void Submit()
+    {
+        Dialog.Close(new CvCertificationInfo() { Year = _year, Title = _title, Supplier = _authority, Duration = _duration });
+    }
+
+}

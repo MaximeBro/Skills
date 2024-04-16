@@ -44,7 +44,9 @@ public partial class UsersList : FullComponentBase
 
     private async Task CreateUserAsync()
     {
-        var instance = await DialogService.ShowAsync<UserDialog>(string.Empty, Hardcoded.DialogOptions);
+        var options = Hardcoded.DialogOptions;
+        options.MaxWidth = MaxWidth.ExtraLarge;
+        var instance = await DialogService.ShowAsync<UserDialog>(string.Empty, options);
         var result = await instance.Result;
         if (result is { Data: UserModel model })
         {
@@ -68,7 +70,9 @@ public partial class UsersList : FullComponentBase
     private async Task EditUserAsync(UserModel model)
     {
         var parameters = new DialogParameters<UserDialog> { { x => x.User, model } };
-        var instance = await DialogService.ShowAsync<UserDialog>(string.Empty, parameters, Hardcoded.DialogOptions);
+        var options = Hardcoded.DialogOptions;
+        options.MaxWidth = MaxWidth.ExtraLarge;
+        var instance = await DialogService.ShowAsync<UserDialog>(string.Empty, parameters, options);
         var result = await instance.Result;
         if (result is { Data: UserModel userModel })
         {
@@ -82,6 +86,7 @@ public partial class UsersList : FullComponentBase
                 old.Role = userModel.Role;
                 old.GroupId = userModel.GroupId;
                 old.IsDisabled = userModel.IsDisabled;
+                old.PhoneNumber = userModel.PhoneNumber;
                 db.Users.Update(old);
                 await db.SaveChangesAsync();
             }

@@ -1,2 +1,10 @@
-@page "/admin/CV"
+@page "/admin/cv"
 @inherits FullComponentBase
+
+<AuthorizedComponent Roles="Admin">
+    <Content>
+        <MudTabs Centered Color="Color.Primary" ActivePanelIndex="0">
+            <SafetyCertifications Title="Habilitations" />
+        </MudTabs>
+    </Content>
+</AuthorizedComponent>

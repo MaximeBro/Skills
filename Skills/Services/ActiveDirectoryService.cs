@@ -42,8 +42,8 @@ public class ActiveDirectoryService(IConfiguration configuration, IDbContextFact
                     Email = directoryEntry.Properties["mail"].Value?.ToString() ?? string.Empty,
                     IsDisabled = Convert.ToBoolean(flags & 0x00000002) // 0x00000002 == ACCOUNT_DISABLED
                 };
-                model.Username = model.Email.Replace("@sasp.fr", String.Empty);
-                model.Name = $"{model.Email.Replace("@sasp.fr", string.Empty).Split(".")[0].FirstCharToUpper()} {model.Email.Replace("@sasp.fr", string.Empty).Split(".")[1].FirstCharToUpper()}";
+                model.Username = directoryEntry.Properties["sAMAccountName"].Value?.ToString() ?? string.Empty;
+                model.Name = directoryEntry.Properties["name"].Value?.ToString() ?? string.Empty;
                 collaborators.Add(model);
             }
             DirectoryEntries.Clear();

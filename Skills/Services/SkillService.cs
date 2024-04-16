@@ -255,7 +255,7 @@ public class SkillService(IConfiguration configuration, IDbContextFactory<Skills
         if (rows is null) return new KeyValuePair<ImportState, string>(ImportState.Cancelled, "Le fichier n'a pas pu être importé à cause d'un mauvais format ou le nom des colonnes n'est pas respecté.");
 
         var db = await factory.CreateDbContextAsync();
-        var userSkills = db.Userskills.Where(x => x.UserId == user.Id).ToList();
+        var userSkills = db.UsersSkills.Where(x => x.UserId == user.Id).ToList();
         foreach (var row in rows)
         {
             row.Category = string.IsNullOrWhiteSpace(row.Category) ? null : row.Category;
@@ -274,12 +274,12 @@ public class SkillService(IConfiguration configuration, IDbContextFactory<Skills
                     if (userSkill != null)
                     {
                         userSkill.Level = level;
-                        db.Userskills.Update(userSkill);
+                        db.UsersSkills.Update(userSkill);
                         await db.SaveChangesAsync();
                     }
                     else
                     {
-                        db.Userskills.Add(new UserSkillModel
+                        db.UsersSkills.Add(new UserSkillModel
                         {
                             UserId = user.Id,
                             SkillId = skill.Id,

@@ -1,0 +1,47 @@
+@using Skills.Models.CV
+@inherits FullComponentBase
+
+<MudTabPanel Class="mark-one" Text="@Title">
+    <MudContainer MaxWidth="MaxWidth.ExtraLarge">
+        <MudGrid Class="mt-8" Justify="Justify.Center">
+            <MudItem xs="12">
+                <MudDataGrid T="SafetyCertification" Items="_certifications" Bordered Hover Outlined Filterable Striped SortMode="SortMode.Multiple" Dense FixedHeader
+                             Culture="@(new CultureInfo("fr-FR"))" Height="70vh" Virtualize OverscanCount="25" QuickFilter="@QuickFilter" ReadOnly="false"
+                             EditMode="DataGridEditMode.Cell" CommittedItemChanges="@CommitChangesAsync">
+                    <ToolBarContent>
+                        <MudText Class="mark-one" Style="font-weight: bold!important">Actions</MudText>
+                        <MudTooltip Class="ml-2" Placement="Placement.Bottom" Text="Créer une habilitation" Arrow>
+                            <MudIconButton Class="ml-4" Style="border-radius: 6px!important; padding: 4px!important;" Icon="@IconsF.Add" Color="Color.Tertiary" OnClick="@(() => CreateCertificationAsync())"/>
+                        </MudTooltip>
+                        <MudSpacer/>
+                        <MudTextField T="string" @bind-Value="_search" Immediate Adornment="Adornment.Start" Clearable
+                                      AdornmentIcon="@IconsF.Search" Placeholder="Rechercher" Class="flex-grow-0 mr-8 mt-0" Style="width: 400px;"/>
+                    </ToolBarContent>
+                    <Columns>
+                        <PropertyColumn Title="Catégorie" Property="x => x.Category" IsEditable />
+                        <PropertyColumn Title="Nomination" Property="x => x.Name" IsEditable />
+                        <PropertyColumn Title="Disponible" Property="x => x.Enabled" IsEditable>
+                            <EditTemplate Context="row">
+                                <MudStack Row Justify="Justify.Center">
+                                    <MudCheckBox T="bool" Size="Size.Small" Value="row.Item.Enabled" ValueChanged="@(async (value) => await ValueChangedAsync(value, row.Item))"/>
+                                </MudStack>
+                            </EditTemplate>
+                        </PropertyColumn>
+                        <TemplateColumn Title="Actions" IsEditable="false">
+                            <CellTemplate Context="row">
+                                <MudStack Row Justify="Justify.Center">
+                                    <MudTooltip Text="Éditer" Placement="Placement.Top" Arrow>
+                                        <MudIconButton Color="Color.Primary" Size="Size.Small" Icon="@IconsF.Edit" OnClick="@(async() => await EditCertificationAsync(row.Item))"/>
+                                    </MudTooltip>
+                                    <MudTooltip Text="Supprimer" Placement="Placement.Bottom" Arrow>
+                                        <MudIconButton Class="hover-red" Size="Size.Small" Icon="@IconsF.Delete" OnClick="@(async() => await DeleteCertificationAsync(row.Item))"/>
+                                    </MudTooltip>
+                                </MudStack>
+                            </CellTemplate>
+                        </TemplateColumn>
+                    </Columns>
+                </MudDataGrid>
+            </MudItem>
+        </MudGrid>
+    </MudContainer>
+</MudTabPanel>

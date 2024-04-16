@@ -9,15 +9,14 @@
             <MudStack Row="false" Class="py-6" Style="max-height: 400px; overflow-y: scroll;">
                 @foreach (var skill in _userSkills.Where(QuickFilter).OrderByDescending(x => x.Value))
                 {
-                    <MudStack Class="mb-1" Row AlignItems="AlignItems.Center" Spacing="0">
+                    <MudStack Row AlignItems="AlignItems.Center" Spacing="0">
                         <MudTooltip Placement="Placement.Left" Text="@($"{(skill.Value ? "Révoquer" : "Attribuer")}")" Arrow>
                             <MudCheckBox T="bool" Value="skill.Value" ValueChanged="@((check) => OnCheckChanged(check, skill.Key))" UnCheckedIcon="@IconsF.Add" checkedIcon="fas fa-minus"
                                          Color="Color.Error" UnCheckedColor="Color.Tertiary" Size="Size.Small"/>
                         </MudTooltip>
                         <MudPaper Class="mx-3 px-4 py-2 flex-grow-1" Elevation="4">
                             <MudStack Row="false" Spacing="0">
-                                <MudText>@skill.Key.ToStringNoDesc()</MudText>
-                                <MudText>@skill.Key.Description</MudText>
+                                <MudText>@skill.Key.ToString()</MudText>
                             </MudStack>
                         </MudPaper>
                     </MudStack>
@@ -63,7 +62,7 @@
     protected override async Task OnInitializedAsync()
     {
         var db = await Factory.CreateDbContextAsync();
-        var ownedSkills = db.Userskills.Where(x => x.UserId == User.Id).ToList();
+        var ownedSkills = db.UsersSkills.Where(x => x.UserId == User.Id).ToList();
         
         var allSkills = new List<AbstractSkillModel>();
         allSkills.AddRange(db.Skills.AsNoTracking().ToList());
@@ -76,10 +75,13 @@
         await db.DisposeAsync();
     }
 
-    private void OnCheckChanged(bool check, AbstractSkillModel skill)
+    private void OnCheckChanged(bool? check, AbstractSkillModel skill)
     {
-        _userSkills[skill] = check;
-        StateHasChanged();
+        if (check.HasValue)
+        {
+            _userSkills[skill] = check.Value;
+            StateHasChanged();
+        }
     }
 
     private void Submit() => Dialog.Close(_userSkills.Where(x => x.Value).Select(x => x.Key));

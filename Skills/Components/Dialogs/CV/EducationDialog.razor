@@ -1,0 +1,82 @@
+@using Skills.Models.CV
+
+<MudDialog>
+    <DialogContent>
+        <MudIconButton Class="ml-n4" Icon="@IconsF.Close" Color="Color.Dark" OnClick="@(() => Dialog.Close())"/>
+        <MudStack Class="px-4 py-2" Justify="Justify.SpaceEvenly" Row="false" Spacing="0">
+            <MudStack Class="mb-2" Row>
+                <MudTextField T="string" @bind-Value="_title" Label="Diplôme" Style="width: 350px;"/>
+                <MudTextField T="string" @bind-Value="_supplier" Label="Établissement" Style="width: 250px;"/>
+            </MudStack>
+            <MudStack Class="mb-2" Row Justify="Justify.SpaceEvenly">
+                <MudSelect T="int" @bind-Value="_yearStart" Label="Début (Année)" AnchorOrigin="Origin.BottomLeft" TransformOrigin="Origin.TopLeft">
+                    @for (int i = DateTime.Now.Year; i >= 1950; i--)
+                    {
+                        var value = i;
+                        <MudSelectItem Value="value">@value</MudSelectItem>
+                    }
+                </MudSelect>
+                <MudSelect T="int" @bind-Value="_yearEnd" Label="Fin (Année)" AnchorOrigin="Origin.BottomLeft" TransformOrigin="Origin.TopLeft">
+                    @for (int i = _yearStart; i <= (_yearEnd + 50); i++)
+                    {
+                        var value = i;
+                        <MudSelectItem Value="value">@value</MudSelectItem>
+                    }
+                </MudSelect>
+            </MudStack>
+            <MudStack Class="mb-2" Row>
+                <MudTextField T="string" @bind-Value="_town" Label="Ville" />
+            </MudStack>
+            <MudStack Row>
+                <MudTextField T="string" @bind-Value="_desc" Label="Description" Lines="3" Clearable />
+            </MudStack>
+        </MudStack>
+    </DialogContent>
+    <DialogActions>
+        <MudButton Class="mark-one" Color="Color.Success" Variant="Variant.Filled" OnClick="@Submit">Enregistrer</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    [CascadingParameter] public MudDialogInstance Dialog { get; set; } = null!;
+    [Parameter] public CvEducationInfo? CvEducation { get; set; }
+
+    private int _yearStart;
+    private int _yearEnd;
+    private string _title = string.Empty;
+    private string _supplier = string.Empty;
+    private string _town = string.Empty;
+    private string _desc = string.Empty;
+
+    protected override void OnInitialized()
+    {
+        if (CvEducation != null)
+        {
+            _yearStart = CvEducation.YearStart;
+            _yearEnd = CvEducation.YearStart;
+            _title = CvEducation.Title;
+            _supplier = CvEducation.Supplier;
+            _town = CvEducation.Town;
+            _desc = CvEducation.Description;
+        }
+        else
+        {
+            _yearStart = _yearEnd = DateTime.Now.Year;
+        }
+    }
+
+    private void Submit()
+    {
+        var education = new CvEducationInfo
+        {
+            YearStart = _yearStart,
+            YearEnd = _yearEnd,
+            Title = _title,
+            Supplier = _supplier,
+            Town = _town,
+            Description = _desc
+        };
+        if (CvEducation != null) education.Id = CvEducation.Id;
+        Dialog.Close(education);
+    }
+}
