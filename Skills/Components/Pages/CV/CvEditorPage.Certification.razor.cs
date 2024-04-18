@@ -31,6 +31,7 @@ public partial class CvEditorPage_Certification : FullComponentBase
         var result = await instance.Result;
         if (result is { Data: CvCertificationInfo certification })
         {
+            certification.CvId = Cv.Id;
             CvCertifications.Add(certification);
             StateHasChanged();
         }

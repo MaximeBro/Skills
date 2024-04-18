@@ -47,26 +47,10 @@
                 </ToolBarContent>
                 <Columns>
                     <HierarchyColumn T="UserSkillModel" />
-                    <TemplateColumn Title="Type" IsEditable="false">
-                        <CellTemplate>
-                            <MudText Class="mark-one">@(context.Item.Skill?.Type ?? string.Empty)</MudText>
-                        </CellTemplate>
-                    </TemplateColumn>
-                    <TemplateColumn Title="Catégorie" IsEditable="false">
-                        <CellTemplate>
-                            <MudText Class="mark-one">@(context.Item.Skill?.Category ?? string.Empty)</MudText>
-                        </CellTemplate>
-                    </TemplateColumn>
-                    <TemplateColumn Title="Sous catégorie" IsEditable="false">
-                        <CellTemplate>
-                            <MudText Class="mark-one">@(context.Item.Skill?.SubCategory ?? string.Empty)</MudText>
-                        </CellTemplate>
-                    </TemplateColumn>
-                    <TemplateColumn Title="Description" IsEditable="false">
-                        <CellTemplate>
-                            <MudText Class="mark-one">@(context.Item.Skill?.Description ?? string.Empty)</MudText>
-                        </CellTemplate>
-                    </TemplateColumn>
+                    <PropertyColumn Title="Type" Property="x => x.Skill.Type" IsEditable="false" />
+                    <PropertyColumn Title="Catégorie" Property="x => x.Skill.Category" IsEditable="false" />
+                    <PropertyColumn Title="Sous catégorie" Property="x => x.Skill.SubCategory" IsEditable="false" />
+                    <PropertyColumn Title="Description" Property="x => x.Skill.Description" IsEditable="false" />
                     <PropertyColumn Title="Niveau" Property="x => x.Level" IsEditable>
                         <EditTemplate>
                             <MudSelect T="int" Value="context.Item.Level" ValueChanged="@(async(value) => await LevelChangedAsync(value, context.Item))" 

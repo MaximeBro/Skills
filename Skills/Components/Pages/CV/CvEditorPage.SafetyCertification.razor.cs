@@ -30,7 +30,7 @@ public partial class CvEditorPage_SafetyCertification : FullComponentBase
         CvSafetyCertifications = db.CvSafetyCertifications.AsNoTracking().Where(x => x.CvId == Cv.Id).Include(x => x.Certification).ToList();
         SafetyCertifications = db.SafetyCertifications.AsNoTracking().ToList();
         _groupedCertifications = SafetyCertifications.GroupBy(x => x.Category).ToDictionary(x => x.Key, y => y.ToList());
-        foreach (var certification in SafetyCertifications) HeldCertifications.Add(certification.Id, CvSafetyCertifications.Select(x => x.Id).Contains(certification.Id));
+        foreach (var certification in SafetyCertifications) HeldCertifications.Add(certification.Id, CvSafetyCertifications.Select(x => x.CertId).Contains(certification.Id));
         await db.DisposeAsync();
         StateHasChanged();
     }

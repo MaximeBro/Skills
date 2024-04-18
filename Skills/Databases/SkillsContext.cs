@@ -14,6 +14,7 @@ public class SkillsContext : DbContext
     public DbSet<CvExperienceInfo> CvExperiences { get; set; }
     public DbSet<CvCertificationInfo> CvCertifications { get; set; }
     public DbSet<CvSafetyCertificationInfo> CvSafetyCertifications { get; set; }
+    public DbSet<CvSkillInfo> CvSkills { get; set; }
     
     public DbSet<SafetyCertification> SafetyCertifications { get; set; } // Admin certifications
     
@@ -96,53 +97,32 @@ public class SkillsContext : DbContext
         // CVs (drop cascade)
         modelBuilder.Entity<CvInfo>()
             .HasMany(e => e.Education)
-            .WithOne()
+            .WithOne(e => e.Cv)
+            .HasForeignKey(e => e.CvId)
             .OnDelete(DeleteBehavior.Cascade);
         
         modelBuilder.Entity<CvInfo>()
             .HasMany(e => e.Experiences)
-            .WithOne()
+            .WithOne(e => e.Cv)
+            .HasForeignKey(e => e.CvId)
             .OnDelete(DeleteBehavior.Cascade);
         
         modelBuilder.Entity<CvInfo>()
             .HasMany(e => e.Certifications)
-            .WithOne()
+            .WithOne(e => e.Cv)
+            .HasForeignKey(e => e.CvId)
             .OnDelete(DeleteBehavior.Cascade);
         
         modelBuilder.Entity<CvInfo>()
             .HasMany(e => e.SafetyCertifications)
-            .WithOne()
+            .WithOne(e => e.Cv)
+            .HasForeignKey(e => e.CvId)
             .OnDelete(DeleteBehavior.Cascade);
         
-        // CVs (relationships)
-        modelBuilder.Entity<SkillModel>()
-            .HasOne(e => e.Cv).WithMany()
-            .IsRequired(false)
-            .HasForeignKey(e => e.CvId);
-        
-        modelBuilder.Entity<SoftSkillModel>()
-            .HasOne(e => e.Cv).WithMany()
-            .IsRequired(false)
-            .HasForeignKey(e => e.CvId);
-        
-        modelBuilder.Entity<CvEducationInfo>()
-            .HasOne(e => e.Cv).WithMany()
-            .HasForeignKey(e => e.CvId);
-
-        modelBuilder.Entity<CvExperienceInfo>()
-            .HasOne(e => e.Cv).WithMany()
-            .HasForeignKey(e => e.CvId);
-
-        modelBuilder.Entity<CvCertificationInfo>()
-            .HasOne(e => e.Cv).WithMany()
-            .HasForeignKey(e => e.CvId);
-
-        modelBuilder.Entity<CvSafetyCertificationInfo>()
-            .HasOne(e => e.Cv).WithMany()
-            .HasForeignKey(e => e.CvId);
-        
-        modelBuilder.Entity<CvSafetyCertificationInfo>()
-            .HasOne(e => e.Certification).WithMany()
-            .HasForeignKey(e => e.CertId);
+        modelBuilder.Entity<CvInfo>()
+            .HasMany(e => e.Skills)
+            .WithOne(e => e.Cv)
+            .HasForeignKey(e => e.CvId)
+            .OnDelete(DeleteBehavior.Cascade);
     }
 }

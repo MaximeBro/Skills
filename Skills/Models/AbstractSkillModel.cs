@@ -17,9 +17,6 @@ public abstract class AbstractSkillModel
     public Guid? GroupId { get; set; }
     public GroupModel? Group { get; set; }
     
-    public Guid? CvId { get; set; }
-    public CvInfo? Cv { get; set; }
-    
     public new string ToString() => !string.IsNullOrWhiteSpace(Type) ? (Type == "SOFT-SKILL" ? string.Join(" - ", Type, Description) : string.Join(" - ", Type, Category, SubCategory, Description)) : string.Empty;
     public new string ToStringNoType() => !string.IsNullOrWhiteSpace(Type) ? (Type == "SOFT-SKILL" ? string.Join(" - ", Type, Description) : string.Join(" - ", Category, SubCategory, Description)) : string.Empty;
     public new string ToStringNoTypeDesc() => !string.IsNullOrWhiteSpace(Type) ? (Type == "SOFT-SKILL" ? $"{Type}" : string.Join(" - ", Category, SubCategory)) : string.Empty;

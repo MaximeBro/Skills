@@ -1,34 +1,34 @@
 @inherits FullComponentBase
 
-<MudPaper id="education" Class="mt-6 pad-anchor" Elevation="2">
+<MudPaper id="experiences" Class="mt-6 pad-anchor" Elevation="2">
     <MudStack Class="px-4 py-3" Row="false" Spacing="2">
-        <MudText Class="mark-one bold">Diplômes</MudText>
+        <MudText Class="mark-one bold">Expériences</MudText>
         <MudStack Class="px-6 py-2" Row="false" Style="max-height: 350px; overflow-y: auto;">
-            @foreach (var education in CvEducations.OrderByDescending(x => x.YearEnd))
+            @foreach (var experience in CvExperiences)
             {
                 <MudPaper Class="rounded-lg mb-1 d-flex px-4 py-1" Elevation="2" Width="100%" Style="flex-direction: row; align-items: center;">
                     <MudStack Row="false" Spacing="0">
                         <MudStack Row Justify="Justify.FlexStart" AlignItems="AlignItems.Center">
-                            <MudText Class="mark-one bold" Color="Color.Primary" Align="Align.Left">@education.Title</MudText> <MudText Class="mark-one bold" Color="Color.Dark" Align="Align.Left">|</MudText> <MudText Class="mark-one bold" Align="Align.Left">@education.Supplier</MudText>
+                            <MudText Class="mark-one bold" Color="Color.Primary">@experience.Category</MudText> <MudText Class="mark-one bold" Color="Color.Primary"> | </MudText> <MudText Class="mark-one bold" Color="Color.Dark">@experience.Title</MudText>
                         </MudStack>
                         <MudStack Row Justify="Justify.FlexStart" AlignItems="AlignItems.Center">
-                            <MudText Class="mark-one">@education.YearStart</MudText> - <MudText Class="mark-one">@education.YearEnd</MudText> | <MudText Class="mark-one">@education.Town</MudText>
+                            <MudText Class="mark-one">@experience.StartsAt.ToString("MM-yyyy")</MudText> <MudText Class="mark-one"> - </MudText> <MudText Class="mark-one">@experience.EndsAt.ToString("MM-yyyy")</MudText>
                         </MudStack>
-                        @if (!string.IsNullOrWhiteSpace(education.Description))
+                        @if (!string.IsNullOrWhiteSpace(experience.Description))
                         {
-                            <MudStack>
-                                <MudText Class="mark-one" Typo="Typo.subtitle2">@education.Description</MudText>
+                            <MudStack Row>
+                                <MudText Class="mark-one" Typo="Typo.subtitle2">@experience.Description</MudText>
                             </MudStack>
                         }
                     </MudStack>
                     <MudSpacer/>
-                    <MudIconButton Class="hover-red" Icon="@IconsF.Delete" Size="Size.Small" OnClick="@(() => CvEducations.Remove(education))"/>
+                    <MudIconButton Class="hover-red" Icon="@IconsF.Delete" Size="Size.Small" OnClick="@(() => CvExperiences.Remove(experience))"/>
                 </MudPaper>
             }
         </MudStack>
         <MudStack Class="px-6 py-2" Row Justify="Justify.Center">
             <MudPaper Class="rounded-lg" Elevation="2" Width="100%" Style="@($"border: 2px dashed {ThemeManager.GetColor(Color.Primary)};")">
-                <MudLink Underline="Underline.None" OnClick="@(async () => await CreateEducationAsync())">
+                <MudLink Underline="Underline.None" OnClick="@(async () => await CreateExperienceAsync())">
                     <MudStack Class="py-2" Row Justify="Justify.Center">
                         <MudIcon Icon="@IconsR.AddCircle" Color="Color.Primary" Size="Size.Small"/>
                     </MudStack>

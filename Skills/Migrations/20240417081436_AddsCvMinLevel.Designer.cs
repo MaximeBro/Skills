@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Skills.Databases;
 
@@ -10,9 +11,11 @@ using Skills.Databases;
 namespace Skills.Migrations
 {
     [DbContext(typeof(SkillsContext))]
-    partial class SkillsContextModelSnapshot : ModelSnapshot
+    [Migration("20240417081436_AddsCvMinLevel")]
+    partial class AddsCvMinLevel
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.3");
@@ -24,6 +27,9 @@ namespace Skills.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Category")
+                        .HasColumnType("TEXT");
+
+                    b.Property<Guid?>("CvId")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Description")
@@ -68,6 +74,9 @@ namespace Skills.Migrations
                     b.Property<Guid>("CvId")
                         .HasColumnType("TEXT");
 
+                    b.Property<Guid?>("CvInfoId")
+                        .HasColumnType("TEXT");
+
                     b.Property<string>("Duration")
                         .IsRequired()
                         .HasColumnType("TEXT");
@@ -87,6 +96,8 @@ namespace Skills.Migrations
 
                     b.HasIndex("CvId");
 
+                    b.HasIndex("CvInfoId");
+
                     b.ToTable("CvCertifications");
                 });
 
@@ -97,6 +108,9 @@ namespace Skills.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<Guid>("CvId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<Guid?>("CvInfoId")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Description")
@@ -125,6 +139,8 @@ namespace Skills.Migrations
 
                     b.HasIndex("CvId");
 
+                    b.HasIndex("CvInfoId");
+
                     b.ToTable("CvEducations");
                 });
 
@@ -134,21 +150,14 @@ namespace Skills.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("Category")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
                     b.Property<Guid>("CvId")
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("Description")
+                    b.Property<Guid?>("CvInfoId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("DateInfo")
                         .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<DateTime>("EndsAt")
-                        .HasColumnType("TEXT");
-
-                    b.Property<DateTime>("StartsAt")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Title")
@@ -158,6 +167,8 @@ namespace Skills.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("CvId");
+
+                    b.HasIndex("CvInfoId");
 
                     b.ToTable("CvExperiences");
                 });
@@ -207,43 +218,24 @@ namespace Skills.Migrations
                     b.Property<Guid>("CertId")
                         .HasColumnType("TEXT");
 
-                    b.Property<Guid?>("CertificationId")
-                        .HasColumnType("TEXT");
-
                     b.Property<Guid>("CvId")
                         .HasColumnType("TEXT");
 
-                    b.HasKey("Id");
-
-                    b.HasIndex("CertificationId");
-
-                    b.HasIndex("CvId");
-
-                    b.ToTable("CvSafetyCertifications");
-                });
-
-            modelBuilder.Entity("Skills.Models.CV.CvSkillInfo", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
+                    b.Property<Guid?>("CvInfoId")
                         .HasColumnType("TEXT");
 
-                    b.Property<Guid>("CvId")
-                        .HasColumnType("TEXT");
-
-                    b.Property<bool>("IsSoftSkill")
+                    b.Property<bool>("Granted")
                         .HasColumnType("INTEGER");
 
-                    b.Property<Guid>("SkillId")
-                        .HasColumnType("TEXT");
-
                     b.HasKey("Id");
+
+                    b.HasIndex("CertId");
 
                     b.HasIndex("CvId");
 
-                    b.HasIndex("SkillId");
+                    b.HasIndex("CvInfoId");
 
-                    b.ToTable("CvSkills");
+                    b.ToTable("CvSafetyCertifications");
                 });
 
             modelBuilder.Entity("Skills.Models.CV.SafetyCertification", b =>
@@ -417,10 +409,17 @@ namespace Skills.Migrations
                     b.Property<Guid>("CategoryId")
                         .HasColumnType("TEXT");
 
+                    b.Property<Guid?>("CvInfoId")
+                        .HasColumnType("TEXT");
+
                     b.Property<Guid?>("SubCategoryId")
                         .HasColumnType("TEXT");
 
                     b.HasIndex("CategoryId");
+
+                    b.HasIndex("CvId");
+
+                    b.HasIndex("CvInfoId");
 
                     b.HasIndex("SubCategoryId");
 
@@ -430,6 +429,19 @@ namespace Skills.Migrations
             modelBuilder.Entity("Skills.Models.SoftSkillModel", b =>
                 {
                     b.HasBaseType("Skills.Models.AbstractSkillModel");
+
+                    b.Property<Guid?>("CvInfoId")
+                        .HasColumnType("TEXT");
+
+                    b.HasIndex("CvId");
+
+                    b.HasIndex("CvInfoId");
+
+                    b.ToTable("AbstractSkillModel", t =>
+                        {
+                            t.Property("CvInfoId")
+                                .HasColumnName("SoftSkillModel_CvInfoId");
+                        });
 
                     b.HasDiscriminator().HasValue("SoftSkillModel");
                 });
@@ -454,10 +466,14 @@ namespace Skills.Migrations
             modelBuilder.Entity("Skills.Models.CV.CvCertificationInfo", b =>
                 {
                     b.HasOne("Skills.Models.CV.CvInfo", "Cv")
-                        .WithMany("Certifications")
+                        .WithMany()
                         .HasForeignKey("CvId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.HasOne("Skills.Models.CV.CvInfo", null)
+                        .WithMany("Certifications")
+                        .HasForeignKey("CvInfoId");
 
                     b.Navigation("Cv");
                 });
@@ -465,10 +481,14 @@ namespace Skills.Migrations
             modelBuilder.Entity("Skills.Models.CV.CvEducationInfo", b =>
                 {
                     b.HasOne("Skills.Models.CV.CvInfo", "Cv")
-                        .WithMany("Education")
+                        .WithMany()
                         .HasForeignKey("CvId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.HasOne("Skills.Models.CV.CvInfo", null)
+                        .WithMany("Education")
+                        .HasForeignKey("CvInfoId");
 
                     b.Navigation("Cv");
                 });
@@ -476,10 +496,14 @@ namespace Skills.Migrations
             modelBuilder.Entity("Skills.Models.CV.CvExperienceInfo", b =>
                 {
                     b.HasOne("Skills.Models.CV.CvInfo", "Cv")
-                        .WithMany("Experiences")
+                        .WithMany()
                         .HasForeignKey("CvId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.HasOne("Skills.Models.CV.CvInfo", null)
+                        .WithMany("Experiences")
+                        .HasForeignKey("CvInfoId");
 
                     b.Navigation("Cv");
                 });
@@ -488,36 +512,23 @@ namespace Skills.Migrations
                 {
                     b.HasOne("Skills.Models.CV.SafetyCertification", "Certification")
                         .WithMany()
-                        .HasForeignKey("CertificationId");
+                        .HasForeignKey("CertId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("Skills.Models.CV.CvInfo", "Cv")
-                        .WithMany("SafetyCertifications")
+                        .WithMany()
                         .HasForeignKey("CvId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.HasOne("Skills.Models.CV.CvInfo", null)
+                        .WithMany("SafetyCertifications")
+                        .HasForeignKey("CvInfoId");
 
                     b.Navigation("Certification");
 
                     b.Navigation("Cv");
-                });
-
-            modelBuilder.Entity("Skills.Models.CV.CvSkillInfo", b =>
-                {
-                    b.HasOne("Skills.Models.CV.CvInfo", "Cv")
-                        .WithMany("Skills")
-                        .HasForeignKey("CvId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Skills.Models.AbstractSkillModel", "Skill")
-                        .WithMany()
-                        .HasForeignKey("SkillId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Cv");
-
-                    b.Navigation("Skill");
                 });
 
             modelBuilder.Entity("Skills.Models.SoftTypeLevel", b =>
@@ -578,6 +589,14 @@ namespace Skills.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("Skills.Models.CV.CvInfo", "Cv")
+                        .WithMany()
+                        .HasForeignKey("CvId");
+
+                    b.HasOne("Skills.Models.CV.CvInfo", null)
+                        .WithMany("Skills")
+                        .HasForeignKey("CvInfoId");
+
                     b.HasOne("Skills.Models.SKillInfo", "SubCategoryInfo")
                         .WithMany()
                         .HasForeignKey("SubCategoryId")
@@ -585,7 +604,22 @@ namespace Skills.Migrations
 
                     b.Navigation("CategoryInfo");
 
+                    b.Navigation("Cv");
+
                     b.Navigation("SubCategoryInfo");
+                });
+
+            modelBuilder.Entity("Skills.Models.SoftSkillModel", b =>
+                {
+                    b.HasOne("Skills.Models.CV.CvInfo", "Cv")
+                        .WithMany()
+                        .HasForeignKey("CvId");
+
+                    b.HasOne("Skills.Models.CV.CvInfo", null)
+                        .WithMany("SoftSkills")
+                        .HasForeignKey("CvInfoId");
+
+                    b.Navigation("Cv");
                 });
 
             modelBuilder.Entity("Skills.Models.CV.CvInfo", b =>
@@ -599,6 +633,8 @@ namespace Skills.Migrations
                     b.Navigation("SafetyCertifications");
 
                     b.Navigation("Skills");
+
+                    b.Navigation("SoftSkills");
                 });
 #pragma warning restore 612, 618
         }

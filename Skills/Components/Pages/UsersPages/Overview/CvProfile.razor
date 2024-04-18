@@ -34,7 +34,7 @@
         </AuthorizedComponent>
 
         <MudItem Class="px-16" xs="12">
-            <MudGrid Justify="Justify.Center" Spacing="2">
+            <MudGrid Justify="Justify.FlexStart" Spacing="2">
                 @foreach (var cv in _cvs)
                 {
                     <MudItem xs="12" sm="6" md="4">
@@ -45,6 +45,9 @@
                                     <MudSpacer/>
                                     <AuthorizedComponent Roles="Admin, Manager">
                                         <Content>
+                                            <MudTooltip Text="Télécharger" Placement="Placement.Top" Arrow>
+                                                <MudIconButton Color="Color.Primary" Size="Size.Small" Icon="@IconsFF.FileWord" />
+                                            </MudTooltip>
                                             <MudTooltip Text="Éditer" Placement="Placement.Top" Arrow>
                                                 <MudIconButton Color="Color.Primary" Size="Size.Small" Icon="@IconsF.Edit" OnClick="@(() => NavManager.NavigateTo($"/overview/{User.Username}/cv-editor/{cv.Id}"))"/>
                                             </MudTooltip>
@@ -55,7 +58,7 @@
                                     </AuthorizedComponent>
                                 </MudStack>
                                 <MudDivider Class="my-2 mt-2" DividerType="DividerType.Middle"/>
-                                <MudText Class="mark-one">Compétences @(cv.Skills.Count + cv.SoftSkills.Count) (dont @cv.SoftSkills.Count soft-skill(s))</MudText>
+                                <MudText Class="mark-one">Compétences @(cv.Skills.Count) (dont @cv.Skills.Count(x => x.IsSoftSkill) soft-skill(s))</MudText>
                                 <MudText Class="mark-one">Formations @cv.Certifications.Count</MudText>
                                 <MudText Class="mark-one">Diplômes @cv.Education.Count</MudText>
                                 <MudStack Row>

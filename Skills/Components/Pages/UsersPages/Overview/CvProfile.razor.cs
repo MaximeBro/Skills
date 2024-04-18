@@ -32,15 +32,16 @@ public partial class CvProfile : ComponentBase
     private async Task CreateCvAsync()
     {
         var db = await Factory.CreateDbContextAsync();
-        db.CVs.Add(new CvInfo
+        var cv = new CvInfo
         {
             UserId = User.Id,
             Title = $"CV{(db.CVs.AsNoTracking().Any(x => x.UserId == User.Id) ? $" ({db.CVs.AsNoTracking().Count(x => x.UserId == User.Id)})" : string.Empty)}"
-        });
+        };
+        db.CVs.Add(cv);
         await db.SaveChangesAsync();
         await db.DisposeAsync();
         
-        NavManager.NavigateTo("/");
+        NavManager.NavigateTo($"/overview/{User.Username}/cv-editor/{cv.Id}");
     }
     
     private async Task DeleteCvAsync(CvInfo cv)
@@ -66,7 +67,7 @@ public partial class CvProfile : ComponentBase
     {
         var db = await Factory.CreateDbContextAsync();
         _cvs = db.CVs.AsNoTracking()
-                     .Include(x => x.Skills).Include(x => x.SoftSkills)
+                     .Include(x => x.Skills)
                      .Include(x => x.Education).Include(x => x.Experiences)
                      .Include(x => x.Certifications).Include(x => x.SafetyCertifications)
                      .ToList();

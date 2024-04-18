@@ -1,9 +1,9 @@
 @inherits FullComponentBase
 
-<MudPaper Class="mt-6" Elevation="2">
+<MudPaper id="certifications" Class="mt-6 pad-anchor" Elevation="2">
     <MudStack Class="px-4 py-3" Row="false" Spacing="2">
         <MudText Class="mark-one bold">Certifications</MudText>
-        <MudStack Class="px-6 py-2" Row="false">
+        <MudStack Class="px-6 py-2" Row="false" Style="max-height: 350px; overflow-y: auto;">
             @foreach (var certification in CvCertifications)
             {
                 <MudPaper Class="rounded-lg mb-1 d-flex px-4 py-1" Elevation="2" Width="100%" Style="flex-direction: row; align-items: center;">
@@ -19,15 +19,15 @@
                     <MudIconButton Class="hover-red" Icon="@IconsF.Delete" Size="Size.Small" OnClick="@(() => CvCertifications.Remove(certification))"/>
                 </MudPaper>
             }
-            <MudStack Row Justify="Justify.Center">
-                <MudPaper Class="rounded-lg" Elevation="2" Width="100%" Style="@($"border: 2px dashed {ThemeManager.GetColor(Color.Primary)};")">
-                    <MudStack Class="py-1" Row Justify="Justify.Center">
-                        <MudTooltip Text="Ajouter une certification" Placement="Placement.Top" Arrow>
-                            <MudIconButton Icon="@IconsR.AddCircle" Color="Color.Primary" Size="Size.Small" OnClick="@(async () => await CreateCertificationAsync())"/>
-                        </MudTooltip>
+        </MudStack>
+        <MudStack Class="px-6 py-2" Row Justify="Justify.Center">
+            <MudPaper Class="rounded-lg" Elevation="2" Width="100%" Style="@($"border: 2px dashed {ThemeManager.GetColor(Color.Primary)};")">
+                <MudLink Underline="Underline.None" OnClick="@(async () => await CreateCertificationAsync())">
+                    <MudStack Class="py-2" Row Justify="Justify.Center">
+                        <MudIcon Icon="@IconsR.AddCircle" Color="Color.Primary" Size="Size.Small"/>
                     </MudStack>
-                </MudPaper>
-            </MudStack>
+                </MudLink>
+            </MudPaper>
         </MudStack>
     </MudStack>
 </MudPaper>

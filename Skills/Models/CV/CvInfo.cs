@@ -15,9 +15,9 @@ public class CvInfo
     [MaxLength(length: 14)]
     public string PhoneNumber { get; set; } = string.Empty;
     public string Job { get; set; } = string.Empty;
+    public int MinLevel { get; set; } = 2;
 
-    public List<SkillModel> Skills { get; set; } = new();
-    public List<SoftSkillModel> SoftSkills { get; set; } = new();
+    public List<CvSkillInfo> Skills { get; set; } = new();
     public List<CvEducationInfo> Education { get; set; } = new();
     public List<CvExperienceInfo> Experiences { get; set; } = new();
     public List<CvCertificationInfo> Certifications { get; set; } = new();

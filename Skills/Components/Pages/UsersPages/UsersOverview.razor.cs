@@ -11,6 +11,7 @@ public partial class UsersOverview : ComponentBase
     [Inject] public NavigationManager NavManager { get; set; } = null!;
 
     [Parameter] public string Id { get; set; } = null!;
+    [Parameter] public int? TabIndex { get; set; }
     
     private UserModel _user = null!;
     

@@ -9,30 +9,29 @@ using Skills.Models.CV;
 
 namespace Skills.Components.Pages.CV;
 
-public partial class CvEditorPage_Education : FullComponentBase
+public partial class CvEditorPage_Experiences : FullComponentBase
 {
     [Inject] public IDbContextFactory<SkillsContext> Factory { get; set; } = null!;
     [Inject] public IDialogService DialogService { get; set; } = null!;
-
     [Parameter] public CvInfo Cv { get; set; } = null!;
 
-    public List<CvEducationInfo> CvEducations = new();
+    public List<CvExperienceInfo> CvExperiences = new();
 
     protected override async Task OnInitializedAsync()
     {
         await RefreshDataAsync();
     }
 
-    private async Task CreateEducationAsync()
+    private async Task CreateExperienceAsync()
     {
         var options = Hardcoded.DialogOptions;
         options.MaxWidth = MaxWidth.Medium;
-        var instance = await DialogService.ShowAsync<EducationDialog>(string.Empty, options);
+        var instance = await DialogService.ShowAsync<ExperienceDialog>(string.Empty, options);
         var result = await instance.Result;
-        if (result is { Data: CvEducationInfo education })
+        if (result is { Data: CvExperienceInfo experience })
         {
-            education.CvId = Cv.Id;
-            CvEducations.Add(education);
+            experience.CvId = Cv.Id;
+            CvExperiences.Add(experience);
             StateHasChanged();
         }
     }
@@ -40,7 +39,8 @@ public partial class CvEditorPage_Education : FullComponentBase
     private async Task RefreshDataAsync()
     {
         var db = await Factory.CreateDbContextAsync();
-        CvEducations = db.CvEducations.AsNoTracking().Where(x => x.CvId == Cv.Id).ToList();
+        CvExperiences = db.CvExperiences.AsNoTracking().Where(x => x.CvId == Cv.Id).ToList();
         await db.DisposeAsync();
+        StateHasChanged();
     }
 }

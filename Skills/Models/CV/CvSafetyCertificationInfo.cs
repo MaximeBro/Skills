@@ -7,5 +7,4 @@ public class CvSafetyCertificationInfo
     public CvInfo? Cv { get; set; }
     public Guid CertId { get; set; }
     public SafetyCertification? Certification { get; set; }
-    public bool Granted { get; set; }
 }
