@@ -1,0 +1,61 @@
+@using Skills.Models.CV
+
+<MudDialog>
+    <DialogContent>
+        <MudIconButton Class="ml-n4" Icon="@IconsF.Close" Color="Color.Dark" OnClick="@(() => Dialog.Close())"/>
+        <MudStack Class="px-4 py-2" Justify="Justify.SpaceEvenly" Row="false" Spacing="0">
+            <MudStack Class="mb-2" Row>
+                <MudTextField T="string" @bind-Value="_category" Label="Catégorie" Style="width: 200px;"/>
+                <MudTextField T="string" @bind-Value="_title" Label="Titre" Style="width: 400px;"/>
+            </MudStack>
+            <MudStack Class="mb-2" Row>
+                <MudDatePicker @bind-Date="_dateStart" DateFormat="MM-yyyy" FixDay="1" Label="Début (période)" />
+                <MudDatePicker @bind-Date="_dateEnd" DateFormat="MM-yyyy" FixDay="1" Label="Fin (période)" />
+            </MudStack>
+            <MudStack Class="mb-2" Row>
+                <MudTextField T="string" @bind-Value="_desc" Label="Description" Lines="3" />
+            </MudStack>
+        </MudStack>
+    </DialogContent>
+    <DialogActions>
+        <MudButton Class="mark-one" Color="Color.Success" Variant="Variant.Filled" OnClick="@Submit">Enregistrer</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    [CascadingParameter] public MudDialogInstance Dialog { get; set; } = null!;
+    [Parameter] public CvExperienceInfo? CvExperience { get; set; }
+
+    private string _category = string.Empty;
+    private string _title = string.Empty;
+    private string _desc = string.Empty;
+    private DateTime? _dateStart = DateTime.Now;
+    private DateTime? _dateEnd = DateTime.Now;
+
+    protected override void OnInitialized()
+    {
+        if (CvExperience != null)
+        {
+            _category = CvExperience.Category;
+            _title = CvExperience.Title;
+            _dateStart = CvExperience.StartsAt;
+            _dateEnd = CvExperience.EndsAt;
+            _desc = CvExperience.Description;
+        }
+    }
+
+    private void Submit()
+    {
+        var experience = new CvExperienceInfo
+        {
+            Category = _category,
+            Title = _title,
+            StartsAt = _dateStart ?? DateTime.Now,
+            EndsAt = _dateEnd ?? DateTime.Now,
+            Description = _desc
+        };
+        if (CvExperience != null) experience.Id = CvExperience.Id;
+        Dialog.Close(experience);
+    }
+
+}

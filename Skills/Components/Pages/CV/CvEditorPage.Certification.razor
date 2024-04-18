@@ -1,0 +1,33 @@
+@inherits FullComponentBase
+
+<MudPaper id="certifications" Class="mt-6 pad-anchor" Elevation="2">
+    <MudStack Class="px-4 py-3" Row="false" Spacing="2">
+        <MudText Class="mark-one bold">Certifications</MudText>
+        <MudStack Class="px-6 py-2" Row="false" Style="max-height: 350px; overflow-y: auto;">
+            @foreach (var certification in CvCertifications)
+            {
+                <MudPaper Class="rounded-lg mb-1 d-flex px-4 py-1" Elevation="2" Width="100%" Style="flex-direction: row; align-items: center;">
+                    <MudStack Row="false" Spacing="0">
+                        <MudStack Row Justify="Justify.FlexStart" AlignItems="AlignItems.Center">
+                            <MudText Class="mark-one bold" Color="Color.Primary">@certification.Title</MudText> <MudText Class="mark-one bold" Color="Color.Dark">|</MudText> <MudText Class="mark-one bold" Color="Color.Dark">@certification.Supplier</MudText>
+                        </MudStack>
+                        <MudStack Row Justify="Justify.FlexStart" AlignItems="AlignItems.Center">
+                            <MudText Class="mark-one">@certification.Year</MudText> - <MudText Class="mark-one">@certification.Duration</MudText>
+                        </MudStack>
+                    </MudStack>
+                    <MudSpacer/>
+                    <MudIconButton Class="hover-red" Icon="@IconsF.Delete" Size="Size.Small" OnClick="@(() => CvCertifications.Remove(certification))"/>
+                </MudPaper>
+            }
+        </MudStack>
+        <MudStack Class="px-6 py-2" Row Justify="Justify.Center">
+            <MudPaper Class="rounded-lg" Elevation="2" Width="100%" Style="@($"border: 2px dashed {ThemeManager.GetColor(Color.Primary)};")">
+                <MudLink Underline="Underline.None" OnClick="@(async () => await CreateCertificationAsync())">
+                    <MudStack Class="py-2" Row Justify="Justify.Center">
+                        <MudIcon Icon="@IconsR.AddCircle" Color="Color.Primary" Size="Size.Small"/>
+                    </MudStack>
+                </MudLink>
+            </MudPaper>
+        </MudStack>
+    </MudStack>
+</MudPaper>

@@ -1,0 +1,48 @@
+@using Skills.Models.CV
+<MudDialog>
+    <DialogContent>
+        <MudIconButton Class="ml-n4" Icon="@IconsF.Close" Color="Color.Dark" OnClick="@(() => Dialog.Close())"/>
+        <MudStack Class="px-4 py-2" Justify="Justify.SpaceEvenly" Row="false" Spacing="0">
+            <MudStack Row>
+                <MudTextField T="string" @bind-Value="_category" Label="Catégorie" />
+                <MudTextField T="string" @bind-Value="_name" Label="Nomination"/>
+            </MudStack>
+            <MudStack Class="mt-2" Row Justify="Justify.Center">
+                <MudCheckBox T="bool" @bind-Value="_enabled" Label="disponible" />
+            </MudStack>
+        </MudStack>
+    </DialogContent>
+    <DialogActions>
+        <MudButton Class="mark-one" Color="Color.Success" Variant="Variant.Filled" OnClick="@Submit">Enregistrer</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    [CascadingParameter] public MudDialogInstance Dialog { get; set; } = null!;
+    [Parameter] public SafetyCertification? Certification { get; set; }
+    
+    private string _name = string.Empty;
+    private string _category = string.Empty;
+    private bool _enabled;
+
+    protected override void OnInitialized()
+    {
+        if (Certification != null)
+        {
+            _name = Certification.Name;
+            _category = Certification.Category;
+            _enabled = Certification.Enabled;
+        }
+        else
+        {
+            _enabled = true;
+        }
+    }
+
+    private void Submit()
+    {
+        var certification = new SafetyCertification() { Name = _name, Category = _category, Enabled = _enabled };
+        if (Certification != null) certification.Id = Certification.Id;
+        Dialog.Close(certification);
+    }
+}

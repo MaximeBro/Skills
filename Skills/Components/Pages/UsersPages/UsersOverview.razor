@@ -1,9 +1,10 @@
 @page "/overview"
 @page "/overview/{Id}"
+@page "/overview/{Id}/{TabIndex:int}"
 
 <AuthorizedComponent Roles="Admin, Manager, User">
     <Content>
-        <MudTabs Centered Color="Color.Primary" ActivePanelIndex="0">
+        <MudTabs Centered Color="Color.Primary" ActivePanelIndex="@(TabIndex ?? 0)">
             <SkillsProfile User="@_user" />
             <CvProfile User="@_user" />
         </MudTabs>

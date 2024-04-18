@@ -1,3 +1,75 @@
 <MudTabPanel Text="CV">
-    <MudText Class="mark-one">@User.Name</MudText>
+    <MudGrid Justify="Justify.Center" Spacing="0">
+        <MudItem Class="px-16" xs="12">
+            <MudStack Row>
+                <MudBreadcrumbs Items="_breadcrumbs"/>
+                <MudSpacer/>
+                <MudPaper Class="my-4 px-4 py-3" Elevation="2">
+                    <MudStack Row AlignItems="AlignItems.Center">
+                        <MudAvatar Color="Color.Dark">@User.Name[0].ToString().ToUpper()</MudAvatar>
+                        <MudStack Row="false" Spacing="0">
+                            <MudText Class="mark-one">@User.Name</MudText>
+                            <MudText Class="mark-one">@User.Email</MudText>
+                            <MudLink Href="@($"tel:{@User.PhoneNumber}")" Color="Color.Inherit">
+                                <MudText Class="mark-one" Typo="Typo.body2">@User.PhoneNumber</MudText>
+                            </MudLink>
+                        </MudStack>
+                    </MudStack>
+                </MudPaper>
+            </MudStack>
+        </MudItem>
+
+        <AuthorizedComponent Roles="Admin, Manager">
+            <Content>
+                <MudItem Class="px-16 mb-6" xs="12">
+                    <MudPaper Elevation="2">
+                        <MudToolBar Dense>
+                            <MudTooltip Text="Créer un CV" Placement="Placement.Right" Arrow>
+                                <MudIconButton Icon="@IconsF.Add" Style="border-radius: 6px!important; padding: 4px!important;" Color="Color.Tertiary" OnClick="@CreateCvAsync"/>
+                            </MudTooltip>
+                        </MudToolBar>
+                    </MudPaper>
+                </MudItem>
+            </Content>
+        </AuthorizedComponent>
+
+        <MudItem Class="px-16" xs="12">
+            <MudGrid Justify="Justify.FlexStart" Spacing="2">
+                @foreach (var cv in _cvs)
+                {
+                    <MudItem xs="12" sm="6" md="4">
+                        <MudPaper Class="px-8 py-4" Elevation="2">
+                            <MudStack Row="false">
+                                <MudStack Row>
+                                    <MudText Class="mark-one bold">@cv.Title</MudText>
+                                    <MudSpacer/>
+                                    <AuthorizedComponent Roles="Admin, Manager">
+                                        <Content>
+                                            <MudTooltip Text="Télécharger" Placement="Placement.Top" Arrow>
+                                                <MudIconButton Color="Color.Primary" Size="Size.Small" Icon="@IconsFF.FileWord" />
+                                            </MudTooltip>
+                                            <MudTooltip Text="Éditer" Placement="Placement.Top" Arrow>
+                                                <MudIconButton Color="Color.Primary" Size="Size.Small" Icon="@IconsF.Edit" OnClick="@(() => NavManager.NavigateTo($"/overview/{User.Username}/cv-editor/{cv.Id}"))"/>
+                                            </MudTooltip>
+                                            <MudTooltip Text="Supprimer" Placement="Placement.Bottom" Arrow>
+                                                <MudIconButton Class="hover-red" Size="Size.Small" Icon="@IconsF.Delete" OnClick="@(async () => await DeleteCvAsync(cv))"/>
+                                            </MudTooltip>
+                                        </Content>
+                                    </AuthorizedComponent>
+                                </MudStack>
+                                <MudDivider Class="my-2 mt-2" DividerType="DividerType.Middle"/>
+                                <MudText Class="mark-one">Compétences @(cv.Skills.Count) (dont @cv.Skills.Count(x => x.IsSoftSkill) soft-skill(s))</MudText>
+                                <MudText Class="mark-one">Formations @cv.Certifications.Count</MudText>
+                                <MudText Class="mark-one">Diplômes @cv.Education.Count</MudText>
+                                <MudStack Row>
+                                    <MudSpacer/>
+                                    <MudText Class="mark-one" Typo="Typo.caption">créé le @cv.CreatedAt.ToString("dd-MM-yyyy")</MudText>
+                                </MudStack>
+                            </MudStack>
+                        </MudPaper>
+                    </MudItem>
+                }
+            </MudGrid>
+        </MudItem>
+    </MudGrid>
 </MudTabPanel>

@@ -21,10 +21,11 @@ public partial class SkillsProfile : ComponentBase
     [Inject] public SkillService SkillService { get; set; } = null!;
     [Parameter] public UserModel User { get; set; } = null!;
 
+    private List<BreadcrumbItem> _breadcrumbs = new();
     private List<UserSkillModel> _userSkillsModels = new();
     private List<AbstractSkillModel> _userSkills = new();
-    private Dictionary<Guid, string> _selectedLevels = new();
-    private Dictionary<Guid, List<string>> _rowSkillLevels = new();
+    private Dictionary<Guid, CommonTypeModel?> _selectedLevels = new();
+    private Dictionary<Guid, List<CommonTypeModel>> _rowSkillLevels = new();
 
     private string _search = string.Empty;
 
@@ -43,23 +44,29 @@ public partial class SkillsProfile : ComponentBase
     
     protected override async Task OnInitializedAsync()
     {
+        _breadcrumbs.Add(new BreadcrumbItem("Accueil", "/"));
+        _breadcrumbs.Add(new BreadcrumbItem("Utilisateurs", "/users"));
+        _breadcrumbs.Add(new BreadcrumbItem(User.Name, $"/overview/{User.Username}"));
+        _breadcrumbs.Add(new BreadcrumbItem("Compétences", null, true));
         await RefreshDataAsync();
     }
 
     private async Task ManageSkillsAsync()
     {
         var parameters = new DialogParameters<ManageSkillsDialog> { { x => x.User, User } };
-        var instance = await DialogService.ShowAsync<ManageSkillsDialog>(string.Empty, parameters, Hardcoded.DialogOptions);
+        var options = Hardcoded.DialogOptions;
+        options.MaxWidth = MaxWidth.ExtraLarge;
+        var instance = await DialogService.ShowAsync<ManageSkillsDialog>(string.Empty, parameters, options);
         var result = await instance.Result;
         if (result is { Data: IEnumerable<AbstractSkillModel> skills })
         {
             var db = await Factory.CreateDbContextAsync();
-            var ownedSkills = db.Userskills.Where(x => x.UserId == User.Id).ToList(); // Current assigned skills, before the update
+            var ownedSkills = db.UsersSkills.Where(x => x.UserId == User.Id).ToList(); // Current assigned skills, before the update
             var oldOwnedSkills = ownedSkills.Where(x => !skills.Select(y => y.Id).Contains(x.SkillId)).ToList(); 
             var newOwnedSkills = skills.Where(x => !ownedSkills.Select(y => y.SkillId).Contains(x.Id)).ToList();
             
-            db.Userskills.RemoveRange(oldOwnedSkills); // Removes old skill that are no longer assigned to the user
-            db.Userskills.AddRange(newOwnedSkills.Select(x => new UserSkillModel { UserId = User.Id, SkillId = x.Id, Level = 0 })); // Adds new skills to the user
+            db.UsersSkills.RemoveRange(oldOwnedSkills); // Removes old skill that are no longer assigned to the user
+            db.UsersSkills.AddRange(newOwnedSkills.Select(x => new UserSkillModel { UserId = User.Id, SkillId = x.Id, Level = 0 })); // Adds new skills to the user
             
             await db.SaveChangesAsync();
             await db.DisposeAsync();
@@ -70,10 +77,10 @@ public partial class SkillsProfile : ComponentBase
     private async Task LevelChangedAsync(int level, UserSkillModel model)
     {
         var db = await Factory.CreateDbContextAsync();
-        if (db.Userskills.Any(x => x.UserId == User.Id && x.SkillId == model.SkillId))
+        if (db.UsersSkills.Any(x => x.UserId == User.Id && x.SkillId == model.SkillId))
         {
             model.Level = level;
-            db.Userskills.Update(model);
+            db.UsersSkills.Update(model);
             await db.SaveChangesAsync();
             Snackbar.Add("Modification enregistrée !", Severity.Success, options =>
             {
@@ -95,10 +102,10 @@ public partial class SkillsProfile : ComponentBase
         if (result.Data != null && (bool)result.Data)
         {
             var db = await Factory.CreateDbContextAsync();
-            var userSkill = await db.Userskills.AsNoTracking().FirstOrDefaultAsync(x => x.UserId == model.UserId && x.SkillId == model.SkillId);
+            var userSkill = await db.UsersSkills.AsNoTracking().FirstOrDefaultAsync(x => x.UserId == model.UserId && x.SkillId == model.SkillId);
             if ( userSkill != null)
             {
-                db.Userskills.Remove(userSkill);
+                db.UsersSkills.Remove(userSkill);
                 await db.SaveChangesAsync();
                 await db.DisposeAsync();
             }
@@ -181,7 +188,7 @@ public partial class SkillsProfile : ComponentBase
     private async Task RefreshDataAsync()
     {
         var db = await Factory.CreateDbContextAsync();
-        _userSkillsModels = await db.Userskills.AsNoTracking()
+        _userSkillsModels = await db.UsersSkills.AsNoTracking()
                                                .Where(x => x.UserId == User.Id)
                                                .Include(x => x.Skill).ThenInclude(x => x!.TypeInfo)
                                                .Include(x => x.User).ThenInclude(x => x!.Group)
@@ -211,12 +218,12 @@ public partial class SkillsProfile : ComponentBase
         _rowSkillLevels.Clear();
         foreach(var skill in _userSkillsModels)
         {
-            var value = db.TypesLevels.AsNoTracking().FirstOrDefault(x => x.TypeId == skill.Skill!.TypeId && x.Level == skill.Level)?.Value ??
-                              db.SoftTypesLevels.AsNoTracking().FirstOrDefault(x => x.SkillId == skill.SkillId && x.Level == skill.Level)?.Value;
-            _selectedLevels.Add(skill.SkillId, value ?? string.Empty);
-            var skillLevels = skill.IsSoftSkill ? db.SoftTypesLevels.Where(x => x.SkillId == skill.SkillId).OrderBy(x => x.Level).Select(x => x.Value).ToList() : 
-                                                            db.TypesLevels.Where(x => x.TypeId == skill.Skill!.TypeId).OrderBy(x => x.Level).Select(x => x.Value).ToList();
-            _rowSkillLevels.Add(skill.SkillId, skillLevels);
+            var level = db.TypesLevels.AsNoTracking().FirstOrDefault(x => x.TypeId == skill.Skill!.TypeId && x.Level == skill.Level)?.ToAbstract() ??
+                                          db.SoftTypesLevels.AsNoTracking().FirstOrDefault(x => x.SkillId == skill.SkillId && x.Level == skill.Level)?.ToAbstract();
+            _selectedLevels.Add(skill.SkillId, level); // The level has to be not null !
+            var skillLevels = skill.IsSoftSkill ? db.SoftTypesLevels.Where(x => x.SkillId == skill.SkillId).Select(x => x.ToAbstract()) : 
+                                                            db.TypesLevels.Where(x => x.TypeId == skill.Skill!.TypeId).Select(x => x.ToAbstract());
+            _rowSkillLevels.Add(skill.SkillId, skillLevels.ToList());
         }
         
         _userSkills.Clear();

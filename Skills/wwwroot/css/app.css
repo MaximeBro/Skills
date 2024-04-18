@@ -5,6 +5,8 @@
 /* Global utility */
 * { outline: none!important; }
 
+.no-margin { margin: 0!important; }
+.no-margin-top { margin-top: 0!important; }
 .text-white { color: #fff!important; }
 .white-all * { color: #fff!important; }
 .transparent { opacity: 0; background: transparent!important; }
@@ -47,3 +49,9 @@
 }
 
 /* Icons */
+
+/* CVs */
+.pad-anchor {
+    scroll-margin-top: 70px!important;
+}
+/* CVs */

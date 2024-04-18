@@ -10,22 +10,22 @@
             </MudStack>
             <MudStack Class="mt-6" Row="false" Justify="Justify.Center" Spacing="0">
                 <MudText Style="font-weight: bold;">Niveaux</MudText>
-                <MudStack Class="px-2" Row Justify="Justify.Center">
+                <MudStack Class="mt-2 px-2" Row Justify="Justify.Center">
                     <MudTextField T="string" @bind-Value="_level0" Class="ma-0" Label="Niveau 0" Variant="Variant.Text" />
+                </MudStack>
+                <MudStack Class="mt-2 px-2" Row Justify="Justify.Center">
                     <MudTextField T="string" @bind-Value="_level1" Class="ma-0" Label="Niveau 1" Variant="Variant.Text" />
-                </MudStack>
-                <MudStack Class="px-2" Row Justify="Justify.Center">
                     <MudTextField T="string" @bind-Value="_level2" Class="ma-0" Label="Niveau 2" Variant="Variant.Text" />
-                    <MudTextField T="string" @bind-Value="_level3" Class="ma-0" Label="Niveau 3" Variant="Variant.Text" />
                 </MudStack>
-                <MudStack Class="px-2" Row Justify="Justify.Center">
+                <MudStack Class="mt-2 px-2" Row Justify="Justify.Center">
+                    <MudTextField T="string" @bind-Value="_level3" Class="ma-0" Label="Niveau 3" Variant="Variant.Text" />
                     <MudTextField T="string" @bind-Value="_level4" Class="ma-0" Label="Niveau 4" Variant="Variant.Text" />
                 </MudStack>
             </MudStack>
         </MudStack>
     </DialogContent>
     <DialogActions>
-        <MudButton Class="mark-one" Color="Color.Success" Variant="Variant.Text" OnClick="@Submit">Enregistrer</MudButton>
+        <MudButton Class="mark-one" Color="Color.Success" Variant="Variant.Filled" OnClick="@Submit">Enregistrer</MudButton>
     </DialogActions>
 </MudDialog>
 

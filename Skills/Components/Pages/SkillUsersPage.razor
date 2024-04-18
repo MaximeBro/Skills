@@ -1,27 +1,56 @@
 @page "/skill-users/{Id:guid}"
 @inherits FullComponentBase
 
-@if (_skill is null) return;
+@if (_skill is null)
+{
+    return;
+}
 <MudContainer MaxWidth="MaxWidth.ExtraLarge">
-    <MudBreadcrumbs Items="_breadcrumbs">
-    </MudBreadcrumbs>
-    <MudText Class="mt-4 mark-one" Typo="Typo.h4" Align="Align.Center">@_skill.ToStringNoDesc()</MudText>
+    <MudBreadcrumbs Items="_breadcrumbs"/>
+    <MudText Class="mark-one" Typo="Typo.h4" Align="Align.Center">@_skill.ToStringNoTypeDesc()</MudText>
     <MudText Class="mark-one" Typo="Typo.h5" Align="Align.Center" Style="font-weight: bold!important;">@_skill.Description</MudText>
-    <MudGrid Justify="Justify.Center">
-        <MudItem Class="mt-10" xs="12">
+    <MudGrid Justify="Justify.FlexStart">
+        <MudItem Class="mt-10" xs="12" md="3">
+            <MudPaper Class="flex-grow-1 py-6 px-8" Elevation="4">
+                <MudStack Row="false">
+                    <MudStack Row AlignItems="AlignItems.Center">
+                        <MudIcon Icon="@IconsR.StarHalf" Size="Size.Large"/>
+                        <MudText Class="bold">Niveaux disponibles</MudText>
+                    </MudStack>
+                    <MudStack Class="px-2" Row="false" Spacing="1">
+                        @foreach (var level in _levels.OrderBy(x => x.Level))
+                        {
+                        <MudText Class="mark-one"><MudChip Class="bold">@level.Level</MudChip> @level.Value</MudText>
+                        }
+                    </MudStack>
+                </MudStack>
+            </MudPaper>
+        </MudItem>
+        <MudItem Class="mt-10" xs="12" md="6">
             <MudStack Class="flex-grow-1" Row Justify="Justify.Center">
                 <MudPaper Elevation="3">
                     <MudList Dense Clickable>
                         <MudListSubheader>
                             <MudText Class="mark-one bold" Typo="Typo.body1">Utilisateurs</MudText>
                         </MudListSubheader>
-                        @foreach (var user in _users)
+                        @if (_users.Any())
+                        {
+                            @foreach (var user in _users)
+                            {
+                                <MudListItem Href="@($"/overview/{user.User?.Username}")">
+                                    <MudStack Row AlignItems="AlignItems.Center">
+                                        <MudTooltip Placement="Placement.Left" Arrow Text="@(_levels.FirstOrDefault(x => x.Level == user.Level)?.Value ?? "Description du niveau inconnue (probablement inexistante ?)")">
+                                            <MudChip Class="bold" Color="Color.Dark">@user.Level</MudChip>
+                                        </MudTooltip>
+                                        <MudText Class="mark-one" Typo="Typo.h6">@user.User!.Name</MudText>
+                                    </MudStack>
+                                </MudListItem>
+                            }
+                        }
+                        else
                         {
                             <MudListItem>
-                                <MudStack Row AlignItems="AlignItems.Center">
-                                    <MudChip Class="bold" Color="Color.Dark">@user.Level</MudChip>
-                                    <MudText Class="mark-one" Typo="Typo.h6">@user.User!.Name</MudText>
-                                </MudStack>
+                                <MudText Class="mark-one" Style="font-weight: 500!important;">Aucun utilisateur ne s'est vu attribuer cette compétence...</MudText>
                             </MudListItem>
                         }
                     </MudList>

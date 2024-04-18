@@ -1,7 +1,7 @@
-<MudDialog Class="pa-0 rounded-lg">
+<MudDialog>
     <DialogContent>
-        <MudIconButton Class="ml-n4" Icon="@IconsF.Close" Color="Color.Dark" OnClick="@(() => Dialog.Close(false))" />
-        <MudStack Class="pb-2 px-4" Row="false" Spacing="0">
+        <MudIconButton Class="ml-n4" Icon="@IconsF.Close" Color="Color.Dark" OnClick="@(() => Dialog.Close())" />
+        <MudStack Class="px-4 py-2" Justify="Justify.SpaceEvenly" Row="false" Spacing="0">
             <MudText Class="mark-one" Typo="Typo.h6" Align="Align.Center" GutterBottom>@Text</MudText>
         </MudStack>
     </DialogContent>

@@ -1,6 +1,6 @@
 @using Microsoft.EntityFrameworkCore
 
-<MudDialog Class="pa-0 rounded">
+<MudDialog>
     <DialogContent>
         <MudIconButton Class="ml-n4" Icon="@IconsF.Close" Color="Color.Dark" OnClick="@(() => Dialog.Close())" />
         <MudStack Class="px-4 py-2" Justify="Justify.Center" Row="false">
@@ -10,6 +10,8 @@
             </MudStack>
             <MudStack Row Justify="Justify.Center">
                 <MudTextField T="string" @bind-Value="_email" Label="Email" Placeholder="prénom.nom@sasp.fr" InputType="InputType.Email" Required />
+                <MudTextField T="string" @bind-Value="_phoneNumber" Label="Tél" Placeholder="06.32.00.00.00" InputType="InputType.Telephone" Adornment="Adornment.Start" AdornmentText="+33"
+                              Mask="@(new PatternMask("00.00.00.00.00"))"/>
             </MudStack>
             <MudStack Row Justify="Justify.Center">
                 <MudSelect T="UserRole" @bind-Value="_role" Label="Rôle" Required AnchorOrigin="Origin.BottomLeft" TransformOrigin="Origin.TopLeft">
@@ -30,7 +32,7 @@
         </MudStack>
     </DialogContent>
     <DialogActions>
-        <MudButton Class="mark-one" Color="Color.Success" Variant="Variant.Text" OnClick="@Submit">Enregistrer</MudButton>
+        <MudButton Class="mark-one" Color="Color.Success" Variant="Variant.Filled" OnClick="@Submit">Enregistrer</MudButton>
     </DialogActions>
 </MudDialog>
 
@@ -43,6 +45,7 @@
     private string _name = string.Empty;
     private string _email = string.Empty;
     private string _username = string.Empty;
+    private string _phoneNumber = string.Empty;
     private UserRole _role;
     private Guid? _selectedGroup;
     private bool _isDisabled;
@@ -69,6 +72,7 @@
             _role = User.Role;
             _isDisabled = User.IsDisabled;
             _selectedGroup = User.GroupId;
+            _phoneNumber = User.PhoneNumber;
         }
         
         var db = await Factory.CreateDbContextAsync();
@@ -86,7 +90,8 @@
             Username = _username,
             Role = _role,
             GroupId = _selectedGroup,
-            IsDisabled = _isDisabled
+            IsDisabled = _isDisabled,
+            PhoneNumber = _phoneNumber
         });
     }
 }

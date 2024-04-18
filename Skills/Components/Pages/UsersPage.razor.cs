@@ -8,6 +8,7 @@ using Skills.Databases;
 using Skills.Extensions;
 using Skills.Models;
 using Skills.Services;
+using BreadcrumbItem = MudBlazor.BreadcrumbItem;
 using Icons = MudBlazor.Icons.Material.Filled;
 
 namespace Skills.Components.Pages;
@@ -21,6 +22,7 @@ public partial class UsersPage : ComponentBase
     [Inject] public IDialogService DialogService { get; set; } = null!;
     [Inject] public ISnackbar Snackbar { get; set; } = null!;
 
+    private List<BreadcrumbItem> _breadcrumbs = new();
     private List<UserModel> _users = new();
     private List<UserModel> _filteredUsers = new();
     private ClaimsPrincipal _user = null!;
@@ -45,6 +47,8 @@ public partial class UsersPage : ComponentBase
 
     protected override async Task OnInitializedAsync()
     {
+        _breadcrumbs.Add(new BreadcrumbItem("Accueil", "/"));
+        _breadcrumbs.Add(new BreadcrumbItem("Utilisateurs", null, true));
         await RefreshDataAsync();
     }
 

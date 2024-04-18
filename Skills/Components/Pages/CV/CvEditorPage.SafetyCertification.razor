@@ -1,0 +1,22 @@
+@inherits FullComponentBase
+
+<MudPaper id="safety" Class="mt-6 pad-anchor" Elevation="2">
+    <MudStack Class="px-4 py-3" Row="false" Spacing="2">
+        <MudText Class="mark-one bold">Habilitations</MudText>
+        <MudStack Class="px-6 py-2" Row="false" Spacing="0">
+            @foreach (var group in _groupedCertifications.Keys)
+            {
+                <MudStack Row AlignItems="AlignItems.Center">
+                    <MudText Class="mark-one bold" Align="Align.Center">@group</MudText>
+                    @foreach (var certification in _groupedCertifications[group])
+                    {
+                        @if (certification.Enabled)
+                        {
+                            <MudCheckBox T="bool" @bind-Value="@HeldCertifications[certification.Id]" Label="@certification.Name" />
+                        }
+                    }
+                </MudStack>
+            }
+        </MudStack>
+    </MudStack>
+</MudPaper>

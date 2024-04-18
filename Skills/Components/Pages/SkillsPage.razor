@@ -2,7 +2,8 @@
 @inherits FullComponentBase
 
 <MudContainer MaxWidth="MaxWidth.ExtraLarge">
-    <MudText Class="mt-2 mark-one" Typo="Typo.h2" Align="Align.Center">Compétences</MudText>
+    <MudBreadcrumbs Items="_breadcrumbs"/>
+    <MudText Class="mark-one" Typo="Typo.h2" Align="Align.Center">Compétences</MudText>
     <MudGrid Justify="Justify.Center">
         <MudItem Class="mt-4" xs="12">
             <MudDataGrid T="AbstractSkillModel" Items="_models" Bordered Hover Outlined Filterable Striped SortMode="SortMode.Multiple" Dense FixedHeader
@@ -16,8 +17,8 @@
                 <Columns>
                     <HierarchyColumn T="AbstractSkillModel"/>
                     <PropertyColumn Title="Type" Property="x => x.Type"/>
-                    <PropertyColumn Title="Catégorie" Property="x => x.Category" />
-                    <PropertyColumn Title="Sous catégorie" Property="x => x.SubCategory" />
+                    <PropertyColumn Title="Catégorie" Property="x => x.Category"/>
+                    <PropertyColumn Title="Sous catégorie" Property="x => x.SubCategory"/>
                     <PropertyColumn Title="Description" Property="x => x.Description"/>
                     <TemplateColumn Filterable="false" Sortable="false" Groupable="false">
                         <CellTemplate>

@@ -1,0 +1,27 @@
+@inherits FullComponentBase
+
+<MudPaper id="skills" Class="mt-6" Elevation="2">
+    <MudStack Class="px-4 py-3" Row="false" Spacing="2">
+        <MudStack Row AlignItems="AlignItems.Center">
+            <MudText Class="mark-one bold mr-2">Compétences</MudText>
+            <MudSelect T="int" Value="Cv.MinLevel" ValueChanged="@LevelChangedAsync" Adornment="Adornment.Start" AdornmentText="Niveau mini"
+                       Class="flex-shrink-0" Style="max-width: 250px;" InputClass="no-margin-top" OuterClass="no-margin-top" ListClass="py-0"
+                       AnchorOrigin="Origin.BottomLeft" TransformOrigin="Origin.TopLeft">
+                <MudSelectItem Value="0"> 0</MudSelectItem>
+                <MudSelectItem Value="1"> 1</MudSelectItem>
+                <MudSelectItem Value="2"> 2</MudSelectItem>
+                <MudSelectItem Value="3"> 3</MudSelectItem>
+                <MudSelectItem Value="4"> 4</MudSelectItem>
+            </MudSelect>
+        </MudStack>
+        <MudStack Row="false" Spacing="0" Style="max-height: 400px; overflow-y: auto;">
+            @foreach (var skill in ChosenSkills.OrderByDescending(x => x.Value))
+            {
+                <MudPaper Class="d-flex mb-1 px-4 py-1" Style="flex-direction: row; align-items: center;">
+                    <MudCheckBox T="bool" @bind-Value="@ChosenSkills[skill.Key]"/>
+                    <MudText Class="mark-one">@skill.Key.ToString()</MudText>
+                </MudPaper>
+            }
+        </MudStack>
+    </MudStack>
+</MudPaper>

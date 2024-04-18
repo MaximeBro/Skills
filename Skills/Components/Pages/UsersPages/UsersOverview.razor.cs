@@ -11,6 +11,7 @@ public partial class UsersOverview : ComponentBase
     [Inject] public NavigationManager NavManager { get; set; } = null!;
 
     [Parameter] public string Id { get; set; } = null!;
+    [Parameter] public int? TabIndex { get; set; }
     
     private UserModel _user = null!;
     
@@ -18,13 +19,8 @@ public partial class UsersOverview : ComponentBase
     {
         var db = await Factory.CreateDbContextAsync();
         var user = await db.Users.AsNoTracking().FirstOrDefaultAsync(x => x.Email.Contains(Id));
-        if (user is null)
-        {
-            NavManager.NavigateTo("/", true);
-        }
-        else
-        {
-            _user = user;
-        }
+        
+        if (user is null) NavManager.NavigateTo("/", true);
+        else _user = user;
     }
 }

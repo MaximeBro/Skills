@@ -1,0 +1,89 @@
+@page "/overview/{Username}/cv-editor/{CvId:guid}"
+@inherits FullComponentBase
+
+<MudContainer MaxWidth="MaxWidth.ExtraLarge">
+    <MudGrid Justify="Justify.Center">
+        
+        @* Navigation menu on the left *@
+        <MudHidden Invert Breakpoint="Breakpoint.MdAndUp">
+            <MudItem xs="0" md="2" Style="border-right: 1px solid #c3c3c3;">
+                <MudStack Class="fixed px-4 pt-6 pb-16" Row="false" Style="height: 100%;">
+                    <MudText Class="mark-one bold" Align="Align.Center">Composition CV</MudText>
+                    <MudDivider Class="mb-2" DividerType="DividerType.Middle"/>
+                    <MudStack Row="false" Class="pa-2">
+                        <MudLink Class="mark-one mb-2" Href="@($"overview/{Username}/cv-editor/{CvId}/#general")">
+                            <MudStack Row Justify="Justify.FlexStart" AlignItems="AlignItems.Center">
+                                <MudIcon Icon="fas fa-circle-info"/> Informations générales
+                            </MudStack>
+                        </MudLink>
+                        <MudLink Class="mark-one mb-2" Href="@($"overview/{Username}/cv-editor/{CvId}/#education")">
+                            <MudStack Row Justify="Justify.FlexStart" AlignItems="AlignItems.Center">
+                                <MudIcon Icon="fas fa-graduation-cap"/> Diplômes
+                            </MudStack>
+                        </MudLink>
+                        <MudLink Class="mark-one mb-2" Href="@($"overview/{Username}/cv-editor/{CvId}/#certifications")">
+                            <MudStack Row Justify="Justify.FlexStart" AlignItems="AlignItems.Center">
+                                <MudIcon Icon="fas fa-award"/> Certifications
+                            </MudStack>
+                        </MudLink>
+                        <MudLink Class="mark-one mb-2" Href="@($"overview/{Username}/cv-editor/{CvId}/#experiences")">
+                            <MudStack Row Justify="Justify.FlexStart" AlignItems="AlignItems.Center">
+                                <MudIcon Icon="fas fa-address-card"/> Expériences
+                            </MudStack>
+                        </MudLink>
+                        <MudLink Class="mark-one mb-2" Href="@($"overview/{Username}/cv-editor/{CvId}/#skills")">
+                            <MudStack Row Justify="Justify.FlexStart" AlignItems="AlignItems.Center">
+                                <MudIcon Icon="fas fa-toolbox"/> Compétences
+                            </MudStack>
+                        </MudLink>
+                        <MudLink Class="mark-one mb-2" Href="@($"overview/{Username}/cv-editor/{CvId}/#safety")">
+                            <MudStack Row Justify="Justify.FlexStart" AlignItems="AlignItems.Center">
+                                <MudIcon Icon="fas fa-helmet-safety"/> Habilitations
+                            </MudStack>
+                        </MudLink>
+                    </MudStack>
+                    <MudStack Class="flex-grow-1 pb-8" Row="false" Justify="Justify.Center" AlignItems="AlignItems.Center">
+                        <MudSpacer/>
+                        <MudTooltip Placement="Placement.Top" Arrow>
+                            <TooltipContent>
+                                N'oubliez pas de sauvegarder avant de quitter, <br/>ce n'est pas automatique !
+                            </TooltipContent>
+                            <ChildContent>
+                                <MudButton Color="Color.Primary" Variant="Variant.Filled" StartIcon="@IconsF.Warning" IconColor="Color.Warning" OnClick="@SaveDataAsync">Sauvegarder</MudButton>
+                            </ChildContent>
+                        </MudTooltip>
+                    </MudStack>
+                </MudStack>
+            </MudItem>
+        </MudHidden>
+        
+        @* General info *@
+        <MudItem id="general" Class="px-16 mb-6 pad-anchor" xs="10">
+            <MudBreadcrumbs Class="mt-2" Items="_breadcrumbs"/>
+            <MudPaper Elevation="2" Class="mt-6">
+                <MudStack Class="px-4 py-3" Row="false" Spacing="1">
+                    <MudText Class="mark-one bold">Informations générales</MudText>
+                    <MudStack Class="px-6 py-2" Row>
+                        <MudTextField Variant="Variant.Outlined" @bind-Value="_cv.Title" Label="Titre du CV"/>
+                    </MudStack>
+                    <MudStack Class="mb-1 px-6 py-2" Row>
+                        <MudTextField Variant="Variant.Outlined" @bind-Value="_cv.Job" Label="Poste occupé"/>
+                    </MudStack>
+                    <MudStack Class="mb-1 px-6 py-2" Row>
+                        <MudTextField T="string" @bind-Value="_cv.PhoneNumber" Label="Téléphone" Placeholder="XX.XX.XX.XX.XX" InputType="InputType.Telephone" Adornment="Adornment.Start" AdornmentText="+33"
+                                      Mask="@(new PatternMask("00.00.00.00.00"))" Variant="Variant.Outlined"/>
+                        <MudDatePicker @bind-Date="_birthDate" Label="Date de naissance" DateFormat="dd-MM-yyyy" Variant="Variant.Outlined"/>
+                    </MudStack>
+                </MudStack>
+            </MudPaper>
+
+            <MudStack Row="false" Spacing="0">
+                <CvEditorPage_Education @ref="_education" Cv="_cv"/>
+                <CvEditorPage_Certification @ref="_certification" Cv="_cv"/>
+                <CvEditorPage_Experiences @ref="_experiences" Cv="_cv"/>
+                <CvEditorPage_Skills @ref="_skills" Cv="_cv"/>
+                <CvEditorPage_SafetyCertification @ref="_safetyCertification" Cv="_cv"/>
+            </MudStack>
+        </MudItem>
+    </MudGrid>
+</MudContainer>

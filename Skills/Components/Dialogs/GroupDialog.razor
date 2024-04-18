@@ -1,6 +1,7 @@
-<MudDialog Class="pa-0 rounded-lg">
+<MudDialog>
     <DialogContent>
-        <MudStack Class="py-2 px-6" Justify="Justify.SpaceEvenly" Row="false" Spacing="0">
+        <MudIconButton Class="ml-n4" Icon="@IconsF.Close" Color="Color.Dark" OnClick="@(() => Dialog.Close())" />
+        <MudStack Class="px-4 py-2" Justify="Justify.SpaceEvenly" Row="false" Spacing="0">
             <MudText Class="mark-one" GutterBottom>Groupe</MudText>
             <MudTextField T="string" @bind-Value="_name" Label="Nomination" Placeholder="Nom"/>
         </MudStack>
@@ -9,6 +10,7 @@
         <MudButton Class="mark-one" Color="Color.Success" Variant="Variant.Text" OnClick="@Submit">Enregistrer</MudButton>
     </DialogActions>
 </MudDialog>
+
 @code {
     [CascadingParameter] public MudDialogInstance Dialog { get; set; } = null!;
     [Parameter] public string? Name { get; set; }
