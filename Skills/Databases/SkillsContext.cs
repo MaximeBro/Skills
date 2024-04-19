@@ -124,5 +124,10 @@ public class SkillsContext : DbContext
             .WithOne(e => e.Cv)
             .HasForeignKey(e => e.CvId)
             .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<CvSafetyCertificationInfo>()
+            .HasOne<SafetyCertification>(e => e.Certification).WithMany()
+            .HasForeignKey(e => e.CertId)
+            .IsRequired(true);
     }
 }
