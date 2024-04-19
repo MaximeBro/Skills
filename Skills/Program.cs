@@ -33,6 +33,7 @@ builder.Services.AddMudServices();
 
 /* Custom Services */
 builder.Services.AddTransient<ADAuthenticationService>();
+builder.Services.AddSingleton<WordExportService>();
 builder.Services.AddSingleton<UserTokenHoldingService>();
 builder.Services.AddSingleton<ActiveDirectoryService>();
 builder.Services.AddSingleton<ThemeManager>();

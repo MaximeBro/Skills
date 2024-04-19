@@ -46,7 +46,7 @@
                                     <AuthorizedComponent Roles="Admin, Manager">
                                         <Content>
                                             <MudTooltip Text="Télécharger" Placement="Placement.Top" Arrow>
-                                                <MudIconButton Color="Color.Primary" Size="Size.Small" Icon="@IconsFF.FileWord" />
+                                                <MudIconButton Color="Color.Primary" Size="Size.Small" Icon="@IconsFF.FileWord" OnClick="@(async() => await ExportCvAsync(cv))" />
                                             </MudTooltip>
                                             <MudTooltip Text="Éditer" Placement="Placement.Top" Arrow>
                                                 <MudIconButton Color="Color.Primary" Size="Size.Small" Icon="@IconsF.Edit" OnClick="@(() => NavManager.NavigateTo($"/overview/{User.Username}/cv-editor/{cv.Id}"))"/>
