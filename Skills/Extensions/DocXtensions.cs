@@ -84,7 +84,8 @@ public static class DocXtensions
             HeadingLevel.H2 => "Titre2",
             HeadingLevel.H3 => "Titre3",
             HeadingLevel.H4 => "Titre4",
-            HeadingLevel.H5 => "Titre5"
+            HeadingLevel.H5 => "Titre5",
+            _ => "Normal"
         };
     }
     
@@ -167,9 +168,9 @@ public static class DocXtensions
                 Console.WriteLine("Error " + count);
                 Console.WriteLine("Description: " + error.Description);
                 Console.WriteLine("ErrorType: " + error.ErrorType);
-                Console.WriteLine("Node: " + error.Node);
-                Console.WriteLine("Path: " + error.Path.XPath);
-                Console.WriteLine("Part: " + error.Part.Uri);
+                Console.WriteLine("Node: " + error?.Node);
+                Console.WriteLine("Path: " + error?.Path?.XPath);
+                Console.WriteLine("Part: " + error?.Part?.Uri);
                 Console.WriteLine("-------------------------------------------");
             }
 

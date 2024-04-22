@@ -12,7 +12,7 @@
                     {
                         @if (certification.Enabled)
                         {
-                            <MudCheckBox T="bool" @bind-Value="@HeldCertifications[certification.Id]" Label="@certification.Name" />
+                            <MudCheckBox T="bool" Value="@Editor.HeldCertifications[certification.Id]" ValueChanged="@((value) => OnCheckChanged(value, certification.Id))" Label="@certification.Name" />
                         }
                     }
                 </MudStack>

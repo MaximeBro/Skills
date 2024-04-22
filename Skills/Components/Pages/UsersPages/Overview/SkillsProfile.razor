@@ -47,10 +47,10 @@
                 </ToolBarContent>
                 <Columns>
                     <HierarchyColumn T="UserSkillModel" />
-                    <PropertyColumn Title="Type" Property="x => x.Skill.Type" IsEditable="false" />
-                    <PropertyColumn Title="Catégorie" Property="x => x.Skill.Category" IsEditable="false" />
-                    <PropertyColumn Title="Sous catégorie" Property="x => x.Skill.SubCategory" IsEditable="false" />
-                    <PropertyColumn Title="Description" Property="x => x.Skill.Description" IsEditable="false" />
+                    <PropertyColumn Title="Type" Property="x => x.Skill!.Type" IsEditable="false" />
+                    <PropertyColumn Title="Catégorie" Property="x => x.Skill!.Category" IsEditable="false" />
+                    <PropertyColumn Title="Sous catégorie" Property="x => x.Skill!.SubCategory" IsEditable="false" />
+                    <PropertyColumn Title="Description" Property="x => x.Skill!.Description" IsEditable="false" />
                     <PropertyColumn Title="Niveau" Property="x => x.Level" IsEditable>
                         <EditTemplate>
                             <MudSelect T="int" Value="context.Item.Level" ValueChanged="@(async(value) => await LevelChangedAsync(value, context.Item))" 

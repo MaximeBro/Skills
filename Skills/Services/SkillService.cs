@@ -9,7 +9,7 @@ using IConfiguration = Microsoft.Extensions.Configuration.IConfiguration;
 
 namespace Skills.Services;
 
-public class SkillService(IConfiguration configuration, IDbContextFactory<SkillsContext> factory)
+public class SkillService(IDbContextFactory<SkillsContext> factory)
 {
     public async Task InitAsync()
     {
@@ -40,7 +40,6 @@ public class SkillService(IConfiguration configuration, IDbContextFactory<Skills
         {
             case ImportType.Purge:
                 return await PurgeSkillsAsync(excelFile);
-                break;
         }
         await ms.DisposeAsync(); // If we dispose it earlier we won't be able to enumerate over the excelfile rows
 
@@ -238,7 +237,7 @@ public class SkillService(IConfiguration configuration, IDbContextFactory<Skills
         }
 
         var memoryStream = new MemoryStream();
-        memoryStream.SaveAs(values, false);
+        await memoryStream.SaveAsAsync(values, false);
         memoryStream.Seek(0, SeekOrigin.Begin);
         return memoryStream;
     }

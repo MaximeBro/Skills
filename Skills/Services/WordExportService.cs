@@ -4,6 +4,7 @@ using Skills.Databases;
 using Skills.Extensions;
 using Skills.Models;
 using Skills.Models.CV;
+using Skills.Models.Enums;
 using Paragraph = DocumentFormat.OpenXml.Wordprocessing.Paragraph;
 using Path = System.IO.Path;
 
@@ -18,7 +19,7 @@ public class WordExportService(IConfiguration configuration, IDbContextFactory<S
     /// </summary>
     /// <param name="cv">The CV to export.</param>
     /// <returns>A stream representing the cv as a Word document.</returns>
-    public async Task<MemoryStream?> ExportCvAsync(CvInfo cv)
+    public async Task<TransactionResult<T>> ExportCvAsync<T>(CvInfo cv) where T : Stream
     {
         FileStream? fs = null;
         string tempFile = string.Empty;
@@ -40,7 +41,15 @@ public class WordExportService(IConfiguration configuration, IDbContextFactory<S
 
             var db = await factory.CreateDbContextAsync();
             var user = db.Users.AsNoTracking().FirstOrDefault(x => x.Id == cv.UserId);
-            if (user is null) return null;
+            if (user is null)
+            {
+                return new TransactionResult<T>
+                {
+                    State = ImportState.Skipped,
+                    Message = "L'utilisateur spécifié est introuvable dans la base !",
+                    Value = null
+                };
+            }
             await db.DisposeAsync();
             var document = WordprocessingDocument.Open(fs, true);
 
@@ -59,11 +68,21 @@ public class WordExportService(IConfiguration configuration, IDbContextFactory<S
             var ms = new MemoryStream();
             await fs.CopyToAsync(ms);
             ms.Position = 0;
-            return ms;
+            return new TransactionResult<T>
+            {
+                State = ImportState.Successful,
+                Value = ms as T
+            };
         }
         catch (Exception e)
         {
-            return null;
+            return new TransactionResult<T>
+            {
+                State = ImportState.Crashed,
+                Message = "Une erreur est survenue lors de la génération du CV !",
+                ErrorMessage = e.Message,
+                 Value = null
+            };
         }
         finally
         {

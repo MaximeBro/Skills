@@ -13,9 +13,9 @@ public partial class CvEditorPage_Experiences : FullComponentBase
 {
     [Inject] public IDbContextFactory<SkillsContext> Factory { get; set; } = null!;
     [Inject] public IDialogService DialogService { get; set; } = null!;
+    
+    [CascadingParameter(Name = "cv-editor")] public CvEditorPage Editor { get; set; } = null!;
     [Parameter] public CvInfo Cv { get; set; } = null!;
-
-    public List<CvExperienceInfo> CvExperiences = new();
 
     protected override async Task OnInitializedAsync()
     {
@@ -30,16 +30,23 @@ public partial class CvEditorPage_Experiences : FullComponentBase
         var result = await instance.Result;
         if (result is { Data: CvExperienceInfo experience })
         {
+            Editor.EditDone();
             experience.CvId = Cv.Id;
-            CvExperiences.Add(experience);
+            Editor.CvExperiences.Add(experience);
             StateHasChanged();
         }
+    }
+
+    private void RemoveExperience(CvExperienceInfo experience)
+    {
+        Editor.CvExperiences.Remove(experience);
+        Editor.EditDone();
     }
 
     private async Task RefreshDataAsync()
     {
         var db = await Factory.CreateDbContextAsync();
-        CvExperiences = db.CvExperiences.AsNoTracking().Where(x => x.CvId == Cv.Id).ToList();
+        Editor.CvExperiences = db.CvExperiences.AsNoTracking().Where(x => x.CvId == Cv.Id).ToList();
         await db.DisposeAsync();
         StateHasChanged();
     }

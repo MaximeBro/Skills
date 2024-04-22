@@ -14,10 +14,9 @@ public partial class CvEditorPage_Certification : FullComponentBase
     [Inject] public IDbContextFactory<SkillsContext> Factory { get; set; } = null!;
     [Inject] public IDialogService DialogService { get; set; } = null!;
 
+    [CascadingParameter(Name = "cv-editor")] public CvEditorPage Editor { get; set; } = null!;
     [Parameter] public CvInfo Cv { get; set; } = null!;
     
-    public List<CvCertificationInfo> CvCertifications = new();
-
     protected override async Task OnInitializedAsync()
     {
         await RefreshDataAsync();
@@ -31,16 +30,23 @@ public partial class CvEditorPage_Certification : FullComponentBase
         var result = await instance.Result;
         if (result is { Data: CvCertificationInfo certification })
         {
+            Editor.EditDone();
             certification.CvId = Cv.Id;
-            CvCertifications.Add(certification);
+            Editor.CvCertifications.Add(certification);
             StateHasChanged();
         }
+    }
+
+    private void RemoveCertification(CvCertificationInfo certification)
+    {
+        Editor.CvCertifications.Remove(certification);
+        Editor.EditDone();
     }
 
     private async Task RefreshDataAsync()
     {
         var db = await Factory.CreateDbContextAsync();
-        CvCertifications = db.CvCertifications.AsNoTracking().Where(x => x.CvId == Cv.Id).ToList();
+        Editor.CvCertifications = db.CvCertifications.AsNoTracking().Where(x => x.CvId == Cv.Id).ToList();
         await db.DisposeAsync();
     }
 }

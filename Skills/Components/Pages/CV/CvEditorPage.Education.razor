@@ -4,7 +4,7 @@
     <MudStack Class="px-4 py-3" Row="false" Spacing="2">
         <MudText Class="mark-one bold">Diplômes</MudText>
         <MudStack Class="px-6 py-2" Row="false" Style="max-height: 350px; overflow-y: auto;">
-            @foreach (var education in CvEducations.OrderByDescending(x => x.YearEnd))
+            @foreach (var education in Editor.CvEducations.OrderByDescending(x => x.YearEnd))
             {
                 <MudPaper Class="rounded-lg mb-1 d-flex px-4 py-1" Elevation="2" Width="100%" Style="flex-direction: row; align-items: center;">
                     <MudStack Row="false" Spacing="0">
@@ -22,7 +22,7 @@
                         }
                     </MudStack>
                     <MudSpacer/>
-                    <MudIconButton Class="hover-red" Icon="@IconsF.Delete" Size="Size.Small" OnClick="@(() => CvEducations.Remove(education))"/>
+                    <MudIconButton Class="hover-red" Icon="@IconsF.Delete" Size="Size.Small" OnClick="@(() => RemoveEducation(education))"/>
                 </MudPaper>
             }
         </MudStack>

@@ -1,5 +1,6 @@
 @page "/overview/{Username}/cv-editor/{CvId:guid}"
 @inherits FullComponentBase
+@implements IAsyncDisposable
 
 <MudContainer MaxWidth="MaxWidth.ExtraLarge">
     <MudGrid Justify="Justify.Center">
@@ -44,14 +45,17 @@
                     </MudStack>
                     <MudStack Class="flex-grow-1 pb-8" Row="false" Justify="Justify.Center" AlignItems="AlignItems.Center">
                         <MudSpacer/>
-                        <MudTooltip Placement="Placement.Top" Arrow>
-                            <TooltipContent>
-                                N'oubliez pas de sauvegarder avant de quitter, <br/>ce n'est pas automatique !
-                            </TooltipContent>
-                            <ChildContent>
+                        <MudCheckBox Class="mb-1" @bind-Value="_autoSave" Label="Sauvegarde auto" Size="Size.Small" Color="Color.Primary" />
+                        @if (_pendingEdits > 0)
+                        {
+                            <MudTooltip Placement="Placement.Top" Arrow Text="@($"Sauvegarde de {_pendingEdits} changement(s) !")">
                                 <MudButton Color="Color.Primary" Variant="Variant.Filled" StartIcon="@IconsF.Warning" IconColor="Color.Warning" OnClick="@SaveDataAsync">Sauvegarder</MudButton>
-                            </ChildContent>
-                        </MudTooltip>
+                            </MudTooltip>
+                        }
+                        else
+                        {
+                            <MudButton Color="Color.Primary" Variant="Variant.Filled" OnClick="@SaveDataAsync">Sauvegarder</MudButton>
+                        }
                     </MudStack>
                 </MudStack>
             </MudItem>
@@ -64,25 +68,27 @@
                 <MudStack Class="px-4 py-3" Row="false" Spacing="1">
                     <MudText Class="mark-one bold">Informations générales</MudText>
                     <MudStack Class="px-6 py-2" Row>
-                        <MudTextField Variant="Variant.Outlined" @bind-Value="_cv.Title" Label="Titre du CV"/>
+                        <MudTextField Variant="Variant.Outlined" Value="_cv.Title" ValueChanged="@((string value) => _cv.Title = value)" OnBlur="@(() => { if (_cv.Title != _title) { _title = _cv.Title; EditDone(); } })" Label="Titre du CV" />
                     </MudStack>
                     <MudStack Class="mb-1 px-6 py-2" Row>
-                        <MudTextField Variant="Variant.Outlined" @bind-Value="_cv.Job" Label="Poste occupé"/>
+                        <MudTextField Variant="Variant.Outlined" Value="_cv.Job" ValueChanged="@((string value) => _cv.Job = value)" OnBlur="@(() => { if (_cv.Job != _job) { _job = _cv.Job; EditDone(); } })" Label="Poste occupé"/>
                     </MudStack>
                     <MudStack Class="mb-1 px-6 py-2" Row>
-                        <MudTextField T="string" @bind-Value="_cv.PhoneNumber" Label="Téléphone" Placeholder="XX.XX.XX.XX.XX" InputType="InputType.Telephone" Adornment="Adornment.Start" AdornmentText="+33"
-                                      Mask="@(new PatternMask("00.00.00.00.00"))" Variant="Variant.Outlined"/>
+                        <MudTextField T="string" Value="_cv.PhoneNumber" ValueChanged="@((string value) => _cv.PhoneNumber = value)" OnBlur="@(() => { if (_cv.PhoneNumber != _phoneNumber) { _phoneNumber = _cv.PhoneNumber; EditDone(); } })" 
+                                      Label="Téléphone" Placeholder="XX.XX.XX.XX.XX" InputType="InputType.Telephone" Adornment="Adornment.Start" AdornmentText="+33" Mask="@(new PatternMask("00.00.00.00.00"))" Variant="Variant.Outlined"/>
                         <MudDatePicker @bind-Date="_birthDate" Label="Date de naissance" DateFormat="dd-MM-yyyy" Variant="Variant.Outlined"/>
                     </MudStack>
                 </MudStack>
             </MudPaper>
 
             <MudStack Row="false" Spacing="0">
-                <CvEditorPage_Education @ref="_education" Cv="_cv"/>
-                <CvEditorPage_Certification @ref="_certification" Cv="_cv"/>
-                <CvEditorPage_Experiences @ref="_experiences" Cv="_cv"/>
-                <CvEditorPage_Skills @ref="_skills" Cv="_cv"/>
-                <CvEditorPage_SafetyCertification @ref="_safetyCertification" Cv="_cv"/>
+                <CascadingValue Name="cv-editor" Value="@this">
+                    <CvEditorPage_Education @ref="_education" Cv="_cv"/>
+                    <CvEditorPage_Certification @ref="_certification" Cv="_cv"/>
+                    <CvEditorPage_Experiences @ref="_experiences" Cv="_cv"/>
+                    <CvEditorPage_Skills @ref="_skills" Cv="_cv"/>
+                    <CvEditorPage_SafetyCertification @ref="_safetyCertification" Cv="_cv"/>
+                </CascadingValue>
             </MudStack>
         </MudItem>
     </MudGrid>

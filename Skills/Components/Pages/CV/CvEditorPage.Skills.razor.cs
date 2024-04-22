@@ -10,9 +10,9 @@ namespace Skills.Components.Pages.CV;
 public partial class CvEditorPage_Skills : FullComponentBase
 {
     [Inject] public IDbContextFactory<SkillsContext> Factory { get; set; } = null!;
-    [Parameter] public CvInfo Cv { get; set; } = null!;
     
-    public Dictionary<AbstractSkillModel, bool> ChosenSkills = new();
+    [CascadingParameter(Name = "cv-editor")] public CvEditorPage Editor { get; set; } = null!;
+    [Parameter] public CvInfo Cv { get; set; } = null!;
     
     protected override async Task OnInitializedAsync()
     {
@@ -25,6 +25,12 @@ public partial class CvEditorPage_Skills : FullComponentBase
         await RefreshDataAsync();
     }
 
+    private void OnCheckChanged(bool value, AbstractSkillModel skill)
+    {
+        Editor.ChosenSkills[skill] = value;
+        Editor.EditDone();
+    }
+
     private async Task RefreshDataAsync()
     {
         var db = await Factory.CreateDbContextAsync();
@@ -32,10 +38,10 @@ public partial class CvEditorPage_Skills : FullComponentBase
         var skills = db.UsersSkills.AsNoTracking().Where(x => x.Level >= Cv.MinLevel && x.UserId == Cv.UserId)
                                                                    .Include(x => x.Skill)
                                                                    .Select(x => x.Skill).ToList() as List<AbstractSkillModel>;
-        ChosenSkills.Clear();
+        Editor.ChosenSkills.Clear();
         foreach (var skill in skills)
         {
-            ChosenSkills.Add(skill, cvSkills.Contains(skill.Id));
+            Editor.ChosenSkills.Add(skill, cvSkills.Contains(skill.Id));
         }
         await db.DisposeAsync();
         StateHasChanged();

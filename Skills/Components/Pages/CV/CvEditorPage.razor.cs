@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Components;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Graph;
+using Microsoft.JSInterop;
 using MudBlazor;
 using Skills.Components.Components;
 using Skills.Databases;
@@ -9,12 +9,13 @@ using Skills.Models.CV;
 
 namespace Skills.Components.Pages.CV;
 
-public partial class CvEditorPage : FullComponentBase
+public partial class CvEditorPage : FullComponentBase, IAsyncDisposable
 {
     [Inject] public IDbContextFactory<SkillsContext> Factory { get; set; } = null!;
     [Inject] public NavigationManager NavManager { get; set; } = null!;
     [Inject] public IDialogService DialogService { get; set; } = null!;
     [Inject] public ISnackbar Snackbar { get; set; } = null!;
+    [Inject] public IJSRuntime JsRuntime { get; set; } = null!;
 
     [Parameter] public string Username { get; set; } = null!;
     [Parameter] public Guid CvId { get; set; }
@@ -29,6 +30,19 @@ public partial class CvEditorPage : FullComponentBase
     private CvEditorPage_SafetyCertification _safetyCertification = null!;
     private CvEditorPage_Skills _skills = null!;
     private CvEditorPage_Experiences _experiences = null!;
+
+    public List<CvEducationInfo> CvEducations { get; set; } = new();
+    public List<CvCertificationInfo> CvCertifications { get; set; } = new();
+    public Dictionary<Guid, bool> HeldCertifications { get; set; } = new();
+    public Dictionary<AbstractSkillModel, bool> ChosenSkills { get; set; } = new();
+    public List<CvExperienceInfo> CvExperiences { get; set; } = new();
+
+    private int _pendingEdits = 0;
+    private bool _autoSave = true;
+
+    private string _title = string.Empty;
+    private string _job = string.Empty;
+    private string _phoneNumber = string.Empty;
     
     protected override async Task OnInitializedAsync()
     {
@@ -50,6 +64,9 @@ public partial class CvEditorPage : FullComponentBase
         _user = user;
         _cv = cv;
         _birthDate = _cv.BirthDate == DateTime.MinValue ? null : _cv.BirthDate;
+        _title = _cv.Title;
+        _job = _cv.Job;
+        _phoneNumber = _cv.PhoneNumber;
         
         _breadcrumbs.Add(new BreadcrumbItem("Accueil", "/"));
         _breadcrumbs.Add(new BreadcrumbItem("Utilisateurs", "/users"));
@@ -57,19 +74,18 @@ public partial class CvEditorPage : FullComponentBase
         _breadcrumbs.Add(new BreadcrumbItem("CV", $"/overview/{Username}/1"));
         _breadcrumbs.Add(new BreadcrumbItem(_cv.Title, null, true));
         await db.DisposeAsync();
-        await RefreshDataAsync();
     }
 
     private async Task SaveDataAsync()
     {
         // Adds new cv fields
         var db = await Factory.CreateDbContextAsync();
-        var educationsToAdd = _education.CvEducations.Where(x => !db.CvEducations.AsNoTracking().Select(y => y.Id).Contains(x.Id)).ToList();
-        var certificationsToAdd = _certification.CvCertifications.Where(x => !db.CvCertifications.AsNoTracking().Select(y => y.Id).Contains(x.Id)).ToList();
-        var experiencesToAdd = _experiences.CvExperiences.Where(x => !db.CvExperiences.AsNoTracking().Select(y => y.Id).Contains(x.Id)).ToList();
+        var educationsToAdd = CvEducations.Where(x => !db.CvEducations.AsNoTracking().Select(y => y.Id).Contains(x.Id)).ToList();
+        var certificationsToAdd = CvCertifications.Where(x => !db.CvCertifications.AsNoTracking().Select(y => y.Id).Contains(x.Id)).ToList();
+        var experiencesToAdd = CvExperiences.Where(x => !db.CvExperiences.AsNoTracking().Select(y => y.Id).Contains(x.Id)).ToList();
 
         List<CvSafetyCertificationInfo> safetyCerts = [];
-        foreach (var cert in _safetyCertification.HeldCertifications.Where(x => x.Value))
+        foreach (var cert in HeldCertifications.Where(x => x.Value))
         {
             if (db.SafetyCertifications.AsNoTracking().Any(x => x.Id == cert.Key))
             {
@@ -79,7 +95,7 @@ public partial class CvEditorPage : FullComponentBase
 
         var safetyCertsToAdd = safetyCerts.Where(x => !db.CvSafetyCertifications.AsNoTracking().Select(y => y.Id).Contains(x.Id)).ToList();
 
-        var heldSkills = _skills.ChosenSkills.Where(x => x.Value).Select(x => new CvSkillInfo
+        var heldSkills = ChosenSkills.Where(x => x.Value).Select(x => new CvSkillInfo
         {
             CvId = CvId,
             SkillId = x.Key.Id,
@@ -94,15 +110,15 @@ public partial class CvEditorPage : FullComponentBase
         db.CvSkills.AddRange(skillsToAdd);
         await db.SaveChangesAsync();
         await db.DisposeAsync();
-
-
+        
+        
         // Removes old cv fields
         db = await Factory.CreateDbContextAsync();
-        var educationsToDell = db.CvEducations.AsNoTracking().Where(x => !_education.CvEducations.Select(y => y.Id).Contains(x.Id)).ToList();
-        var certificationsToDell = db.CvCertifications.AsNoTracking().Where(x => !_certification.CvCertifications.Select(y => y.Id).Contains(x.Id)).ToList();
-        var experiencesToDell = db.CvExperiences.AsNoTracking().Where(x => !_experiences.CvExperiences.Select(y => y.Id).Contains(x.Id)).ToList();
+        var educationsToDell = db.CvEducations.AsNoTracking().Where(x => !CvEducations.Select(y => y.Id).Contains(x.Id)).ToList();
+        var certificationsToDell = db.CvCertifications.AsNoTracking().Where(x => !CvCertifications.Select(y => y.Id).Contains(x.Id)).ToList();
+        var experiencesToDell = db.CvExperiences.AsNoTracking().Where(x => !CvExperiences.Select(y => y.Id).Contains(x.Id)).ToList();
         var safetyCertsToDell = db.CvSafetyCertifications.AsNoTracking().Where(x => !safetyCerts.Select(y => y.CertId).Contains(x.CertId)).ToList();
-        var skillsIds = _skills.ChosenSkills.Where(y => y.Value).Select(y => y.Key.Id).ToList();
+        var skillsIds = ChosenSkills.Where(y => y.Value).Select(y => y.Key.Id).ToList();
         var skillsToDell = db.CvSkills.AsNoTracking().Where(x => !skillsIds.Contains(x.SkillId)).ToList();
 
         db.CvEducations.RemoveRange(educationsToDell);
@@ -123,11 +139,21 @@ public partial class CvEditorPage : FullComponentBase
             options.ShowCloseIcon = false;
             options.HideTransitionDuration = 1500;
         });
-        await RefreshDataAsync();
+
+        _pendingEdits = 0;
     }
 
-    private async Task RefreshDataAsync()
+    public void EditDone()
     {
+        _pendingEdits++;
         StateHasChanged();
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        if (_pendingEdits > 0 && _autoSave)
+        {
+            await SaveDataAsync();
+        }
     }
 }

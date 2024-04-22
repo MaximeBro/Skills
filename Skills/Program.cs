@@ -14,6 +14,8 @@ var dataPath = new DirectoryInfo(Path.Combine(builder.Environment.ContentRootPat
 
 // var dataPath = new DirectoryInfo(Path.Combine(builder.Environment.WebRootPath, "../data")).FullName;
 Console.WriteLine($"DATA PATH ROUTING -> {dataPath}");
+Console.WriteLine($"ENVIRONMENT USERNAME -> {Environment.UserName}");
+Console.WriteLine($"ENVIRONMENT DOMAIN -> {Environment.UserDomainName}");
 builder.Configuration.AddJsonFile(Path.Combine(dataPath, "config/main.json"), optional: false, reloadOnChange: true);
 builder.Configuration.AddJsonFile(Path.Combine(dataPath, "config/skills.json"), optional: false, reloadOnChange: true);
 

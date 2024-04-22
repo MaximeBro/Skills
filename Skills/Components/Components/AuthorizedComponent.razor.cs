@@ -8,7 +8,7 @@ using Skills.Services;
 
 namespace Skills.Components.Components;
 
-public partial class AuthorizedComponent : FullComponentBase
+public partial class AuthorizedComponent : FullComponentBase, IDisposable
 {
     [CascadingParameter] public Task<AuthenticationState> AuthenticationState { get; set; } = null!; 
     [Inject] public ADAuthenticationService AuthenticationService { get; set; } = null!;
@@ -43,4 +43,8 @@ public partial class AuthorizedComponent : FullComponentBase
     }
 
     public void InvokeStateHasChanged() => StateHasChanged();
+    public void Dispose()
+    {
+        AuthenticationService.OnNotAuthorized -= ShowLoginDialogAsync;
+    }
 }

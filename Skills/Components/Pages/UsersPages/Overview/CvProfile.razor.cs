@@ -7,6 +7,7 @@ using Skills.Databases;
 using Skills.Extensions;
 using Skills.Models;
 using Skills.Models.CV;
+using Skills.Models.Enums;
 using Skills.Services;
 
 namespace Skills.Components.Pages.UsersPages.Overview;
@@ -70,15 +71,21 @@ public partial class CvProfile : ComponentBase
 
     private async Task ExportCvAsync(CvInfo cv)
     {
-        var stream = await WordExportService.ExportCvAsync(cv);
-        if (stream != null)
+        var transaction = await WordExportService.ExportCvAsync<MemoryStream>(cv);
+        if (transaction.State == ImportState.Successful)
         {
-            var streamRef = new DotNetStreamReference(stream);
+            var streamRef = new DotNetStreamReference(transaction.Value!);
             await JsRuntime.InvokeVoidAsync("downloadFileFromStream", $"CV_{User.Username}.docx", streamRef);
+            Snackbar.Add($"CV de {User.Name} exporté avec succès !", Severity.Success);
         }
-        else
+        else if (transaction.State == ImportState.Skipped)
         {
-            Snackbar.Add("Une erreur est survenue lors de la génération du CV !", Severity.Error);
+            Snackbar.Add($"{transaction.Message}", Severity.Warning);
+        }
+        else if(transaction.State == ImportState.Crashed)
+        {
+            Snackbar.Add($"{transaction.Message}", Severity.Error);
+            Snackbar.Add($"{transaction.ErrorMessage}", Severity.Error);
         }
     }
 
