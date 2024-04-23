@@ -32,7 +32,10 @@ public class WordExportService(IConfiguration configuration, IDbContextFactory<S
             var fileFolder = configuration.GetSection("Export")["WordTemplateFolder"] ?? string.Empty;
             var dir = Directory.GetCurrentDirectory();
             var template = Path.Combine(dir, fileFolder, fileName);
-            tempFile = Path.Combine(dir, fileFolder, "temp.docx");
+            tempFile = Path.Combine(dir, configuration.GetSection("Export")["WordTemporaryFolder"] ?? string.Empty, "temp.docx");
+            
+            Console.WriteLine($"Template PATH -> {template}");
+            Console.WriteLine($"TempFile PATH -> {tempFile}");
             
             if (File.Exists(tempFile)) File.Delete(tempFile);
             File.Copy(template, tempFile);
@@ -59,8 +62,7 @@ public class WordExportService(IConfiguration configuration, IDbContextFactory<S
             InsertSafety(cv, document);
             InsertSkills(cv, document);
             InsertExperiences(cv, document);
-
-            DocXtensions.Validate(document);
+            
             document.Save();
             document.Dispose();
 

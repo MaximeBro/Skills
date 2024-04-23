@@ -43,31 +43,31 @@ public partial class CvEditorPage : FullComponentBase, IAsyncDisposable
     private string _title = string.Empty;
     private string _job = string.Empty;
     private string _phoneNumber = string.Empty;
-    
+
     protected override async Task OnInitializedAsync()
     {
         var db = await Factory.CreateDbContextAsync();
         var user = db.Users.AsNoTracking().FirstOrDefault(x => x.Username == Username);
         var cv = db.CVs.AsNoTracking()
-                       .Include(x => x.Education)
-                       .Include(x => x.Certifications)
-                       .Include(x => x.SafetyCertifications)
-                       .Include(x => x.Skills)
-                       .FirstOrDefault(x => x.Id == CvId); // Imports all cv data from other tables
-        
+            .Include(x => x.Education)
+            .Include(x => x.Certifications)
+            .Include(x => x.SafetyCertifications)
+            .Include(x => x.Skills)
+            .FirstOrDefault(x => x.Id == CvId); // Imports all cv data from other tables
+
         if (user is null || cv is null)
         {
             NavManager.NavigateTo("/", true);
             return;
         }
-        
+
         _user = user;
         _cv = cv;
         _birthDate = _cv.BirthDate == DateTime.MinValue ? null : _cv.BirthDate;
         _title = _cv.Title;
         _job = _cv.Job;
         _phoneNumber = _cv.PhoneNumber;
-        
+
         _breadcrumbs.Add(new BreadcrumbItem("Accueil", "/"));
         _breadcrumbs.Add(new BreadcrumbItem("Utilisateurs", "/users"));
         _breadcrumbs.Add(new BreadcrumbItem(user.Name, $"/overview/{Username}"));
@@ -77,12 +77,15 @@ public partial class CvEditorPage : FullComponentBase, IAsyncDisposable
     }
 
     private async Task SaveDataAsync()
-    {
+{
         // Adds new cv fields
         var db = await Factory.CreateDbContextAsync();
-        var educationsToAdd = CvEducations.Where(x => !db.CvEducations.AsNoTracking().Select(y => y.Id).Contains(x.Id)).ToList();
-        var certificationsToAdd = CvCertifications.Where(x => !db.CvCertifications.AsNoTracking().Select(y => y.Id).Contains(x.Id)).ToList();
-        var experiencesToAdd = CvExperiences.Where(x => !db.CvExperiences.AsNoTracking().Select(y => y.Id).Contains(x.Id)).ToList();
+        var educationsToAdd = CvEducations
+            .Where(x => !db.CvEducations.AsNoTracking().Select(y => y.Id).Contains(x.Id)).ToList();
+        var certificationsToAdd = CvCertifications
+            .Where(x => !db.CvCertifications.AsNoTracking().Select(y => y.Id).Contains(x.Id)).ToList();
+        var experiencesToAdd = CvExperiences
+            .Where(x => !db.CvExperiences.AsNoTracking().Select(y => y.Id).Contains(x.Id)).ToList();
 
         List<CvSafetyCertificationInfo> safetyCerts = [];
         foreach (var cert in HeldCertifications.Where(x => x.Value))
@@ -93,7 +96,8 @@ public partial class CvEditorPage : FullComponentBase, IAsyncDisposable
             }
         }
 
-        var safetyCertsToAdd = safetyCerts.Where(x => !db.CvSafetyCertifications.AsNoTracking().Select(y => y.Id).Contains(x.Id)).ToList();
+        var safetyCertsToAdd = safetyCerts
+            .Where(x => !db.CvSafetyCertifications.AsNoTracking().Select(y => y.Id).Contains(x.Id)).ToList();
 
         var heldSkills = ChosenSkills.Where(x => x.Value).Select(x => new CvSkillInfo
         {
@@ -101,23 +105,25 @@ public partial class CvEditorPage : FullComponentBase, IAsyncDisposable
             SkillId = x.Key.Id,
             IsSoftSkill = x.Key.Type?.ToLower() == "soft-skill"
         }).ToList();
-        var skillsToAdd = heldSkills.Where(x => !db.CvSkills.AsNoTracking().Select(y => y.SkillId).Contains(x.SkillId)).ToList();
+        var skillsToAdd = heldSkills
+            .Where(x => !db.CvSkills.AsNoTracking().Select(y => y.SkillId).Contains(x.SkillId)).ToList();
 
         db.CvEducations.AddRange(educationsToAdd);
         db.CvCertifications.AddRange(certificationsToAdd);
         db.CvExperiences.AddRange(experiencesToAdd);
         db.CvSafetyCertifications.AddRange(safetyCertsToAdd);
         db.CvSkills.AddRange(skillsToAdd);
-        await db.SaveChangesAsync();
-        await db.DisposeAsync();
-        
-        
+
+
         // Removes old cv fields
-        db = await Factory.CreateDbContextAsync();
-        var educationsToDell = db.CvEducations.AsNoTracking().Where(x => !CvEducations.Select(y => y.Id).Contains(x.Id)).ToList();
-        var certificationsToDell = db.CvCertifications.AsNoTracking().Where(x => !CvCertifications.Select(y => y.Id).Contains(x.Id)).ToList();
-        var experiencesToDell = db.CvExperiences.AsNoTracking().Where(x => !CvExperiences.Select(y => y.Id).Contains(x.Id)).ToList();
-        var safetyCertsToDell = db.CvSafetyCertifications.AsNoTracking().Where(x => !safetyCerts.Select(y => y.CertId).Contains(x.CertId)).ToList();
+        var educationsToDell = db.CvEducations.AsNoTracking()
+            .Where(x => !CvEducations.Select(y => y.Id).Contains(x.Id)).ToList();
+        var certificationsToDell = db.CvCertifications.AsNoTracking()
+            .Where(x => !CvCertifications.Select(y => y.Id).Contains(x.Id)).ToList();
+        var experiencesToDell = db.CvExperiences.AsNoTracking()
+            .Where(x => !CvExperiences.Select(y => y.Id).Contains(x.Id)).ToList();
+        var safetyCertsToDell = db.CvSafetyCertifications.AsNoTracking()
+            .Where(x => !safetyCerts.Select(y => y.CertId).Contains(x.CertId)).ToList();
         var skillsIds = ChosenSkills.Where(y => y.Value).Select(y => y.Key.Id).ToList();
         var skillsToDell = db.CvSkills.AsNoTracking().Where(x => !skillsIds.Contains(x.SkillId)).ToList();
 
@@ -126,7 +132,6 @@ public partial class CvEditorPage : FullComponentBase, IAsyncDisposable
         db.CvExperiences.RemoveRange(experiencesToDell);
         db.CvSafetyCertifications.RemoveRange(safetyCertsToDell);
         db.CvSkills.RemoveRange(skillsToDell);
-        await db.SaveChangesAsync();
 
         _cv.BirthDate = _birthDate ?? _cv.BirthDate;
         db.CVs.Update(_cv);
@@ -153,7 +158,7 @@ public partial class CvEditorPage : FullComponentBase, IAsyncDisposable
     {
         if (_pendingEdits > 0 && _autoSave)
         {
-            await SaveDataAsync();
+            await Task.Run(async () => await SaveDataAsync());
         }
     }
 }
