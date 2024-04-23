@@ -25,6 +25,10 @@ public partial class CvProfile : ComponentBase
 
     private List<CvInfo> _cvs = new();
 
+    private bool _sortMostRecent = false;
+    private string _sortActionText => _sortMostRecent ? "Du plus récent au plus ancien" : "Du plus ancien au plus récent";
+    private string _sortActionIcon => _sortMostRecent ? "fas fa-arrow-down-1-9" : "fas fa-arrow-up-9-1";
+
     protected override async Task OnInitializedAsync()
     {
         _breadcrumbs.Add(new BreadcrumbItem("Accueil", "/"));
@@ -52,7 +56,7 @@ public partial class CvProfile : ComponentBase
     
     private async Task DeleteCvAsync(CvInfo cv)
     {
-        var parameters = new DialogParameters<ConfirmDialog> { { x => x.Text, $"Voulez-vous vraiment supprimer ce CV ? Cette action est irréversible !" } };
+        var parameters = new DialogParameters<ConfirmDialog> { { x => x.Text, $"Voulez-vous vraiment supprimer ce CV ? \nCette action est irréversible !" } };
         var instance = await DialogService.ShowAsync<ConfirmDialog>(string.Empty, parameters, Hardcoded.DialogOptions);
         var result = await instance.Result;
         if (result.Data != null && (bool)result.Data)
@@ -89,6 +93,14 @@ public partial class CvProfile : ComponentBase
         }
     }
 
+    private void OnSortChanged()
+    {
+        _sortMostRecent = !_sortMostRecent;
+        if (_sortMostRecent) _cvs = _cvs.OrderBy(x => x.CreatedAt).ToList();
+        else _cvs = _cvs.OrderByDescending(x => x.CreatedAt).ToList();
+        StateHasChanged();
+    }
+
     private async Task RefreshDataAsync()
     {
         var db = await Factory.CreateDbContextAsync();
@@ -96,6 +108,7 @@ public partial class CvProfile : ComponentBase
                      .Include(x => x.Skills).ThenInclude(x => x.Skill)
                      .Include(x => x.Education).Include(x => x.Experiences)
                      .Include(x => x.Certifications).Include(x => x.SafetyCertifications).ThenInclude(x => x.Certification)
+                     .OrderByDescending(x => x.CreatedAt)
                      .ToList();
 
         await db.DisposeAsync();

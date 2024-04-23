@@ -24,8 +24,11 @@
                 <MudItem Class="px-16 mb-6" xs="12">
                     <MudPaper Elevation="2">
                         <MudToolBar Dense>
-                            <MudTooltip Text="Créer un CV" Placement="Placement.Right" Arrow>
-                                <MudIconButton Icon="@IconsF.Add" Style="border-radius: 6px!important; padding: 4px!important;" Color="Color.Tertiary" OnClick="@CreateCvAsync"/>
+                            <MudTooltip Text="@_sortActionText" Placement="Placement.Right" Arrow>
+                                <MudIconButton Icon="@_sortActionIcon" Size="Size.Small" Style="border-radius: 6px!important; padding: 4px!important;" Color="Color.Dark" OnClick="@OnSortChanged"/>
+                            </MudTooltip>
+                            <MudTooltip Class="ml-2" Text="Créer un CV" Placement="Placement.Top" Arrow>
+                                <MudIconButton Class="ml-4" Icon="@IconsF.AddBox" Style="border-radius: 6px!important; padding: 4px!important;" Color="Color.Tertiary" OnClick="@CreateCvAsync"/>
                             </MudTooltip>
                         </MudToolBar>
                     </MudPaper>
@@ -45,14 +48,14 @@
                                     <MudSpacer/>
                                     <AuthorizedComponent Roles="Admin, Manager">
                                         <Content>
-                                            <MudTooltip Text="Télécharger" Placement="Placement.Top" Arrow>
+                                            <MudTooltip Text="Télécharger" Placement="Placement.Bottom" Arrow>
                                                 <MudIconButton Color="Color.Primary" Size="Size.Small" Icon="@IconsFF.FileWord" OnClick="@(async() => await ExportCvAsync(cv))" />
                                             </MudTooltip>
                                             <MudTooltip Text="Éditer" Placement="Placement.Top" Arrow>
                                                 <MudIconButton Color="Color.Primary" Size="Size.Small" Icon="@IconsF.Edit" OnClick="@(() => NavManager.NavigateTo($"/overview/{User.Username}/cv-editor/{cv.Id}"))"/>
                                             </MudTooltip>
                                             <MudTooltip Text="Supprimer" Placement="Placement.Bottom" Arrow>
-                                                <MudIconButton Class="hover-red" Size="Size.Small" Icon="@IconsF.Delete" OnClick="@(async () => await DeleteCvAsync(cv))"/>
+                                                <MudIconButton Class="hover-red" Size="Size.Small" Color="Color.Dark" Icon="@IconsO.Delete" OnClick="@(async () => await DeleteCvAsync(cv))"/>
                                             </MudTooltip>
                                         </Content>
                                     </AuthorizedComponent>

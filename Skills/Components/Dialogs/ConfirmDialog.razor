@@ -2,12 +2,15 @@
     <DialogContent>
         <MudIconButton Class="ml-n4" Icon="@IconsF.Close" Color="Color.Dark" OnClick="@(() => Dialog.Close())" />
         <MudStack Class="px-4 py-2" Justify="Justify.SpaceEvenly" Row="false" Spacing="0">
-            <MudText Class="mark-one" Typo="Typo.h6" Align="Align.Center" GutterBottom>@Text</MudText>
+            @foreach (var text in Text.Split("\n"))
+            {
+                <MudText Class="mark-one" Typo="Typo.h6" Align="Align.Center">@text</MudText>
+            }
         </MudStack>
     </DialogContent>
     <DialogActions>
-        <MudButton Color="Color.Dark" OnClick="@(() => Dialog.Close(false))">Annuler</MudButton>
-        <MudButton Color="Color.Error" OnClick="@(() => Dialog.Close(true))">Ok</MudButton>
+        <MudButton Color="Color.Dark" Variant="Variant.Filled" OnClick="@(() => Dialog.Close(false))">Annuler</MudButton>
+        <MudButton Color="Color.Error" Variant="Variant.Filled" OnClick="@(() => Dialog.Close(true))">Ok</MudButton>
     </DialogActions>
 </MudDialog>
 
