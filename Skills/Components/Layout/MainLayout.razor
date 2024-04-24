@@ -13,9 +13,11 @@
         <MudSpacer/>
         @if (_identity is { IsAuthenticated: true })
         {
-            <MudStack Class="mr-4" AlignItems="AlignItems.Center" Row>
-                <MudText Class="text-white mark-one"><MudIcon Class="mb-n1" Icon="@IconsF.Check" Color="Color.Info"/> Vous êtes connecté</MudText>
-            </MudStack>
+            <MudHidden Invert Breakpoint="Breakpoint.SmAndUp">
+                <MudStack Class="mr-4" AlignItems="AlignItems.Center" Row>
+                    <MudText Class="text-white mark-one"><MudIcon Class="mb-n1" Icon="@IconsF.Check" Color="Color.Info"/> Vous êtes connecté</MudText>
+                </MudStack>
+            </MudHidden>
             <div class="mr-4">
                 <MenuProfile></MenuProfile>
             </div>

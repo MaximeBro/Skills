@@ -2,7 +2,7 @@
 @inherits FullComponentBase
 
 <MudContainer MaxWidth="MaxWidth.ExtraLarge">
-    <MudBreadcrumbs Items="_breadcrumbs"/>
+    <HideableBreadcrumb Items="@_breadcrumbs" />
     <MudText Class="mark-one" Typo="Typo.h2" Align="Align.Center">Compétences</MudText>
     <MudGrid Justify="Justify.Center">
         <MudItem Class="mt-4" xs="12">

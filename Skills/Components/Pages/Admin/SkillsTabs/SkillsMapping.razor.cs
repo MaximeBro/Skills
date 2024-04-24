@@ -191,7 +191,7 @@ public partial class SkillsMapping : FullComponentBase
 
     private async Task PurgeSkillsAsync()
     {
-        var parameters = new DialogParameters<ConfirmDialog> { { x => x.Text, $"Voulez-vous vraiment supprimer toutes les compétences et tous les types de la base ? Cette action est irréversible !" } };
+        var parameters = new DialogParameters<ConfirmDialog> { { x => x.Text, $"Voulez-vous vraiment supprimer toutes les compétences et tous les types de la base ? \nCette action est irréversible !" } };
         var instance = await DialogService.ShowAsync<ConfirmDialog>(string.Empty, parameters, Hardcoded.DialogOptions);
         var result = await instance.Result;
         if (result.Data != null && (bool)result.Data)

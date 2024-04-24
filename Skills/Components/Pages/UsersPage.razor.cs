@@ -39,10 +39,9 @@ public partial class UsersPage : ComponentBase
         return false;
     };
 
-    private int _toggleIndex = 1;
-    private string _toggleIcon => _toggleIndex < 2 ? Icons.GridView : _toggleIndex == 2 ? Icons.ViewList : Icons.TableChart;
-    private string _toggleTooltip => _toggleIndex < 2 ? "Cartes" : _toggleIndex == 2 ? "Liste" : "Tableau";
-    private void ToggleView() => _toggleIndex += _toggleIndex == 3 ? -2 : 1;
+    private bool _tableView;
+    private string _toggleIcon => _tableView ? Icons.TableChart : Icons.GridView;
+    private string _toggleTooltip => _tableView ? "Tableau" : "Cartes";
     public Func<UserModel, string> DisabledColor => x => x.IsDisabled ? "color: orange;" : "color: inherit;";
 
     protected override async Task OnInitializedAsync()

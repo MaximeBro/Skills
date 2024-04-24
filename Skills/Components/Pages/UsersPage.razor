@@ -1,11 +1,11 @@
 @page "/users"
 
 <MudContainer MaxWidth="MaxWidth.ExtraLarge">
-    <MudBreadcrumbs Items="_breadcrumbs"/>
+    <HideableBreadcrumb Items="@_breadcrumbs" />
     <MudText Class="mark-one" Typo="Typo.h2" Align="Align.Center">Utilisateurs</MudText>
     <MudToolBar Class="mb-6">
         <MudTooltip Placement="Placement.Bottom" Text="@_toggleTooltip" Arrow>
-            <MudIconButton Icon="@_toggleIcon" OnClick="@ToggleView"/>
+            <MudIconButton Icon="@_toggleIcon" OnClick="@(() => _tableView = !_tableView)"/>
         </MudTooltip>
         <MudTooltip Placement="Placement.Bottom" Text="Filtres" Arrow>
             <MudMenu Icon="@IconsF.FilterAlt" ListClass="pa-0" PopoverClass="pa-0" AnchorOrigin="Origin.BottomLeft" TransformOrigin="Origin.TopLeft">
@@ -14,11 +14,13 @@
                 </MudStack>
             </MudMenu>
         </MudTooltip>
-        @if (_toggleIndex == 3)
+        @if (_tableView)
         {
-            <MudTooltip Placement="Placement.Right" Text="Vous pouvez faire un double clic sur une ligne pour ouvrir le profil d'un utilisateur !" Arrow>
-                <MudIcon Class="ml-3 mt-1" Icon="@IconsF.Info" Color="Color.Info"/>
-            </MudTooltip>
+            <MudHidden Invert Breakpoint="Breakpoint.SmAndUp">
+                <MudTooltip Placement="Placement.Right" Text="Vous pouvez faire un double clic sur une ligne pour ouvrir le profil d'un utilisateur !" Arrow>
+                    <MudIcon Class="ml-3 mt-1" Icon="@IconsF.Info" Color="Color.Info"/>
+                </MudTooltip>
+            </MudHidden>
         }
         <MudSpacer/>
         <div>
@@ -26,7 +28,7 @@
                           Adornment="Adornment.Start" AdornmentIcon="@IconsF.Search"/>
         </div>
     </MudToolBar>
-    @if (_toggleIndex == 1)
+    @if (!_tableView)
     {
         <MudGrid Class="pb-4" Justify="Justify.FlexStart">
             @foreach (var user in _filteredUsers.Where(QuickFilter))
@@ -53,38 +55,6 @@
                 </MudItem>
             }
         </MudGrid>
-    }
-    else if (_toggleIndex == 2)
-    {
-        <MudContainer MaxWidth="MaxWidth.Medium">
-            <MudGrid Class="pb-6" Justify="Justify.FlexStart">
-                @foreach (var user in _filteredUsers.Where(QuickFilter))
-                {
-                    <MudItem xs="12">
-                        <MudPaper Class="py-4 px-6" Elevation="5">
-                            <MudStack Row AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween" Spacing="0">
-                                <MudLink Class="flex-grow-1" Href="@($"/overview/{user.Username}/")" Underline="Underline.None">
-                                    <MudStack Row="false" AlignItems="AlignItems.Center" Justify="Justify.Center" Spacing="0">
-                                        <MudText Align="Align.Center">@user.Name</MudText>
-                                        <MudText Align="Align.Center">@user.Email</MudText>
-                                    </MudStack>
-                                </MudLink>
-                                <MudStack Class="flex-shrink-0" Row Spacing="0" AlignItems="AlignItems.Center">
-                                    @if (user.IsDisabled)
-                                    {
-                                        <div class="mr-2 mb-n2">
-                                            <MudTooltip Placement="Placement.Bottom" Text="Ce compte est désactivé !" Arrow>
-                                                <MudIcon Icon="@IconsF.Warning" Size="Size.Small" Color="Color.Warning"/>
-                                            </MudTooltip>
-                                        </div>
-                                    }
-                                </MudStack>
-                            </MudStack>
-                        </MudPaper>
-                    </MudItem>
-                }
-            </MudGrid>
-        </MudContainer>
     }
     else
     {

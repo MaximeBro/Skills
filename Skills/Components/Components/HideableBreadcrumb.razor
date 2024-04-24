@@ -1,0 +1,9 @@
+<MudHidden Invert Breakpoint="@Breakpoint">
+    <MudBreadcrumbs Class="@Class" Items="@Items" />
+</MudHidden>
+
+@code {
+    [Parameter] public List<BreadcrumbItem> Items { get; set; } = new ();
+    [Parameter] public string Class { get; set; } = string.Empty;
+    [Parameter] public Breakpoint Breakpoint { get; set; } = Breakpoint.SmAndUp;
+}

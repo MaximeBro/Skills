@@ -29,6 +29,8 @@ public partial class CvProfile : ComponentBase
     private string _sortActionText => _sortMostRecent ? "Du plus récent au plus ancien" : "Du plus ancien au plus récent";
     private string _sortActionIcon => _sortMostRecent ? "fas fa-arrow-down-1-9" : "fas fa-arrow-up-9-1";
 
+    private bool _loading;
+
     protected override async Task OnInitializedAsync()
     {
         _breadcrumbs.Add(new BreadcrumbItem("Accueil", "/"));
@@ -75,6 +77,8 @@ public partial class CvProfile : ComponentBase
 
     private async Task ExportCvAsync(CvInfo cv)
     {
+        _loading = true;
+        StateHasChanged();
         var transaction = await WordExportService.ExportCvAsync<MemoryStream>(cv);
         if (transaction.State == ImportState.Successful)
         {
@@ -91,6 +95,9 @@ public partial class CvProfile : ComponentBase
             Snackbar.Add($"{transaction.Message}", Severity.Error);
             Snackbar.Add($"{transaction.ErrorMessage}", Severity.Error);
         }
+
+        _loading = false;
+        StateHasChanged();
     }
 
     private void OnSortChanged()

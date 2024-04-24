@@ -70,15 +70,4 @@
     </MudContainer>
 </MudTabPanel>
 
-@if (_loading)
-{
-    <MudOverlay Absolute DarkBackground Visible LockScroll ZIndex="1400" AutoClose="false" Style="height: 100vh; width: 100vw;">
-        <MudStack Row="false" Color="Color.Default" Justify="Justify.Center" AlignItems="AlignItems.Center" Spacing="0">
-            <MudStack Row AlignItems="AlignItems.Center">
-                <MudProgressCircular Class="z-9999" Indeterminate Color="Color.Default"/>
-                <MudText Class="mark-one mr-3 z-9999" Align="Align.Center">Chargement en cours...</MudText>
-            </MudStack>
-            <MudText Class="mark-one mt-2 z-9999" Color="Color.Default" Align="Align.Center" Style="font-weight: bold!important;">Ne rafraîchissez pas la page !</MudText>
-        </MudStack>
-    </MudOverlay>
-}
+<PageLoading IsVisible="@_loading" />

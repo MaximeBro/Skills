@@ -2,9 +2,9 @@
     <MudGrid Justify="Justify.Center" Spacing="0">
 
         @* User information *@
-        <MudItem Class="px-16" xs="12">
+        <MudItem Class="px-2 px-md-16" xs="12">
             <MudStack Row>
-                <MudBreadcrumbs Items="_breadcrumbs"/>
+                <HideableBreadcrumb Items="@_breadcrumbs" />
                 <MudSpacer />
                 <MudPaper Class="my-4 px-4 py-3" Elevation="2">
                     <MudStack Row AlignItems="AlignItems.Center">
@@ -22,7 +22,7 @@
         </MudItem>
 
         @* Skills *@
-        <MudItem Class="px-16" xs="12">
+        <MudItem Class="px-2 px-md-16" xs="12">
             
             <MudDataGrid T="UserSkillModel" Items="_userSkillsModels" Bordered Hover Outlined Filterable Striped SortMode="SortMode.Multiple" Dense FixedHeader ReadOnly="false"
                          Culture="@(new CultureInfo("fr-FR"))" Height="65vh" Virtualize OverscanCount="25" QuickFilter="@QuickFilter" EditMode="DataGridEditMode.Cell">

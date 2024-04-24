@@ -6,7 +6,7 @@
     return;
 }
 <MudContainer MaxWidth="MaxWidth.ExtraLarge">
-    <MudBreadcrumbs Items="_breadcrumbs"/>
+    <HideableBreadcrumb Items="@_breadcrumbs" />
     <MudText Class="mark-one" Typo="Typo.h4" Align="Align.Center">@_skill.ToStringNoTypeDesc()</MudText>
     <MudText Class="mark-one" Typo="Typo.h5" Align="Align.Center" Style="font-weight: bold!important;">@_skill.Description</MudText>
     <MudGrid Justify="Justify.FlexStart">

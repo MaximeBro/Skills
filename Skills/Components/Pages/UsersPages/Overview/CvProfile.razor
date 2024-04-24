@@ -1,8 +1,8 @@
 <MudTabPanel Text="CV">
     <MudGrid Justify="Justify.Center" Spacing="0">
-        <MudItem Class="px-16" xs="12">
+        <MudItem Class="px-2 px-md-16" xs="12">
             <MudStack Row>
-                <MudBreadcrumbs Items="_breadcrumbs"/>
+                <HideableBreadcrumb Items="@_breadcrumbs" />
                 <MudSpacer/>
                 <MudPaper Class="my-4 px-4 py-3" Elevation="2">
                     <MudStack Row AlignItems="AlignItems.Center">
@@ -21,7 +21,7 @@
 
         <AuthorizedComponent Roles="Admin, Manager">
             <Content>
-                <MudItem Class="px-16 mb-6" xs="12">
+                <MudItem Class="px-2 px-md-16 mb-6" xs="12">
                     <MudPaper Elevation="2">
                         <MudToolBar Dense>
                             <MudTooltip Text="@_sortActionText" Placement="Placement.Right" Arrow>
@@ -36,7 +36,7 @@
             </Content>
         </AuthorizedComponent>
 
-        <MudItem Class="px-16" xs="12">
+        <MudItem Class="px-2 px-md-16" xs="12">
             <MudGrid Justify="Justify.FlexStart" Spacing="2">
                 @foreach (var cv in _cvs)
                 {
@@ -76,3 +76,5 @@
         </MudItem>
     </MudGrid>
 </MudTabPanel>
+
+<PageLoading IsVisible="@_loading" />
