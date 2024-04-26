@@ -5,22 +5,22 @@
                   $"background-image: url('/pictures/{ThemeManager.Get("login-banner")}'); background-position: center center; background-size: cover;")">
     <MudItem xs="12" md="8" lg="6" Class="d-flex" Style="align-items: center; justify-content: center;">
         <MudPaper Class="rounded-lg pt-3 pt-6 pb-2 px-12" Elevation="20" Style="@($"backdrop-filter: blur(5px) brightness(.45); background: transparent;")">
-            <MudText Class="text-white mark-one" Align="Align.Center" Typo="Typo.h3">Connexion</MudText>
+            <MudText Class="text-white open-sans-600" Align="Align.Center" Typo="Typo.h3">Connexion</MudText>
             <MudStack Row Spacing="0">
                 <EditForm Model="@_model" OnValidSubmit="@TrySignInAsync">
                     <MudStack Row>
-                        <MudTextField T="string" @bind-Value="_model.Username" Class="white-all mark-one my-3" Label="@("Identifiant")" Variant="Variant.Filled"
+                        <MudTextField T="string" @bind-Value="_model.Username" Class="white-all open-sans-600 my-3" Label="@("Identifiant")" Variant="Variant.Filled"
                                       Placeholder="prénom.nom" Required For="@(() => _model.Username)" Style="min-width: 300px;" />
                     </MudStack>
 
                     <MudStack Class="mt-2" Row>
-                        <MudTextField T="string" @bind-Value="_model.Password" Class="white-all mark-one" Label="Mot de passe" Variant="Variant.Filled"
+                        <MudTextField T="string" @bind-Value="_model.Password" Class="white-all open-sans-600" Label="Mot de passe" Variant="Variant.Filled"
                                       Placeholder="Votre mdp AD local" InputType="@PasswordInputType" AdornmentIcon="@PasswordIcon" Adornment="Adornment.End"
                                       OnAdornmentClick="@(() => _shown = !_shown)" Required For="@(() => _model.Password)" Style="min-width: 300px;" />
                     </MudStack>
 
                     <MudStack Class="mt-4 py-4" Row Justify="Justify.Center">
-                        <MudButton Class="text-white mark-one" Color="Color.Transparent" Size="Size.Large" DisableElevation Variant="Variant.Filled"
+                        <MudButton Class="text-white open-sans-600" Color="Color.Transparent" Size="Size.Large" DisableElevation Variant="Variant.Filled"
                                    ButtonType="ButtonType.Submit" Style="text-transform: none;">
                             Se connecter
                         </MudButton>

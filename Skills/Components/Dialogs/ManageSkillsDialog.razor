@@ -11,7 +11,7 @@
                 {
                     <MudStack Row AlignItems="AlignItems.Center" Spacing="0">
                         <MudTooltip Placement="Placement.Left" Text="@($"{(skill.Value ? "Révoquer" : "Attribuer")}")" Arrow>
-                            <MudCheckBox T="bool" Value="skill.Value" ValueChanged="@((check) => OnCheckChanged(check, skill.Key))" UnCheckedIcon="@IconsF.Add" checkedIcon="fas fa-minus"
+                            <MudCheckBox T="bool" Value="skill.Value" ValueChanged="@((check) => OnCheckChanged(check, skill.Key))" UnCheckedIcon="@IconsF.AddBox" checkedIcon="fas fa-minus"
                                          Color="Color.Error" UnCheckedColor="Color.Tertiary" Size="Size.Small"/>
                         </MudTooltip>
                         <MudPaper Class="mx-3 px-4 py-2 flex-grow-1" Elevation="4">
@@ -24,8 +24,8 @@
             </MudStack>
             <MudTooltip Class="mt-6" Placement="Placement.Bottom" Arrow>
                 <TooltipContent>
-                    <MudText Class="mark-one"><strong>@_userSkills.Where(x => x.Value).Count()</strong> compétences attribuées</MudText>
-                    <MudText Class="mark-one"><strong>@_userSkills.Count()</strong> compétences disponibles</MudText>
+                    <MudText Class="open-sans-600"><strong>@_userSkills.Where(x => x.Value).Count()</strong> compétences attribuées</MudText>
+                    <MudText Class="open-sans-600"><strong>@_userSkills.Count()</strong> compétences disponibles</MudText>
                 </TooltipContent>
                 <ChildContent>
                     <MudIcon Class="mt-4 mb-n6" Icon="@IconsF.Info" Color="Color.Dark" />
@@ -34,7 +34,7 @@
         </MudStack>
     </DialogContent>
     <DialogActions>
-        <MudButton Class="mark-one" Color="Color.Success" Variant="Variant.Filled" OnClick="@Submit">Enregistrer</MudButton>
+        <MudButton Class="open-sans-600" Color="Color.Success" Variant="Variant.Filled" OnClick="@Submit">Enregistrer</MudButton>
     </DialogActions>
 </MudDialog>
 

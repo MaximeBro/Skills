@@ -1,13 +1,13 @@
 @inherits FullComponentBase
 
-<MudTabPanel Class="mark-one" Text="Groupes">
+<MudTabPanel Class="open-sans-600" Text="Groupes">
     <MudContainer MaxWidth="MaxWidth.ExtraLarge">
         <MudGrid Class="mt-8" Justify="Justify.Center">
             <MudItem xs="12" sm="6" md="4">
                 <MudPaper Class="rounded" Elevation="3">
                     <MudStack Row="false" Spacing="0">
                         <MudStack Class="px-6 py-4" Row>
-                            <MudText Class="mark-one">Groupes</MudText>
+                            <MudText Class="open-sans-600">Groupes</MudText>
                         </MudStack>
                     </MudStack>
                     <EditForm Model="_inputModel" OnValidSubmit="@(async () => await AddAsync())">

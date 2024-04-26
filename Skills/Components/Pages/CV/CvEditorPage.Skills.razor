@@ -3,7 +3,7 @@
 <MudPaper id="skills" Class="mt-6" Elevation="2">
     <MudStack Class="px-4 py-3" Row="false" Spacing="2">
         <MudStack Row AlignItems="AlignItems.Center">
-            <MudText Class="mark-one bold mr-2">Compétences</MudText>
+            <MudText Class="open-sans-600 bold mr-2">Compétences</MudText>
             <MudSelect T="int" Value="Cv.MinLevel" ValueChanged="@LevelChangedAsync" Adornment="Adornment.Start" AdornmentText="Niveau mini"
                        Class="flex-shrink-0" Style="max-width: 250px;" InputClass="no-margin-top" OuterClass="no-margin-top" ListClass="py-0"
                        AnchorOrigin="Origin.BottomLeft" TransformOrigin="Origin.TopLeft">
@@ -19,7 +19,7 @@
             {
                 <MudPaper Class="d-flex mb-1 px-4 py-1" Style="flex-direction: row; align-items: center;">
                     <MudCheckBox T="bool" Value="@Editor.ChosenSkills[skill.Key]" ValueChanged="@((value) => OnCheckChanged(value, skill.Key))" />
-                    <MudText Class="mark-one">@skill.Key.ToString()</MudText>
+                    <MudText Class="open-sans-600">@skill.Key.ToString()</MudText>
                 </MudPaper>
             }
         </MudStack>

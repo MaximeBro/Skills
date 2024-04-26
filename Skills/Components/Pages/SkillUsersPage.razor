@@ -6,9 +6,9 @@
     return;
 }
 <MudContainer MaxWidth="MaxWidth.ExtraLarge">
-    <HideableBreadcrumb Items="@_breadcrumbs" />
-    <MudText Class="mark-one" Typo="Typo.h4" Align="Align.Center">@_skill.ToStringNoTypeDesc()</MudText>
-    <MudText Class="mark-one" Typo="Typo.h5" Align="Align.Center" Style="font-weight: bold!important;">@_skill.Description</MudText>
+    <HideableBreadcrumb Items="@_breadcrumbs" Class="open-sans" />
+    <MudText Class="open-sans-600" Typo="Typo.h4" Align="Align.Center">@_skill.ToStringNoTypeDesc()</MudText>
+    <MudText Class="open-sans-600" Typo="Typo.h5" Align="Align.Center" Style="font-weight: bold!important;">@_skill.Description</MudText>
     <MudGrid Justify="Justify.FlexStart">
         <MudItem Class="mt-10" xs="12" md="3">
             <MudPaper Class="flex-grow-1 py-6 px-8" Elevation="4">
@@ -20,7 +20,7 @@
                     <MudStack Class="px-2" Row="false" Spacing="1">
                         @foreach (var level in _levels.OrderBy(x => x.Level))
                         {
-                        <MudText Class="mark-one"><MudChip Class="bold">@level.Level</MudChip> @level.Value</MudText>
+                        <MudText Class="open-sans-600"><MudChip Class="bold">@level.Level</MudChip> @level.Value</MudText>
                         }
                     </MudStack>
                 </MudStack>
@@ -31,7 +31,7 @@
                 <MudPaper Elevation="3">
                     <MudList Dense Clickable>
                         <MudListSubheader>
-                            <MudText Class="mark-one bold" Typo="Typo.body1">Utilisateurs</MudText>
+                            <MudText Class="open-sans-600 bold" Typo="Typo.body1">Utilisateurs</MudText>
                         </MudListSubheader>
                         @if (_users.Any())
                         {
@@ -42,7 +42,7 @@
                                         <MudTooltip Placement="Placement.Left" Arrow Text="@(_levels.FirstOrDefault(x => x.Level == user.Level)?.Value ?? "Description du niveau inconnue (probablement inexistante ?)")">
                                             <MudChip Class="bold" Color="Color.Dark">@user.Level</MudChip>
                                         </MudTooltip>
-                                        <MudText Class="mark-one" Typo="Typo.h6">@user.User!.Name</MudText>
+                                        <MudText Class="open-sans-600" Typo="Typo.h6">@user.User!.Name</MudText>
                                     </MudStack>
                                 </MudListItem>
                             }
@@ -50,7 +50,7 @@
                         else
                         {
                             <MudListItem>
-                                <MudText Class="mark-one" Style="font-weight: 500!important;">Aucun utilisateur ne s'est vu attribuer cette compétence...</MudText>
+                                <MudText Class="open-sans-600" Style="font-weight: 500!important;">Aucun utilisateur ne s'est vu attribuer cette compétence...</MudText>
                             </MudListItem>
                         }
                     </MudList>

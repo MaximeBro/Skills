@@ -14,17 +14,17 @@
                 </MudFileUpload>
                 @if (string.IsNullOrWhiteSpace(_fileName))
                 {
-                    <MudText Class="mark-one ml-2" Style="font-style: italic!important;">Importez un fichier .xlsx</MudText>
+                    <MudText Class="open-sans-600 ml-2" Style="font-style: italic!important;">Importez un fichier .xlsx</MudText>
                 }
                 else
                 {
-                    <MudText Class="ml-4 mark-one" Style="font-weight: bold!important; text-decoration: underline;">@_fileName</MudText>
+                    <MudText Class="ml-4 open-sans-600" Style="font-weight: bold!important; text-decoration: underline;">@_fileName</MudText>
                 }
             </MudStack>
         </MudStack>
     </DialogContent>
     <DialogActions>
-        <MudButton Class="mark-one" Color="Color.Success" Variant="Variant.Filled" Size="Size.Small" OnClick="@Submit">Enregistrer</MudButton>
+        <MudButton Class="open-sans-600" Color="Color.Success" Variant="Variant.Filled" Size="Size.Small" OnClick="@Submit">Enregistrer</MudButton>
     </DialogActions>
 </MudDialog>
 

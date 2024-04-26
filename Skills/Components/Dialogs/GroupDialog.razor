@@ -2,12 +2,11 @@
     <DialogContent>
         <MudIconButton Class="ml-n4" Icon="@IconsF.Close" Color="Color.Dark" OnClick="@(() => Dialog.Close())" />
         <MudStack Class="px-4 py-2" Justify="Justify.SpaceEvenly" Row="false" Spacing="0">
-            <MudText Class="mark-one" GutterBottom>Groupe</MudText>
-            <MudTextField T="string" @bind-Value="_name" Label="Nomination" Placeholder="Nom"/>
+            <MudTextField T="string" @bind-Value="_name" Label="Nomination" Placeholder="Nom" Variant="Variant.Outlined" />
         </MudStack>
     </DialogContent>
     <DialogActions>
-        <MudButton Class="mark-one" Color="Color.Success" Variant="Variant.Text" OnClick="@Submit">Enregistrer</MudButton>
+        <MudButton Class="open-sans-600" Color="Color.Success" Variant="Variant.Filled" Size="Size.Small" OnClick="@Submit">Enregistrer</MudButton>
     </DialogActions>
 </MudDialog>
 

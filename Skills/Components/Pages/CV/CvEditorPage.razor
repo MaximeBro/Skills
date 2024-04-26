@@ -8,35 +8,35 @@
     <MudHidden Invert Breakpoint="Breakpoint.MdAndUp">
         <MudItem xs="0" md="2" Class="d-flex" Style="border-right: 1px solid #c3c3c3; justify-content: center;">
             <MudStack Class="fixed px-4 pt-6 pb-16" Row="false" Style="height: 100%; flex: 1;">
-                <MudText Class="mark-one bold" Align="Align.Center">Composition CV</MudText>
+                <MudText Class="open-sans-600 bold" Align="Align.Center">Composition CV</MudText>
                 <MudDivider Class="mb-2" DividerType="DividerType.Middle"/>
                 <MudStack Row="false" Class="pa-2">
-                    <MudLink Class="mark-one mb-2" Href="@($"overview/{Username}/cv-editor/{CvId}/#general")">
+                    <MudLink Class="open-sans-600 mb-2" Href="@($"overview/{Username}/cv-editor/{CvId}/#general")">
                         <MudStack Row Justify="Justify.FlexStart" AlignItems="AlignItems.Center">
                             <MudIcon Icon="fas fa-circle-info"/> Général
                         </MudStack>
                     </MudLink>
-                    <MudLink Class="mark-one mb-2" Href="@($"overview/{Username}/cv-editor/{CvId}/#education")">
+                    <MudLink Class="open-sans-600 mb-2" Href="@($"overview/{Username}/cv-editor/{CvId}/#education")">
                         <MudStack Row Justify="Justify.FlexStart" AlignItems="AlignItems.Center">
                             <MudIcon Icon="fas fa-graduation-cap"/> Diplômes
                         </MudStack>
                     </MudLink>
-                    <MudLink Class="mark-one mb-2" Href="@($"overview/{Username}/cv-editor/{CvId}/#certifications")">
+                    <MudLink Class="open-sans-600 mb-2" Href="@($"overview/{Username}/cv-editor/{CvId}/#certifications")">
                         <MudStack Row Justify="Justify.FlexStart" AlignItems="AlignItems.Center">
                             <MudIcon Icon="fas fa-award"/> Certifications
                         </MudStack>
                     </MudLink>
-                    <MudLink Class="mark-one mb-2" Href="@($"overview/{Username}/cv-editor/{CvId}/#experiences")">
+                    <MudLink Class="open-sans-600 mb-2" Href="@($"overview/{Username}/cv-editor/{CvId}/#experiences")">
                         <MudStack Row Justify="Justify.FlexStart" AlignItems="AlignItems.Center">
                             <MudIcon Icon="fas fa-address-card"/> Expériences
                         </MudStack>
                     </MudLink>
-                    <MudLink Class="mark-one mb-2" Href="@($"overview/{Username}/cv-editor/{CvId}/#skills")">
+                    <MudLink Class="open-sans-600 mb-2" Href="@($"overview/{Username}/cv-editor/{CvId}/#skills")">
                         <MudStack Row Justify="Justify.FlexStart" AlignItems="AlignItems.Center">
                             <MudIcon Icon="fas fa-toolbox"/> Compétences
                         </MudStack>
                     </MudLink>
-                    <MudLink Class="mark-one mb-2" Href="@($"overview/{Username}/cv-editor/{CvId}/#safety")">
+                    <MudLink Class="open-sans-600 mb-2" Href="@($"overview/{Username}/cv-editor/{CvId}/#safety")">
                         <MudStack Row Justify="Justify.FlexStart" AlignItems="AlignItems.Center">
                             <MudIcon Icon="fas fa-helmet-safety"/> Habilitations
                         </MudStack>
@@ -62,10 +62,10 @@
     
     @* General info *@
     <MudItem id="general" Class="px-2 px-md-16 mb-6 pad-anchor" xs="12" md="10">
-        <HideableBreadcrumb Class="mt-2" Items="@_breadcrumbs" />
+        <HideableBreadcrumb Class="mt-2 open-sans" Items="@_breadcrumbs" />
         <MudPaper Elevation="2" Class="mt-6">
             <MudStack Class="px-4 py-3" Row="false" Spacing="1">
-                <MudText Class="mark-one bold">Informations générales</MudText>
+                <MudText Class="open-sans-600 bold">Informations générales</MudText>
                 <MudStack Class="px-6 py-2" Row>
                     <MudTextField Variant="Variant.Outlined" Value="_cv.Title" ValueChanged="@((string value) => _cv.Title = value)" OnBlur="@(() => { if (_cv.Title != _title) { _title = _cv.Title; EditDone(); } })" Label="Titre du CV" />
                 </MudStack>

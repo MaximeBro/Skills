@@ -22,7 +22,7 @@
                 </MudSelect>
             </MudStack>
             
-            <MudStack Row Justify="Justify.Center">
+            <MudStack Class="mt-4" Row Justify="Justify.Center">
                 <MudSelect T="SKillInfo?" @bind-Value="_selectedSubCategory" Label="Sous catégorie" Style="min-width: 220px;" ToStringFunc="@(skill => skill?.Value ?? string.Empty)"
                            AnchorOrigin="Origin.BottomLeft" TransformOrigin="Origin.TopLeft">
                     @foreach (var subcategory in _subcategories)
@@ -36,7 +36,7 @@
         </MudStack>
     </DialogContent>
     <DialogActions>
-        <MudButton Class="mark-one" Color="Color.Success" Variant="Variant.Filled" OnClick="@Submit">Enregistrer</MudButton>
+        <MudButton Class="open-sans-600" Color="Color.Success" Variant="Variant.Filled" OnClick="@Submit">Enregistrer</MudButton>
     </DialogActions>
 </MudDialog>
 

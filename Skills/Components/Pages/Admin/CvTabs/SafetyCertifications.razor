@@ -1,7 +1,7 @@
 @using Skills.Models.CV
 @inherits FullComponentBase
 
-<MudTabPanel Class="mark-one" Text="@Title">
+<MudTabPanel Class="open-sans-600" Text="@Title">
     <MudContainer MaxWidth="MaxWidth.ExtraLarge">
         <MudGrid Class="mt-8" Justify="Justify.Center">
             <MudItem xs="12">
@@ -9,9 +9,9 @@
                              Culture="@(new CultureInfo("fr-FR"))" Height="70vh" Virtualize OverscanCount="25" QuickFilter="@QuickFilter" ReadOnly="false"
                              EditMode="DataGridEditMode.Cell" CommittedItemChanges="@CommitChangesAsync">
                     <ToolBarContent>
-                        <MudText Class="mark-one" Style="font-weight: bold!important">Actions</MudText>
+                        <MudText Class="open-sans-600" Style="font-weight: bold!important">Actions</MudText>
                         <MudTooltip Class="ml-2" Placement="Placement.Bottom" Text="Créer une habilitation" Arrow>
-                            <MudIconButton Class="ml-4" Style="border-radius: 6px!important; padding: 4px!important;" Icon="@IconsF.Add" Color="Color.Tertiary" OnClick="@(() => CreateCertificationAsync())"/>
+                            <MudIconButton Class="ml-4" Style="border-radius: 6px!important; padding: 4px!important;" Icon="@IconsF.AddBox" Color="Color.Tertiary" OnClick="@(() => CreateCertificationAsync())"/>
                         </MudTooltip>
                         <MudSpacer/>
                         <MudTextField T="string" @bind-Value="_search" Immediate Adornment="Adornment.Start" Clearable

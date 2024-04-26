@@ -19,6 +19,8 @@ public partial class SkillTypeLevels : FullComponentBase
     private string _levelTwoText = string.Empty;
     private string _levelThreeText = string.Empty;
     private string _levelFourText = string.Empty;
+
+    private SemaphoreSlim _semaphore = new SemaphoreSlim(1);
     
     protected override async Task OnInitializedAsync()
     {
@@ -27,6 +29,8 @@ public partial class SkillTypeLevels : FullComponentBase
 
     private async Task SaveAsync(int level)
     {
+        Parent.SetSaving(true);
+        await _semaphore.WaitAsync();
         var db = await Factory.CreateDbContextAsync();
         var old = db.TypesLevels.AsNoTracking().FirstOrDefault(x => x.TypeId == Type.Id && x.Level == level);
         
@@ -45,16 +49,12 @@ public partial class SkillTypeLevels : FullComponentBase
                 Value = GetValueOf(level)
             });
         }
-
-        Snackbar.Add("Modification enregistrée !", Severity.Success, options =>
-        {
-            options.VisibleStateDuration = 1000;
-            options.ShowCloseIcon = false;
-            options.DuplicatesBehavior = SnackbarDuplicatesBehavior.Allow;
-        });
+        
         await db.SaveChangesAsync();
         await db.DisposeAsync();
         await Parent.RefreshSkillsAsync();
+        _semaphore.Release(1);
+        Parent.SetSaving(false);
     }
 
     private string GetValueOf(int level)

@@ -1,8 +1,8 @@
 @page "/users"
 
 <MudContainer MaxWidth="MaxWidth.ExtraLarge">
-    <HideableBreadcrumb Items="@_breadcrumbs" />
-    <MudText Class="mark-one" Typo="Typo.h2" Align="Align.Center">Utilisateurs</MudText>
+    <HideableBreadcrumb Items="@_breadcrumbs" Class="open-sans" />
+    <MudText Class="open-sans-600" Typo="Typo.h2" Align="Align.Center">Utilisateurs</MudText>
     <MudToolBar Class="mb-6">
         <MudTooltip Placement="Placement.Bottom" Text="@_toggleTooltip" Arrow>
             <MudIconButton Icon="@_toggleIcon" OnClick="@(() => _tableView = !_tableView)"/>
@@ -69,9 +69,11 @@
                     <PropertyColumn Title="Désactivé" Property="x => x.IsDisabled" CellStyleFunc="@DisabledColor"/>
                     <TemplateColumn Title="Actions" Sortable="false" Filterable="false">
                         <CellTemplate>
-                            <MudTooltip Placement="Placement.Bottom" Text="Voir le profil" Arrow>
-                                <MudIconButton Class="mr-3" Size="Size.Small" Color="Color.Info" Icon="@IconsF.Visibility" OnClick="@(() => NavigateToProfile(context.Item))"/>
-                            </MudTooltip>
+                            <MudStack Row Justify="Justify.SpaceEvenly">
+                                <MudTooltip Placement="Placement.Bottom" Text="Voir le profil" Arrow>
+                                    <MudIconButton Class="mr-3" Size="Size.Small" Color="Color.Secondary" Icon="@IconsF.Visibility" OnClick="@(() => NavigateToProfile(context.Item))"/>
+                                </MudTooltip>
+                            </MudStack>
                         </CellTemplate>
                     </TemplateColumn>
                 </Columns>

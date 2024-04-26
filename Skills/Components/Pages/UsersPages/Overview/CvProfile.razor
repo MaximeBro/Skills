@@ -2,16 +2,16 @@
     <MudGrid Justify="Justify.Center" Spacing="0">
         <MudItem Class="px-2 px-md-16" xs="12">
             <MudStack Row>
-                <HideableBreadcrumb Items="@_breadcrumbs" />
+                <HideableBreadcrumb Items="@_breadcrumbs" Class="open-sans" />
                 <MudSpacer/>
                 <MudPaper Class="my-4 px-4 py-3" Elevation="2">
                     <MudStack Row AlignItems="AlignItems.Center">
                         <MudAvatar Color="Color.Dark">@User.Name[0].ToString().ToUpper()</MudAvatar>
                         <MudStack Row="false" Spacing="0">
-                            <MudText Class="mark-one">@User.Name</MudText>
-                            <MudText Class="mark-one">@User.Email</MudText>
+                            <MudText Class="open-sans-600">@User.Name</MudText>
+                            <MudText Class="open-sans-600">@User.Email</MudText>
                             <MudLink Href="@($"tel:{@User.PhoneNumber}")" Color="Color.Inherit">
-                                <MudText Class="mark-one" Typo="Typo.body2">@User.PhoneNumber</MudText>
+                                <MudText Class="open-sans-600" Typo="Typo.body2">@User.PhoneNumber</MudText>
                             </MudLink>
                         </MudStack>
                     </MudStack>
@@ -44,7 +44,7 @@
                         <MudPaper Class="px-8 py-4" Elevation="2">
                             <MudStack Row="false">
                                 <MudStack Row>
-                                    <MudText Class="mark-one bold">@cv.Title</MudText>
+                                    <MudText Class="open-sans-600 bold">@cv.Title</MudText>
                                     <MudSpacer/>
                                     <AuthorizedComponent Roles="Admin, Manager">
                                         <Content>
@@ -61,12 +61,12 @@
                                     </AuthorizedComponent>
                                 </MudStack>
                                 <MudDivider Class="my-2 mt-2" DividerType="DividerType.Middle"/>
-                                <MudText Class="mark-one">Compétences @(cv.Skills.Count) (dont @cv.Skills.Count(x => x.IsSoftSkill) soft-skill(s))</MudText>
-                                <MudText Class="mark-one">Formations @cv.Certifications.Count</MudText>
-                                <MudText Class="mark-one">Diplômes @cv.Education.Count</MudText>
+                                <MudText Class="open-sans-600">Compétences @(cv.Skills.Count) (dont @cv.Skills.Count(x => x.IsSoftSkill) soft-skill(s))</MudText>
+                                <MudText Class="open-sans-600">Formations @cv.Certifications.Count</MudText>
+                                <MudText Class="open-sans-600">Diplômes @cv.Education.Count</MudText>
                                 <MudStack Row>
                                     <MudSpacer/>
-                                    <MudText Class="mark-one" Typo="Typo.caption">créé le @cv.CreatedAt.ToString("dd-MM-yyyy")</MudText>
+                                    <MudText Class="open-sans-600" Typo="Typo.caption">créé le @cv.CreatedAt.ToString("dd-MM-yyyy")</MudText>
                                 </MudStack>
                             </MudStack>
                         </MudPaper>

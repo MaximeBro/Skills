@@ -37,11 +37,19 @@ public partial class SkillsTypes : FullComponentBase
     private string _levelTwoText = string.Empty;
     private string _levelThreeText = string.Empty;
     private string _levelFourText = string.Empty;
+
+    private bool _loading;
     
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
         await RefreshDataAsync();
+    }
+
+    public void SetSaving(bool saving)
+    {
+        _loading = saving;
+        StateHasChanged();
     }
 
     private async Task AddAsync(SkillDataType type)

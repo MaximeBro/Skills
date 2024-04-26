@@ -86,7 +86,7 @@ public partial class SkillsProfile : ComponentBase
             {
                 options.VisibleStateDuration = 1000;
                 options.ShowCloseIcon = false;
-                options.DuplicatesBehavior = SnackbarDuplicatesBehavior.Allow;
+                options.DuplicatesBehavior = SnackbarDuplicatesBehavior.Prevent;
             });
         }
         

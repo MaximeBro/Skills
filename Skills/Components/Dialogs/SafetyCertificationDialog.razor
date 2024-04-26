@@ -4,16 +4,16 @@
         <MudIconButton Class="ml-n4" Icon="@IconsF.Close" Color="Color.Dark" OnClick="@(() => Dialog.Close())"/>
         <MudStack Class="px-4 py-2" Justify="Justify.SpaceEvenly" Row="false" Spacing="0">
             <MudStack Row>
-                <MudTextField T="string" @bind-Value="_category" Label="Catégorie" />
-                <MudTextField T="string" @bind-Value="_name" Label="Nomination"/>
+                <MudTextField T="string" @bind-Value="_category" Label="Catégorie" Style="width: 180px;" />
+                <MudTextField T="string" @bind-Value="_name" Label="Nomination" Style="width: 320px;" />
             </MudStack>
             <MudStack Class="mt-2" Row Justify="Justify.Center">
-                <MudCheckBox T="bool" @bind-Value="_enabled" Label="disponible" />
+                <MudCheckBox T="bool" @bind-Value="_enabled" Label="Disponible" />
             </MudStack>
         </MudStack>
     </DialogContent>
     <DialogActions>
-        <MudButton Class="mark-one" Color="Color.Success" Variant="Variant.Filled" OnClick="@Submit">Enregistrer</MudButton>
+        <MudButton Class="open-sans-600" Color="Color.Success" Variant="Variant.Filled" OnClick="@Submit">Enregistrer</MudButton>
     </DialogActions>
 </MudDialog>
 

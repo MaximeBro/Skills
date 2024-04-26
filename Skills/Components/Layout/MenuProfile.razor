@@ -8,7 +8,7 @@
                 <MudStack Class="px-4" Row AlignItems="AlignItems.Center">
                     <MudAvatar Variant="Variant.Filled" Color="Color.Dark">@_name[0].ToString().ToUpper()</MudAvatar>
                     <MudStack Class="py-2" Row="false" Justify="Justify.FlexStart" Spacing="0">
-                        <MudLink Class="text-white mark-one" Underline="Underline.Hover" Href="@($"/overview/{_email.Replace("@sasp.fr", string.Empty)}")" OnClick="@(() => _menu.CloseMenu())"
+                        <MudLink Class="text-white open-sans-600" Underline="Underline.Hover" Href="@($"/overview/{_email.Replace("@sasp.fr", string.Empty)}")" OnClick="@(() => _menu.CloseMenu())"
                                  Style="text-decoration-color: #fff;">
                             <MudText Class="text-white">@_name</MudText>
                         </MudLink>
