@@ -38,6 +38,66 @@ public static class DocXtensions
     public static Paragraph AddLineBreak() => new Paragraph();
 
     public static Paragraph AddPageBreak() => new Paragraph(new Break() { Type = BreakValues.Page });
+
+    public static int AddBulletList(this MainDocumentPart mainPart)
+    {
+        var numberingPart = mainPart.NumberingDefinitionsPart;
+        if (numberingPart == null)
+        {
+            numberingPart = mainPart.AddNewPart<NumberingDefinitionsPart>(Guid.NewGuid().ToString());
+            Numbering element = new Numbering();
+            element.Save(numberingPart);
+        }
+        
+        var abstractNumberId = numberingPart.Numbering.Elements<AbstractNum>().Count() + 1;
+        var abstractLevel = new Level(new NumberingFormat() { Val = NumberFormatValues.Bullet }, new LevelText() { Val = "-" }) { LevelIndex = 0 };
+        var abstractNum = new AbstractNum(abstractLevel) { AbstractNumberId = abstractNumberId };
+
+        if (abstractNumberId == 1)
+        {
+            numberingPart.Numbering.Append(abstractNum);
+        }
+        else
+        {
+            var lastAbstractNum = numberingPart.Numbering.Elements<AbstractNum>().Last();
+            numberingPart.Numbering.InsertAfter(abstractNum, lastAbstractNum);
+        }
+
+        var numberId = numberingPart.Numbering.Elements<NumberingInstance>().Count() + 1;
+        var numberingInstance1 = new NumberingInstance() { NumberID = numberId };
+        var abstractNumId1 = new AbstractNumId() { Val = abstractNumberId };
+        numberingInstance1.Append(abstractNumId1);
+
+        if (numberId == 1)
+        {
+            numberingPart.Numbering.Append(numberingInstance1);
+        }
+        else
+        {
+            var lastNumberingInstance = numberingPart.Numbering.Elements<NumberingInstance>().Last();
+            numberingPart.Numbering.InsertAfter(numberingInstance1, lastNumberingInstance);
+        }
+
+        return numberId;
+    }
+    
+    public static Paragraph ConvertRunToBulletList(Run run, int pNumberId)
+    {
+        var numberingProperties = new NumberingProperties(new NumberingLevelReference() { Val = 0 }, new NumberingId() { Val = pNumberId });
+        var indentation = new Indentation { Left = "720", Hanging = "360" };
+
+        var paragraphMarkRunProperties = new ParagraphMarkRunProperties();
+        paragraphMarkRunProperties.Append(new RunFonts { Ascii = "Symbol", HighAnsi = "Symbol" });
+        
+        var paragraphProperties = new ParagraphProperties(numberingProperties, indentation, paragraphMarkRunProperties);
+        
+        var newPara = new Paragraph(paragraphProperties);
+        newPara.AppendChild(run);
+
+        return newPara;
+    }
+
+    
     
     /// <summary>
     /// Creates a paragraph with the given texts and properties. Each text has its own properties that will be only applied to itself.

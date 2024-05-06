@@ -8,6 +8,7 @@ namespace Skills.Components.Layout;
 
 public partial class MenuProfile : FullComponentBase
 {
+    [Inject] public NavigationManager NavManager { get; set; } = null!;
     [CascadingParameter] public Task<AuthenticationState> AuthenticationState { get; set; } = null!;
     
     private ClaimsPrincipal _user = null!;
@@ -23,4 +24,6 @@ public partial class MenuProfile : FullComponentBase
         _name = _user.FindFirstValue("name") ?? "Undefined";
         _email = _user.FindFirstValue(ClaimTypes.Email) ?? string.Empty;
     }
+
+    private void Overview() => NavManager.NavigateTo($"/overview/{_email.Replace("@sasp.fr", string.Empty)}", true);   
 }

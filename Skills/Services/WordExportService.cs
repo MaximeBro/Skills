@@ -1,3 +1,4 @@
+using DocumentFormat.OpenXml.Drawing;
 using DocumentFormat.OpenXml.Packaging;
 using Microsoft.EntityFrameworkCore;
 using Skills.Databases;
@@ -122,7 +123,33 @@ public class WordExportService(IConfiguration configuration, IDbContextFactory<S
 
             if (!string.IsNullOrWhiteSpace(education.Description))
             {
-                reference.InsertBeforeSelf(DocXtensions.CreateTitle(education.Description, DocXtensions.HeadingLevel.Normal));
+                var lines = education.Description.Split("\n");
+                
+                var listCreated = false;
+                int listId = 0;
+                foreach (var line in lines)
+                {
+                    if (line.StartsWith("- ") || line.StartsWith(" - "))
+                    {
+                        if (!listCreated)
+                        {
+                            listCreated = true;
+                            listId = document.MainDocumentPart!.AddBulletList();
+                            reference.InsertBeforeSelf(DocXtensions.ConvertRunToBulletList(
+                                DocXtensions.CreateRunAsTitle(line.Replace(" - ", string.Empty).Replace("- ", string.Empty), DocXtensions.HeadingLevel.Normal), listId));
+                        }
+                        else
+                        {
+                            reference.InsertBeforeSelf(DocXtensions.ConvertRunToBulletList(
+                                DocXtensions.CreateRunAsTitle(line.Replace(" - ", string.Empty).Replace("- ", string.Empty), DocXtensions.HeadingLevel.Normal), listId));
+                        }
+                    }
+                    else
+                    {
+                        listCreated = false;
+                        reference.InsertBeforeSelf(DocXtensions.CreateTitle(line, DocXtensions.HeadingLevel.Normal));
+                    }
+                }
             }
         }
         
@@ -171,19 +198,28 @@ public class WordExportService(IConfiguration configuration, IDbContextFactory<S
         var reference = document.Search<Paragraph>("{SKILLS}");
         if (reference is null) return;
 
-        var groups = cv.Skills.GroupBy(x => x.Skill!.Type ?? string.Empty).ToDictionary(x => x.Key, x => x.ToList().Select(y => y.Skill));
-        foreach (var type in groups.Keys)
+        var skillTypes = cv.Skills.GroupBy(x => x.Skill!.Type ?? string.Empty).ToDictionary(x => x.Key, x => x.ToList().Select(y => y.Skill));
+        foreach (var type in skillTypes.Keys)
         {
             var typeLine = DocXtensions.CreateTitle(type, DocXtensions.HeadingLevel.H2);
             reference.InsertBeforeSelf(typeLine);
 
-            foreach (var subCategory in groups[type].GroupBy(x => x!.SubCategory ?? string.Empty))
+            var skills = cv.Skills.Where(x => x.Skill!.Type == type).Select(x => x.Skill).ToList();
+            if (type.ToLower() == "soft-skill")
             {
-                var subCategoryText = $"{subCategory.Key}: ";
-                if (type.ToLower() == "soft-skill") subCategoryText = string.Empty;
-                var skillsLine = DocXtensions.CreateTitle(subCategoryText, DocXtensions.HeadingLevel.H4);
-                skillsLine.Append(DocXtensions.CreateRunAsTitle(string.Join(" ; ", groups[type].Select(x => x?.Description ?? string.Empty)), DocXtensions.HeadingLevel.Accent));
+                var skillsLine = DocXtensions.CreateTitle(string.Empty, DocXtensions.HeadingLevel.H4);
+                skillsLine.Append(DocXtensions.CreateRunAsTitle(string.Join(" ; ", skillTypes[type].Select(x => x?.Description ?? string.Empty)), DocXtensions.HeadingLevel.Accent));
                 reference.InsertBeforeSelf(skillsLine);
+            }
+            else
+            {
+                foreach (var subCategory in skillTypes[type].Select(x => x!.SubCategory).Distinct().OrderDescending())
+                {
+                    var subCategoryText = string.IsNullOrWhiteSpace(subCategory) ? string.Empty : $"{subCategory}: ";
+                    var skillsLine = DocXtensions.CreateTitle(subCategoryText, DocXtensions.HeadingLevel.H4);
+                    skillsLine.Append(DocXtensions.CreateRunAsTitle(string.Join(" ; ", skillTypes[type].Where(x => x?.SubCategory == subCategory).Select(x => x?.Description ?? string.Empty)), DocXtensions.HeadingLevel.Accent));
+                    reference.InsertBeforeSelf(skillsLine);
+                }
             }
             
             reference.InsertBeforeSelf(DocXtensions.AddLineBreak());
@@ -196,7 +232,7 @@ public class WordExportService(IConfiguration configuration, IDbContextFactory<S
     {
         var reference = document.Search<Paragraph>("{EXPERIENCES}");
         if (reference is null) return;
-
+        
         foreach (var experience in cv.Experiences)
         {
             var firstLine = DocXtensions.CreateTitle($"{experience.Category} | ", DocXtensions.HeadingLevel.H2);
@@ -210,7 +246,33 @@ public class WordExportService(IConfiguration configuration, IDbContextFactory<S
 
             if (!string.IsNullOrWhiteSpace(experience.Description))
             {
-                reference.InsertBeforeSelf(DocXtensions.CreateTitle(experience.Description, DocXtensions.HeadingLevel.Normal));
+                var lines = experience.Description.Split("\n");
+
+                var listCreated = false;
+                int listId = 0;
+                foreach (var line in lines)
+                {
+                    if (line.StartsWith("- ") || line.StartsWith(" - "))
+                    {
+                        if (!listCreated)
+                        {
+                            listCreated = true;
+                            listId = document.MainDocumentPart!.AddBulletList();
+                            reference.InsertBeforeSelf(DocXtensions.ConvertRunToBulletList(
+                                DocXtensions.CreateRunAsTitle(line.Replace(" - ", string.Empty).Replace("- ", string.Empty), DocXtensions.HeadingLevel.Normal), listId));
+                        }
+                        else
+                        {
+                            reference.InsertBeforeSelf(DocXtensions.ConvertRunToBulletList(
+                                DocXtensions.CreateRunAsTitle(line.Replace(" - ", string.Empty).Replace("- ", string.Empty), DocXtensions.HeadingLevel.Normal), listId));
+                        }
+                    }
+                    else
+                    {
+                        listCreated = false;
+                        reference.InsertBeforeSelf(DocXtensions.CreateTitle(experience.Description, DocXtensions.HeadingLevel.Normal));
+                    }
+                }
             }
         }
         

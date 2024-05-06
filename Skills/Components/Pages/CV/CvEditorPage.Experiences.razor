@@ -16,8 +16,11 @@
                         </MudStack>
                         @if (!string.IsNullOrWhiteSpace(experience.Description))
                         {
-                            <MudStack Row>
-                                <MudText Class="open-sans-600" Typo="Typo.subtitle2">@experience.Description</MudText>
+                            <MudStack Row="false" Spacing="0">
+                                @foreach (var line in experience.Description.Split("\n"))
+                                {
+                                <MudText Class="open-sans-600" Typo="Typo.subtitle2">@line</MudText>
+                                }
                             </MudStack>
                         }
                     </MudStack>

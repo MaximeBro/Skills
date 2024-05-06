@@ -64,6 +64,7 @@
                                 <MudText Class="open-sans-600">Compétences @(cv.Skills.Count) (dont @cv.Skills.Count(x => x.IsSoftSkill) soft-skill(s))</MudText>
                                 <MudText Class="open-sans-600">Formations @cv.Certifications.Count</MudText>
                                 <MudText Class="open-sans-600">Diplômes @cv.Education.Count</MudText>
+                                <MudText Class="open-sans-600">Expériences @cv.Experiences.Count</MudText>
                                 <MudStack Row>
                                     <MudSpacer/>
                                     <MudText Class="open-sans-600" Typo="Typo.caption">créé le @cv.CreatedAt.ToString("dd-MM-yyyy")</MudText>

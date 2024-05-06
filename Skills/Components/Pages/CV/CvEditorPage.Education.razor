@@ -16,8 +16,11 @@
                         </MudStack>
                         @if (!string.IsNullOrWhiteSpace(education.Description))
                         {
-                            <MudStack>
-                                <MudText Class="open-sans-600" Typo="Typo.subtitle2">@education.Description</MudText>
+                            <MudStack Row="false" Spacing="0">
+                                @foreach (var line in education.Description.Split("\n"))
+                                {
+                                    <MudText Class="open-sans-600" Typo="Typo.subtitle2">@line</MudText>
+                                }
                             </MudStack>
                         }
                     </MudStack>

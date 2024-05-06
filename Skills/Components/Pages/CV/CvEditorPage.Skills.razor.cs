@@ -38,6 +38,9 @@ public partial class CvEditorPage_Skills : FullComponentBase
         var skills = db.UsersSkills.AsNoTracking().Where(x => x.Level >= Cv.MinLevel && x.UserId == Cv.UserId)
                                                                    .Include(x => x.Skill)
                                                                    .Select(x => x.Skill).ToList() as List<AbstractSkillModel>;
+
+        var t = db.UsersSkills.AsNoTracking().Where(x => x.Level >= Cv.MinLevel && x.UserId == Cv.UserId).ToList();
+        
         Editor.ChosenSkills.Clear();
         foreach (var skill in skills)
         {

@@ -146,7 +146,7 @@ public partial class UsersList : FullComponentBase
 
     private async Task PurgeUsersAsync()
     {
-        var parameters = new DialogParameters<ConfirmDialog> { { x => x.Text, "Cette action va supprimer tous les utilisateurs de la base. Ajoutez de nouveau au moins un compte avant de vous déconnecter ou fermer le navigateur car votre comtpe va également être supprimé pendant le processus. Voulez-vous effectuer cette action ?" } };
+        var parameters = new DialogParameters<ConfirmDialog> { { x => x.Text, "Cette action va supprimer tous les utilisateurs de la base. Ajoutez de nouveau un compte avant de vous déconnecter ou fermer le navigateur car votre session sera également supprimée pendant le processus. \nVoulez-vous vraiment effectuer cette action ?" } };
         var instance = await DialogService.ShowAsync<ConfirmDialog>(string.Empty, parameters, Hardcoded.DialogOptions);
         var result = await instance.Result;
         if (result.Data != null && (bool)result.Data)
@@ -163,7 +163,7 @@ public partial class UsersList : FullComponentBase
     public async Task RefreshDataAsync()
     {
         var db = await Factory.CreateDbContextAsync();
-        _users = await db.Users.AsNoTracking().Include(x => x.Group).ToListAsync();
+        _users = await db.Users.AsNoTracking().Include(x => x.Group).OrderBy(x => x.IsDisabled).ToListAsync();
         _groups = await db.Groups.AsNoTracking().ToListAsync();
         await db.DisposeAsync();
     }

@@ -55,14 +55,16 @@
                         <MudCheckBox T="bool" @bind-Value="row.Item.IsDisabled" Label="Désactivé" />
                     </EditTemplate>
                 </PropertyColumn>
-                <TemplateColumn IsEditable="false">
+                <TemplateColumn IsEditable="false" Sortable="false" Filterable="false">
                     <CellTemplate Context="row">
-                        <MudTooltip Placement="Placement.Bottom" Text="Éditer" Arrow>
-                            <MudIconButton Size="Size.Small" Icon="@IconsF.Edit" Color="Color.Primary" OnClick="@(async() => await EditUserAsync(row.Item))"/>
-                        </MudTooltip>
-                        <MudTooltip Class="ml-2" Placement="Placement.Bottom" Text="Supprimer" Arrow>
-                            <MudIconButton Class="ml-4" Size="Size.Small" Icon="@IconsF.Delete" Color="Color.Error" OnClick="@(async () => await DeleteUserAsync(row.Item))"/>
-                        </MudTooltip>
+                        <MudStack Row Justify="Justify.SpaceEvenly">
+                            <MudTooltip Placement="Placement.Bottom" Text="Éditer" Arrow>
+                                <MudIconButton Size="Size.Small" Icon="@IconsF.Edit" Color="Color.Primary" OnClick="@(async () => await EditUserAsync(row.Item))"/>
+                            </MudTooltip>
+                            <MudTooltip Class="ml-2" Placement="Placement.Bottom" Text="Supprimer" Arrow>
+                                <MudIconButton Class="ml-4" Size="Size.Small" Icon="@IconsF.Delete" Color="Color.Error" OnClick="@(async () => await DeleteUserAsync(row.Item))"/>
+                            </MudTooltip>
+                        </MudStack>
                     </CellTemplate>
                 </TemplateColumn>
             </Columns>

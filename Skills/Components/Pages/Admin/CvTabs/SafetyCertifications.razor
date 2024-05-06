@@ -5,7 +5,7 @@
     <MudContainer MaxWidth="MaxWidth.ExtraLarge">
         <MudGrid Class="mt-8" Justify="Justify.Center">
             <MudItem xs="12">
-                <MudDataGrid T="SafetyCertification" Items="_certifications" Bordered Hover Outlined Filterable Striped SortMode="SortMode.Multiple" Dense FixedHeader
+                <MudDataGrid T="SafetyCertification" Items="@_certifications" Bordered Hover Outlined Filterable Striped SortMode="SortMode.Multiple" Dense FixedHeader
                              Culture="@(new CultureInfo("fr-FR"))" Height="70vh" Virtualize OverscanCount="25" QuickFilter="@QuickFilter" ReadOnly="false"
                              EditMode="DataGridEditMode.Cell" CommittedItemChanges="@CommitChangesAsync">
                     <ToolBarContent>

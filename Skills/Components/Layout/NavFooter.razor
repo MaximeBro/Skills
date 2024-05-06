@@ -10,7 +10,7 @@
                     <div class="flex-grow-1"></div>
                     <MudToolBar Class="mt-3" DisableGutters>
                         <MudIconButton Class="text-white mr-2" Icon="@IconsB.LinkedIn" Href="https://www.linkedin.com/company/sasp-it-process-automation" Target="_blank" />
-                        <MudIconButton Class="text-white" Icon="fas fa-earth-europe" Href="https://sasp.fr" Target="_blank" />
+                        <MudIconButton Class="text-white mr-2" Icon="fas fa-earth-europe" Href="https://sasp.fr" Target="_blank" />
                         <MudIconButton Class="text-white" Icon="@IconsF.LocationOn" Href="https://maps.app.goo.gl/7k6GHyRZ4yk5UEz98" Target="_blank" />
                     </MudToolBar>
                 </MudItem>
@@ -35,9 +35,13 @@
                     <MudLink Class="my-2" Href="/skills" Style="text-decoration-color: #fff;">
                         <MudText Class="open-sans text-white">Compétences</MudText>
                     </MudLink>
-                    <MudLink Class="my-2" Href="/users" Style="text-decoration-color: #fff;">
-                        <MudText Class="open-sans text-white">Utilisateurs</MudText>
-                    </MudLink>
+                    <AuthorizeView Roles="User, Manager, Admin">
+                        <Authorized>
+                            <MudLink Class="my-2" Href="/users" Style="text-decoration-color: #fff;">
+                                <MudText Class="open-sans text-white">Utilisateurs</MudText>
+                            </MudLink>
+                        </Authorized>
+                    </AuthorizeView>
                 </MudItem>
             </MudGrid>
 

@@ -20,13 +20,12 @@ public partial class AuthorizedComponent : FullComponentBase, IDisposable
     
     protected override async Task OnInitializedAsync()
     {
+        AuthenticationService.OnNotAuthorized += ShowLoginDialogAsync;
         var authorized = await AuthenticationService.HasRequiredRoleAsync(AuthenticationState, UserRole.User);
         if(!authorized)
         {
-            await ShowLoginDialogAsync();
+            await AuthenticationService.InvokeNotAuthorized();
         }
-
-        AuthenticationService.OnNotAuthorized += ShowLoginDialogAsync;
     }
     
     /// <summary>
@@ -38,7 +37,7 @@ public partial class AuthorizedComponent : FullComponentBase, IDisposable
         var result = await instance.Result;
         if (result is null or {Canceled: true} or { Data: false })
         {
-            NavManager.NavigateTo("/dashboard", true);
+            NavManager.NavigateTo("/", true);
         }
     }
 

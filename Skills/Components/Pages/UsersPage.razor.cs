@@ -3,9 +3,7 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.EntityFrameworkCore;
 using MudBlazor;
-using Skills.Components.Dialogs;
 using Skills.Databases;
-using Skills.Extensions;
 using Skills.Models;
 using Skills.Services;
 using BreadcrumbItem = MudBlazor.BreadcrumbItem;
@@ -75,9 +73,10 @@ public partial class UsersPage : ComponentBase
     {
         var authState = await AuthenticationState;
         _user = authState.User;
+        
         var db = await Factory.CreateDbContextAsync();
         _users = await db.Users.AsNoTracking().ToListAsync();
-        _filteredUsers = _users.Where(x => !x.IsDisabled || x.IsDisabled == _showDisabledAccounts).ToList();
+        _filteredUsers = _users.OrderBy(x => x.Name).Where(x => !x.IsDisabled || x.IsDisabled == _showDisabledAccounts).ToList();
         await db.DisposeAsync();
     }
 }
