@@ -27,6 +27,8 @@ public partial class SkillsMapping : FullComponentBase
     private string _search = string.Empty;
     private bool _loading;
 
+    private MudDataGrid<AbstractSkillModel> _grid = null!;
+
     public Func<AbstractSkillModel, bool> QuickFilter => x =>
     {
         if (!string.IsNullOrWhiteSpace(x.Type) &&
@@ -40,11 +42,6 @@ public partial class SkillsMapping : FullComponentBase
 
         return false;
     };
-
-    protected override async Task OnInitializedAsync()
-    {
-        await RefreshDataAsync();
-    }
 
     private async Task CreateSkillAsync()
     {
@@ -276,15 +273,15 @@ public partial class SkillsMapping : FullComponentBase
         }
     }
 
-    public async Task RefreshDataAsync()
+    private async Task<GridData<AbstractSkillModel>> GetModelsAsync(GridState<AbstractSkillModel> state)
     {
         _loading = true;
         var db = await Factory.CreateDbContextAsync();
         var skillModels = await db.Skills.AsNoTracking()
-                                                       .Include(x => x.TypeInfo) // Includes are use for edition, don't delete them !
-                                                       .Include(x => x.CategoryInfo)
-                                                       .Include(x => x.SubCategoryInfo)
-                                                       .ToListAsync();
+            .Include(x => x.TypeInfo) // Includes are use for edition, don't delete them !
+            .Include(x => x.CategoryInfo)
+            .Include(x => x.SubCategoryInfo)
+            .ToListAsync();
 
         var softSkillsModels = await db.SoftSkills.AsNoTracking().ToListAsync();
 
@@ -292,11 +289,25 @@ public partial class SkillsMapping : FullComponentBase
         _models.AddRange(new List<AbstractSkillModel>(skillModels));
         _models.AddRange(new List<AbstractSkillModel>(softSkillsModels));
 
+        _models = _models.Where(QuickFilter).ToList();
+
         _skillTypeLevels.Clear();
         _softSkillTypeLevels.Clear();
         foreach (var model in _models) _skillTypeLevels.Add(model.Id, db.TypesLevels.AsNoTracking().Where(x => x.TypeId == model.TypeId).ToList());
         foreach (var model in _models) _softSkillTypeLevels.Add(model.Id, db.SoftTypesLevels.AsNoTracking().Where(x => x.SkillId == model.Id).ToList());
         _loading = false;
-        StateHasChanged();
+
+        return new GridData<AbstractSkillModel>
+        {   
+            Items = _models,
+            TotalItems = _models.Count
+        };
+    }
+    
+    public async Task RefreshDataAsync()
+    {
+        _loading = true;
+        await _grid.ReloadServerData();
+        _loading = false;
     }
 }

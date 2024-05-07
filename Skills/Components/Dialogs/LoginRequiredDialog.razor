@@ -19,5 +19,5 @@
     [Inject] public ThemeManager ThemeManager { get; set; } = null!;
     [Inject] public NavigationManager NavManager { get; set; } = null!;
     
-    private void RedirectToLoginPage() => NavManager.NavigateTo("/login", true);
+    private void RedirectToLoginPage() => NavManager.NavigateTo("/connexion", true);
 }

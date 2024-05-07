@@ -24,6 +24,7 @@ public partial class UsersList : FullComponentBase
     private List<GroupModel> _groups = new();
     private string _search = string.Empty;
     private bool _loading;
+    private bool _pageLoading;
 
     public Func<UserModel, string> DisabledColor => x => x.IsDisabled ? "color: orange;" : "color: inherit;";
     
@@ -36,11 +37,6 @@ public partial class UsersList : FullComponentBase
 
         return false;
     };
-
-    protected override async Task OnInitializedAsync()
-    {
-        await RefreshDataAsync();
-    }
 
     private async Task CreateUserAsync()
     {
@@ -135,11 +131,11 @@ public partial class UsersList : FullComponentBase
         var result = await instance.Result;
         if (result.Data != null && (bool)result.Data)
         {
-            _loading = true;
+            _pageLoading = true;
             StateHasChanged();
             await ADService.CheckUsersAsync();
             await RefreshDataAsync();
-            _loading = false;
+            _pageLoading = false;
             StateHasChanged();
         }
     }
@@ -151,20 +147,33 @@ public partial class UsersList : FullComponentBase
         var result = await instance.Result;
         if (result.Data != null && (bool)result.Data)
         {
-            _loading = true;
+            _pageLoading = true;
             StateHasChanged();
             await ADService.PurgeUsersAsync();
             await RefreshDataAsync();
-            _loading = false;
+            _pageLoading = false;
             StateHasChanged();
         }
     }
 
-    public async Task RefreshDataAsync()
+    private async Task<GridData<UserModel>> GetUsersAsync(GridState<UserModel> state)
     {
         var db = await Factory.CreateDbContextAsync();
-        _users = await db.Users.AsNoTracking().Include(x => x.Group).OrderBy(x => x.IsDisabled).ToListAsync();
+        _users = db.Users.AsNoTracking().Include(x => x.Group).Where(QuickFilter).OrderBy(x => x.IsDisabled).ToList();
         _groups = await db.Groups.AsNoTracking().ToListAsync();
         await db.DisposeAsync();
+
+        return new GridData<UserModel>
+        {
+            Items = _users,
+            TotalItems = _users.Count
+        };
+    }
+    
+    public async Task RefreshDataAsync()
+    {
+        _loading = true;
+        await _grid.ReloadServerData();
+        _loading = false;
     }
 }

@@ -1,8 +1,7 @@
-@page "/login"
+@page "/connexion"
 @inherits FullComponentBase
 
-<MudGrid Justify="Justify.Center" Spacing="0" style="@($"min-height: calc(100vh - 64px); width: 100vw; justify-content: center; align-items: center; padding-top: -32px!important;" + 
-                  $"background-image: url('/pictures/{ThemeManager.Get("login-banner")}'); background-position: center center; background-size: cover;")">
+<MudGrid Justify="Justify.Center" Spacing="0" Class="mb-n8" style="@($"min-height: calc(100vh - 64px); width: 100%; justify-content: center; align-items: center; padding-top: -32px!important; background-image: url('/pictures/{ThemeManager.Get("login-banner")}'); background-position: center center; background-size: cover;")">
     <MudItem xs="12" md="8" lg="6" Class="d-flex" Style="align-items: center; justify-content: center;">
         <MudPaper Class="rounded-lg pt-3 pt-6 pb-2 px-12" Elevation="20" Style="@($"backdrop-filter: blur(5px) brightness(.45); background: transparent;")">
             <MudText Class="text-white open-sans-600" Align="Align.Center" Typo="Typo.h3">Connexion</MudText>

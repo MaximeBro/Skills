@@ -1,57 +1,59 @@
 @inherits FullComponentBase
 
-<MudStack Class="mt-8" Row="false" Spacing="0">
-    <MudStack Row Style="@($"background: {ThemeManager.GetColor(Color.Primary)};")">
-        <MudContainer Class="d-flex py-6" Style="flex-direction: row; align-items: center;" MaxWidth="MaxWidth.Large">
+<MudAppBar Bottom Fixed="false" DisableGutters WrapContent>
+    <MudStack Class="flex-grow-1" Row="false" Spacing="0">
+        <MudStack Row Style="@($"background: {ThemeManager.GetColor(Color.Primary)};")">
+            <MudContainer Class="d-flex py-6" Style="flex-direction: row; align-items: center;" MaxWidth="MaxWidth.Large">
 
-            <MudGrid Spacing="3">
-                <MudItem xs="12" sm="12" md="8" Class="d-flex px-4 px-md-0 pt-md-12" Style="flex-direction: column;">
-                    <MudText Class="open-sans text-white" Align="Align.Left">Bienvenue sur Skills, l'application créée par et pour les collaborateurs de SASP.<br/>Ici, vous trouverez une liste exhausite de toutes les compétences de nos collaborateurs ainsi que leur niveau de maîtrise.<br/>Pour accéder à la plateforme veuillez vous connecter en utilisant votre compte de l'AD local.</MudText>
-                    <div class="flex-grow-1"></div>
-                    <MudToolBar Class="mt-3" DisableGutters>
-                        <MudIconButton Class="text-white mr-2" Icon="@IconsB.LinkedIn" Href="https://www.linkedin.com/company/sasp-it-process-automation" Target="_blank" />
-                        <MudIconButton Class="text-white mr-2" Icon="fas fa-earth-europe" Href="https://sasp.fr" Target="_blank" />
-                        <MudIconButton Class="text-white" Icon="@IconsF.LocationOn" Href="https://maps.app.goo.gl/7k6GHyRZ4yk5UEz98" Target="_blank" />
-                    </MudToolBar>
-                </MudItem>
-
-                <MudHidden Invert Breakpoint="Breakpoint.MdAndUp">
-                    <MudItem xs="12" sm="1" md="1" Class="pt-md-12">
-                        <MudDivider Vertical DividerType="DividerType.Middle"/>
+                <MudGrid Spacing="3">
+                    <MudItem xs="12" sm="12" md="8" Class="d-flex px-4 px-md-0 pt-md-12" Style="flex-direction: column;">
+                        <MudText Class="open-sans text-white" Align="Align.Left">Bienvenue sur Skills, l'application créée par et pour les collaborateurs de SASP.<br/>Ici, vous trouverez une liste exhausite de toutes les compétences de nos collaborateurs ainsi que leur niveau de maîtrise.<br/>Pour accéder à la plateforme veuillez vous connecter en utilisant votre compte de l'AD local.</MudText>
+                        <div class="flex-grow-1"></div>
+                        <MudToolBar Class="mt-3" DisableGutters>
+                            <MudIconButton Class="text-white mr-2" Icon="@IconsB.LinkedIn" Href="https://www.linkedin.com/company/sasp-it-process-automation" Target="_blank" />
+                            <MudIconButton Class="text-white mr-2" Icon="fas fa-earth-europe" Href="https://sasp.fr" Target="_blank" />
+                            <MudIconButton Class="text-white" Icon="@IconsF.LocationOn" Href="https://maps.app.goo.gl/7k6GHyRZ4yk5UEz98" Target="_blank" />
+                        </MudToolBar>
                     </MudItem>
-                </MudHidden>
 
-                <MudHidden Invert Breakpoint="Breakpoint.SmAndDown">
-                    <MudItem xs="12">
-                        <MudDivider DividerType="DividerType.Middle"/>
+                    <MudHidden Invert Breakpoint="Breakpoint.MdAndUp">
+                        <MudItem xs="12" sm="1" md="1" Class="pt-md-12">
+                            <MudDivider Vertical DividerType="DividerType.Middle"/>
+                        </MudItem>
+                    </MudHidden>
+
+                    <MudHidden Invert Breakpoint="Breakpoint.SmAndDown">
+                        <MudItem xs="12">
+                            <MudDivider DividerType="DividerType.Middle"/>
+                        </MudItem>
+                    </MudHidden>
+
+                    <MudItem xs="12" sm="12" md="3" Class="d-flex px-4 px-md-0 pl-0 pl-md-4 pt-md-12" Style="flex-direction: column;">
+                        <MudText Class="open-sans bold text-white mb-2" Style="font-size: 20px;">Menu</MudText>
+                        <MudLink Class="my-2" Href="/" Style="text-decoration-color: #fff;">
+                            <MudText Class="open-sans text-white">Accueil</MudText>
+                        </MudLink>
+                        <MudLink Class="my-2" Href="/skills" Style="text-decoration-color: #fff;">
+                            <MudText Class="open-sans text-white">Compétences</MudText>
+                        </MudLink>
+                        <AuthorizeView Roles="User, Manager, Admin">
+                            <Authorized>
+                                <MudLink Class="my-2" Href="/users" Style="text-decoration-color: #fff;">
+                                    <MudText Class="open-sans text-white">Utilisateurs</MudText>
+                                </MudLink>
+                            </Authorized>
+                        </AuthorizeView>
                     </MudItem>
-                </MudHidden>
+                </MudGrid>
 
-                <MudItem xs="12" sm="12" md="3" Class="d-flex px-4 px-md-0 pl-0 pl-md-4 pt-md-12" Style="flex-direction: column;">
-                    <MudText Class="open-sans bold text-white mb-2" Style="font-size: 20px;">Menu</MudText>
-                    <MudLink Class="my-2" Href="/" Style="text-decoration-color: #fff;">
-                        <MudText Class="open-sans text-white">Accueil</MudText>
-                    </MudLink>
-                    <MudLink Class="my-2" Href="/skills" Style="text-decoration-color: #fff;">
-                        <MudText Class="open-sans text-white">Compétences</MudText>
-                    </MudLink>
-                    <AuthorizeView Roles="User, Manager, Admin">
-                        <Authorized>
-                            <MudLink Class="my-2" Href="/users" Style="text-decoration-color: #fff;">
-                                <MudText Class="open-sans text-white">Utilisateurs</MudText>
-                            </MudLink>
-                        </Authorized>
-                    </AuthorizeView>
-                </MudItem>
-            </MudGrid>
-
-        </MudContainer>
+            </MudContainer>
+        </MudStack>
+        <MudStack Class="py-4" Row Style="@($"background: {ThemeManager.Get("appbar-background")};")">
+            <MudContainer Class="d-flex" Style="flex-direction: row;" MaxWidth="MaxWidth.Large">
+                <MudStack Row="false" Spacing="0">
+                    <MudText Class="open-sans-600 text-white">Copyright © 2024 SASP SERVICES</MudText>
+                </MudStack>
+            </MudContainer>
+        </MudStack>
     </MudStack>
-    <MudStack Class="py-4" Row Style="@($"background: {ThemeManager.Get("appbar-background")};")">
-        <MudContainer Class="d-flex" Style="flex-direction: row;" MaxWidth="MaxWidth.Large">
-            <MudStack Row="false" Spacing="0">
-                <MudText Class="open-sans-600 text-white">Copyright © 2024 SASP SERVICES</MudText>
-            </MudStack>
-        </MudContainer>
-    </MudStack>
-</MudStack>
+</MudAppBar>

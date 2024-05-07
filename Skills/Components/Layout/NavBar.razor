@@ -1,51 +1,58 @@
 @inherits FullComponentBase
 
-<MudAppBar Style="@($"background: {ThemeManager.Get("appbar-background")}!important;")">
-        <MudIconButton Class="text-white" Icon="@IconsF.Menu" OnClick="@Toggle"/>
-        <MudLink Class="white-all" Href="/" Underline="Underline.Hover" Style="text-decoration-color: #fff;">
-            <MudText Class="ml-2 text-white open-sans-600" Typo="Typo.h5">@ThemeManager.Get("name")</MudText>
-        </MudLink>
-        <MudSpacer/>
-        @if (_identity is { IsAuthenticated: true })
-        {
-            <MudHidden Invert Breakpoint="Breakpoint.SmAndUp">
-                <MudStack Class="mr-4" AlignItems="AlignItems.Center" Row>
-                    <MudText Class="text-white open-sans-600"><MudIcon Class="mb-n1" Icon="@IconsF.Check" Color="Color.Info"/> Vous êtes connecté</MudText>
+<MudAppBar Class="px-2" Style="@($"background: {ThemeManager.Get("appbar-background")}!important;")" DisableGutters>
+    <MudGrid>
+        <MudItem xs="6" md="3">
+            <MudIconButton Class="text-white" Icon="@IconsF.Menu" OnClick="@Toggle"/>
+        </MudItem>
+        <MudHidden Invert Breakpoint="Breakpoint.MdAndUp">
+            <MudItem Class="d-flex" Style="align-items: center; justify-content: center;" xs="0" md="6">
+                <MudStack Row Justify="Justify.Center" AlignItems="AlignItems.Center">
+                    <MudLink Class="white-al" Href="/" Underline="Underline.Hover" Style="text-decoration-color: #fff;">
+                        <MudText Class="text-white open-sans-600" Typo="Typo.h5">@ThemeManager.Get("name")</MudText>
+                    </MudLink>
                 </MudStack>
-            </MudHidden>
-            <div class="mr-4">
-                <MenuProfile></MenuProfile>
-            </div>
-        }
-        else
-        {
-            <MudLink Class="mr-4" Href="/login" Underline="Underline.Hover" Style="text-decoration-color: #fff;">
-                <MudText Class="text-white">Se connecter</MudText>
-            </MudLink>
-        }
-    </MudAppBar>
-    <MudDrawer Class="mud-drawer-fixed" @bind-Open="_docked" Variant="DrawerVariant.Temporary" ClipMode="DrawerClipMode.Always"
-               Elevation="1" Style="@($"background: {ThemeManager.Get("drawer-background")}!important;")">
-        <MudNavMenu Class="pa-2" Color="Color.Primary" Rounded Dense>
-            <MudNavLink Class="open-sans link-bold" Href="/dashboard" Match="NavLinkMatch.All" Icon="@IconsF.Home" IconColor="Color.Dark">Accueil</MudNavLink>
-            <MudNavLink Class="open-sans-600 my-2 link-bold" Href="/skills" Match="NavLinkMatch.All" Icon="@IconsF.Stars" IconColor="Color.Warning">Compétences</MudNavLink>
-            <AuthorizeView Roles="Admin, Manager, User">
-                <Authorized>
-                    <MudNavLink Class="open-sans-600 my-2 link-bold" Href="/users" Match="NavLinkMatch.All" Icon="@IconsF.People" IconColor="Color.Info">Utilisateurs</MudNavLink>
-                </Authorized>
-            </AuthorizeView>
-            <AuthorizeView Roles="Admin">
-                <Authorized>
-                    <MudNavGroup Class="mt-3 open-sans-600 link-bold link-category" Title="Administration" Icon="@IconsF.AdminPanelSettings" IconColor="Color.Tertiary" Expanded>
-                        <MudNavLink Class="open-sans-600 my-2 link-bold" Href="/admin/skills" Match="NavLinkMatch.All" Icon="@IconsF.Checklist" IconColor="Color.Warning">Compétences</MudNavLink>
-                        <MudNavLink Class="open-sans-600 mt-1 mb-2 link-bold" Href="/admin/users" Match="NavLinkMatch.All" Icon="@IconsF.ManageAccounts" IconColor="Color.Info">Utilisateurs</MudNavLink>
-                        <MudNavLink Class="open-sans-600 link-bold" Href="/admin/cv" Match="NavLinkMatch.All" Icon="@IconsFF.FileDocument" IconColor="Color.Secondary">CV</MudNavLink>
-                    </MudNavGroup>
-                </Authorized>
-            </AuthorizeView>
-        </MudNavMenu>
+            </MudItem>
+        </MudHidden>
+        <MudItem xs="6" md="3">
+            <MudStack Row AlignItems="AlignItems.Center" Justify="Justify.FlexEnd" Spacing="0">
+                <MudIconButton Class="text-white mr-2 icon-hoverable" Icon="@IconsR.Notifications"/>
+                <MudBadge BadgeClass="ml-n1 mb-n1" Overlap Dot Origin="Origin.TopRight" Color="@(_identity is { IsAuthenticated: true } ? Color.Info : Color.Transparent)">
+                    <ProfileMenu/>
+                </MudBadge>
+                <PreferencesMenu Class="ml-2"/>
+            </MudStack>
+        </MudItem>
+    </MudGrid>
+</MudAppBar>
+
+<MudDrawer @bind-Open="_docked" Variant="DrawerVariant.Mini" ClipMode="DrawerClipMode.Docked" OpenMiniOnHover Elevation="1" 
+           Style="@($"background: {ThemeManager.Get("drawer-background")}!important;")">
+    <MudNavMenu Color="Color.Primary">
+        <MudNavLink Class="open-sans link-bold" Href="/" Match="NavLinkMatch.All" Icon="@IconsF.Home" IconColor="Color.Dark">Accueil</MudNavLink>
+        <MudNavLink Class="open-sans-600 my-2 link-bold" Href="/skills" Match="NavLinkMatch.All" Icon="@IconsF.Stars" IconColor="Color.Dark">Compétences</MudNavLink>
+        <AuthorizeView Roles="Admin, Manager, User">
+            <Authorized>
+                <MudNavLink Class="open-sans-600 my-2 link-bold" Href="/users" Match="NavLinkMatch.All" Icon="@IconsF.People" IconColor="Color.Dark">Utilisateurs</MudNavLink>
+            </Authorized>
+        </AuthorizeView>
+        <AuthorizeView Roles="Admin">
+            <Authorized>
+                <MudNavGroup Class="mt-3 open-sans-600 link-bold link-category" Title="Administration" Icon="@IconsF.AdminPanelSettings" IconColor="Color.Tertiary" HideExpandIcon="@(!_docked)">
+                    <MudNavLink Class="open-sans-600 my-2 link-bold" Href="/admin/skills" Match="NavLinkMatch.All" Icon="@IconsF.Checklist" IconColor="Color.Dark">Compétences</MudNavLink>
+                    <MudNavLink Class="open-sans-600 mt-1 mb-2 link-bold" Href="/admin/users" Match="NavLinkMatch.All" Icon="@IconsF.ManageAccounts" IconColor="Color.Dark">Utilisateurs</MudNavLink>
+                    <MudNavLink Class="open-sans-600 link-bold" Href="/admin/cv" Match="NavLinkMatch.All" Icon="@IconsFF.FileDocument" IconColor="Color.Dark">CV</MudNavLink>
+                </MudNavGroup>
+            </Authorized>
+        </AuthorizeView>
+    </MudNavMenu>
+    @if (_docked)
+    {
         <MudSpacer/>
-        <MudStack Class="mb-4" AlignItems="AlignItems.Center" Justify="Justify.Center" Spacing="0" Row>
-            <MudImage Src="@($"/pictures/{ThemeManager.Get("drawer-icon")}")" Alt="Icône" Height="50"/>
-        </MudStack>
-    </MudDrawer>
+        <MudLink Underline="Underline.None" Href="/">
+            <MudStack Class="mb-4" AlignItems="AlignItems.Center" Justify="Justify.Center" Spacing="0" Row>
+                <MudImage Src="@($"/pictures/{ThemeManager.Get("drawer-icon")}")" Alt="Icône" Height="50"/>
+            </MudStack>
+        </MudLink>
+    }
+</MudDrawer>

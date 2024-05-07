@@ -16,7 +16,12 @@ public partial class SkillsPage : FullComponentBase
     private Dictionary<Guid, List<TypeLevel>> _skillTypeLevels = new();
     private Dictionary<Guid, List<SoftTypeLevel>> _softSkillTypeLevels = new();
     private List<AbstractSkillModel> _models = new();
+
     private string _search = string.Empty;
+
+    private bool _loading;
+
+    private MudDataGrid<AbstractSkillModel> _grid = null!;
 
     public Func<AbstractSkillModel, bool> QuickFilter => x =>
     {
@@ -32,7 +37,6 @@ public partial class SkillsPage : FullComponentBase
     {
         _breadcrumbs.Add(new BreadcrumbItem("Accueil", "/"));
         _breadcrumbs.Add(new BreadcrumbItem("Compétences", null, true));
-        await RefreshDataAsync();
     }
 
     private void OnRowClicked(DataGridRowClickEventArgs<AbstractSkillModel> args)
@@ -43,8 +47,9 @@ public partial class SkillsPage : FullComponentBase
         }
     }
 
-    private async Task RefreshDataAsync()
+    private async Task<GridData<AbstractSkillModel>> GetSkillsAsync(GridState<AbstractSkillModel> state)
     {
+        _loading = true;
         var db = await Factory.CreateDbContextAsync();
         var skillModels = await db.Skills.AsNoTracking().ToListAsync();
         var softSkillsModels = await db.SoftSkills.AsNoTracking().ToListAsync();
@@ -52,11 +57,27 @@ public partial class SkillsPage : FullComponentBase
         _models.Clear();
         _models.AddRange(new List<AbstractSkillModel>(skillModels));
         _models.AddRange(new List<AbstractSkillModel>(softSkillsModels));
-
+       
+        _models = _models.Where(QuickFilter).ToList();
+        
         _skillTypeLevels.Clear();
         _softSkillTypeLevels.Clear();
         foreach (var model in _models) _skillTypeLevels.Add(model.Id, db.TypesLevels.AsNoTracking().Where(x => x.TypeId == model.TypeId).ToList());
         foreach (var model in _models) _softSkillTypeLevels.Add(model.Id, db.SoftTypesLevels.AsNoTracking().Where(x => x.SkillId == model.Id).ToList());
-        StateHasChanged();
+        
+        _loading = false;
+
+        return new GridData<AbstractSkillModel>()
+        {
+            Items = _models,
+            TotalItems = _models.Count
+        };
+    }
+
+    private async Task SearchDataAsync()
+    {
+        _loading = true;
+        await _grid.ReloadServerData();
+        _loading = false;
     }
 }

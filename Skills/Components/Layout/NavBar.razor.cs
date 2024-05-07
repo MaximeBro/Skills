@@ -12,7 +12,6 @@ public partial class NavBar : FullComponentBase
     [Inject] public IWebHostEnvironment Environment { get; set; } = null!;
     [Inject] public ADAuthenticationService AuthenticationService { get; set; } = null!;
     [Inject] public NavigationManager NavManager { get; set; } = null!;
-    [Inject] public ThemeManager ThemeManager { get; set; } = null!; 
     
     private bool _docked = false;
     private IIdentity? _identity;

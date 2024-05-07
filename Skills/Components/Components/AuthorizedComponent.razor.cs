@@ -27,7 +27,7 @@ public partial class AuthorizedComponent : FullComponentBase, IDisposable
             await AuthenticationService.InvokeNotAuthorized();
         }
     }
-    
+
     /// <summary>
     /// In case the user is not authenticated and tries to access a restricted content, we show him this dialog.
     /// </summary>

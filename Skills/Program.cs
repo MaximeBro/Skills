@@ -23,7 +23,7 @@ builder.Services.AddHttpContextAccessor(); // Required for authentication, take 
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie(options =>
     {
-        options.LoginPath = "/login";
+        options.LoginPath = "/connexion";
         options.AccessDeniedPath = "/";
         options.Cookie.Name = "Skills";
     });

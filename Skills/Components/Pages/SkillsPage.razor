@@ -6,12 +6,11 @@
     <MudText Class="open-sans-600" Typo="Typo.h2" Align="Align.Center">Compétences</MudText>
     <MudGrid Justify="Justify.Center">
         <MudItem Class="mt-4" xs="12">
-            <MudDataGrid T="AbstractSkillModel" Items="_models" Bordered Hover Outlined Filterable Striped SortMode="SortMode.Multiple" Dense FixedHeader
-                         Culture="@(new CultureInfo("fr-FR"))" Height="70vh" Virtualize OverscanCount="25" QuickFilter="@QuickFilter"
-                         RowClick="@OnRowClicked">
+            <MudDataGrid @ref="_grid" T="AbstractSkillModel" ServerData="@(async(state) => await GetSkillsAsync(state))" Loading="@_loading" Bordered Hover Outlined Filterable Striped SortMode="SortMode.Multiple" 
+                         Dense FixedHeader Culture="@(new CultureInfo("fr-FR"))" Height="70vh" Virtualize OverscanCount="5" ItemSize="39" RowClick="@OnRowClicked"> 
                 <ToolBarContent>
                     <MudSpacer/>
-                    <MudTextField T="string" @bind-Value="_search" Immediate Adornment="Adornment.Start" Clearable
+                    <MudTextField T="string" @bind-Value="_search" OnBlur="@(async() => await SearchDataAsync())" Immediate Adornment="Adornment.Start" Clearable
                                   AdornmentIcon="@IconsF.Search" Placeholder="Rechercher" Class="flex-grow-0 mr-8 mt-0" Style="width: 400px;"/>
                 </ToolBarContent>
                 <Columns>

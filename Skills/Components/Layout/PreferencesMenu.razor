@@ -1,0 +1,21 @@
+@inherits  FullComponentBase
+
+<MudMenu @ref="_menu" Icon="@IconsR.MoreVert" Class="@($"icon-hoverable white-all {Class}")" ActivationEvent="MouseEvent.LeftClick" PopoverClass="dark-bg" ListClass="rounded-lg" 
+         AnchorOrigin="Origin.BottomRight" TransformOrigin="Origin.TopRight">
+    <MudStack Class="pt-1" Row="false" Spacing="0" Style="min-width: 200px;">
+        <MudStack Row Class="px-4" Justify="Justify.Center">
+            <MudText Class="text-white" Typo="Typo.h6" Align="Align.Center">Préférences</MudText>
+        </MudStack>
+        <MudDivider Class="my-2" Style="border-color: grey!important;" DividerType="DividerType.FullWidth"/>
+        <MudStack Row="false" Class="px-4" Justify="Justify.Center" Spacing="0">
+            <div>
+                <MudCheckBox T="bool" @bind-Value="_isDarkMode" Class="text-white" Label="@($"{(_isDarkMode ? "Thème sombre" : "Thème clair")}")"
+                             Color="Color.Inherit" UnCheckedColor="Color.Inherit" CheckedIcon="@IconsR.DarkMode" UncheckedIcon="@IconsR.LightMode"/>
+            </div>
+            <div>
+                <MudSwitch T="bool" @bind-Value="_french" Class="white-all pl-2" ThumbIcon="@(_french ? _frenchSvg : _englishSvg)"
+                           Label="@($"{(_french ? "Français (Fr)" : "Enlighs (US)")}")" Color="Color.Secondary"/>
+            </div>
+        </MudStack>
+    </MudStack>
+</MudMenu>

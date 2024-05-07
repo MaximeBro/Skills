@@ -5,28 +5,31 @@
 <MudDialogProvider/>
 <MudSnackbarProvider/>
 
-<MudLayout>
-    <NavBar/>
-    <MudMainContent> @* Padding-top used for appbar space only *@
-        <MudContainer MaxWidth="MaxWidth.False" Class="@($"pa-0 ma-0 {(IsEditing ? string.Empty : "mb-4")}")" Style="min-height: calc(100vh - 64px);">
-            @Body
-        </MudContainer>
-    </MudMainContent>
+<CascadingValue Name="MainLayout" Value="@this">
+    <MudLayout>
+        <NavBar/>
+        <MudMainContent> @* Padding-top used for appbar space only *@
+            <MudContainer MaxWidth="MaxWidth.False" Class="@($"pa-0 ma-0 {(IsEditing ? string.Empty : "mb-4")}")" Style="min-height: calc(100vh - 64px);">
+                @Body
+            </MudContainer>
+        </MudMainContent>
 
-    @if (!IsEditing)
-    {
+        @if (!IsEditing)
+        {
         <NavFooter/>
-    }
+        }
 
-    @if (Environment.IsDevelopment())
-    {
+        @if (Environment.IsDevelopment())
+        {
         <div id="blazor-error-ui">
             An unhandled error has occurred.
             <a href="" class="reload">Reload</a>
             <a class="dismiss">🗙</a>.
         </div>
-    }
-</MudLayout>
+        }
+    </MudLayout>
+</CascadingValue>
+
 
 @code {
 

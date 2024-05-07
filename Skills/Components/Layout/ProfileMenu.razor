@@ -1,0 +1,34 @@
+@inherits FullComponentBase
+
+<MudMenu @ref="_menu" Icon="@IconsR.AccountCircle" Class="@($"icon-hoverable white-all {Class}")" PopoverClass="dark-bg" ListClass="rounded-lg" AnchorOrigin="Origin.BottomRight" TransformOrigin="Origin.TopRight">
+    <MudStack Class="pt-1" Row="false" Spacing="0">
+        @if (!string.IsNullOrWhiteSpace(_name))
+        {
+            <MudStack Class="px-4" Row AlignItems="AlignItems.Center">
+                <MudAvatar Variant="Variant.Filled" Color="Color.Dark">@_name[0].ToString().ToUpper()</MudAvatar>
+                <MudStack Class="py-2" Row="false" Justify="Justify.FlexStart" Spacing="0">
+                    <MudLink Class="text-white open-sans-600" Underline="Underline.Hover" OnClick="@ToOverview" Style="text-decoration-color: #fff;">
+                        <MudText Class="text-white">@_name</MudText>
+                    </MudLink>
+                    <MudText Class="text-white">@_email</MudText>
+                </MudStack>
+            </MudStack>
+            <MudDivider Class="my-2" Style="border-color: grey!important;"/>
+            <MudLink Class="text-white py-1" Href="/api/logout" Underline="Underline.Hover" Style="text-decoration-color: #fff;">
+                <MudStack Row AlignItems="AlignItems.Center" Justify="Justify.Center">
+                    <MudIcon Class="text-white" Icon="@IconsR.Logout"/>
+                    <MudText Class="text-white">Se déconnecter</MudText>
+                </MudStack>
+            </MudLink>
+        }
+        else
+        {
+            <MudLink Class="text-white open-sans-600" Underline="Underline.Hover" OnClick="@ToLogin" Style="text-decoration-color: #fff;">
+                <MudStack Class="px-4 py-1" Row AlignItems="AlignItems.Center">
+                    <MudIcon Class="text-white mr-1" Icon="@IconsR.Login"/>
+                    <MudText Class="text-white">Se connecter</MudText>
+                </MudStack>
+            </MudLink>
+        }
+    </MudStack>
+</MudMenu>
