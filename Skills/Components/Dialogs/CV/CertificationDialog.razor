@@ -50,7 +50,15 @@
 
     private void Submit()
     {
-        Dialog.Close(new CvCertificationInfo() { Year = _year, Title = _title, Supplier = _authority, Duration = _duration });
+        var certification = new CvCertificationInfo
+        {
+            Year = _year,
+            Title = _title,
+            Supplier = _authority,
+            Duration = _duration
+        };
+        if (CvCertification != null) certification.Id = CvCertification.Id;
+        Dialog.Close(certification);
     }
 
 }

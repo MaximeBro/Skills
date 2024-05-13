@@ -16,6 +16,7 @@
                         </MudStack>
                     </MudStack>
                     <MudSpacer/>
+                    <MudIconButton Class="mr-2" Icon="@IconsF.Edit" Size="Size.Small" Color="Color.Primary" OnClick="@(async() => await EditCertificationAsync(certification))"/>
                     <MudIconButton Class="hover-red" Icon="@IconsF.Delete" Size="Size.Small" OnClick="@(() => RemoveCertification(certification))"/>
                 </MudPaper>
             }

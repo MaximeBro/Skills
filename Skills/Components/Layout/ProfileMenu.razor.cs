@@ -8,7 +8,6 @@ namespace Skills.Components.Layout;
 
 public partial class ProfileMenu : FullComponentBase
 {
-    [Inject] public NavigationManager NavManager { get; set; } = null!;
     [CascadingParameter] public Task<AuthenticationState> AuthenticationState { get; set; } = null!;
     [Parameter] public string Class { get; set; } = string.Empty;
     

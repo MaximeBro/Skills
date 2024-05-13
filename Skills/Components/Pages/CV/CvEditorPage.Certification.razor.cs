@@ -36,6 +36,23 @@ public partial class CvEditorPage_Certification : FullComponentBase
             StateHasChanged();
         }
     }
+    
+    private async Task EditCertificationAsync(CvCertificationInfo certification)
+    {
+        var parameters = new DialogParameters<CertificationDialog> { { x => x.CvCertification, certification} };
+        var options = Hardcoded.DialogOptions;
+        options.MaxWidth = MaxWidth.Medium;
+        var instance = await DialogService.ShowAsync<CertificationDialog>(string.Empty, parameters, options);
+        var result = await instance.Result;
+        if (result is { Data: CvCertificationInfo model })
+        {
+            Editor.EditDone();
+            model.CvId = Cv.Id;
+            Editor.CvCertifications.Remove(certification);
+            Editor.CvCertifications.Add(model);
+            StateHasChanged();
+        }
+    }
 
     private void RemoveCertification(CvCertificationInfo certification)
     {
@@ -48,5 +65,6 @@ public partial class CvEditorPage_Certification : FullComponentBase
         var db = await Factory.CreateDbContextAsync();
         Editor.CvCertifications = db.CvCertifications.AsNoTracking().Where(x => x.CvId == Cv.Id).ToList();
         await db.DisposeAsync();
+        StateHasChanged();
     }
 }

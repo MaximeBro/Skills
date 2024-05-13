@@ -13,7 +13,6 @@ public partial class LoginPage : FullComponentBase
 {
     [CascadingParameter] public Task<AuthenticationState> AuthenticationState { get; set; } = null!;
     [Inject] public ADAuthenticationService AuthenticationService { get; set; } = null!;
-    [Inject] public NavigationManager NavManager { get; set; } = null!;
     [Inject] public ISnackbar Snackbar { get; set; } = null!;
     
     private LoginModel _model = new();

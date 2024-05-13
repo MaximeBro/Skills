@@ -7,7 +7,7 @@
             <MudTextField T="string" @bind-Value="_search" Class="flex-shrink-0" Style="width: 400px;" Placeholder="Rechercher" Immediate Clearable
                           Adornment="Adornment.Start" AdornmentIcon="@IconsF.Search" />
             <MudStack Row="false" Class="py-6" Style="max-height: 400px; overflow-y: scroll;">
-                @foreach (var skill in _userSkills.Where(QuickFilter).OrderByDescending(x => x.Value))
+                @foreach (var skill in _userSkills.Where(QuickFilter).OrderBy(x => x.Value))
                 {
                     <MudStack Row AlignItems="AlignItems.Center" Spacing="0">
                         <MudTooltip Placement="Placement.Left" Text="@($"{(skill.Value ? "Révoquer" : "Attribuer")}")" Arrow>
@@ -45,8 +45,10 @@
     [Inject] public ISnackbar Snackbar { get; set; } = null!;
     [Parameter] public UserModel User { get; set; } = null!;
 
-    private Dictionary<AbstractSkillModel, bool> _userSkills = new();
+    private Dictionary<AbstractSkillModel, bool> _userSkills = [];
 
+    private Dictionary<string, bool> _filters = [];
+    
     private string _search = string.Empty;
 
     private Func<KeyValuePair<AbstractSkillModel, bool>, bool> QuickFilter => x =>
@@ -55,11 +57,26 @@
         if (!string.IsNullOrWhiteSpace(x.Key.Category) && x.Key.Category.Contains(_search, StringComparison.OrdinalIgnoreCase)) return true;
         if (!string.IsNullOrWhiteSpace(x.Key.SubCategory) && x.Key.SubCategory.Contains(_search, StringComparison.OrdinalIgnoreCase)) return true;
         if (!string.IsNullOrWhiteSpace(x.Key.Description) && x.Key.Description.Contains(_search, StringComparison.OrdinalIgnoreCase)) return true;
-            
+        
         return false;
     };
     
     protected override async Task OnInitializedAsync()
+    {
+        var allSkills = await RefreshDataAsync();
+        _filters = allSkills.Where(x => !string.IsNullOrWhiteSpace(x.Type)).GroupBy(x => x.Type).ToDictionary(x => x.Key!, x => true);
+    }
+
+    private void OnCheckChanged(bool? check, AbstractSkillModel skill)
+    {
+        if (check.HasValue)
+        {
+            _userSkills[skill] = check.Value;
+            StateHasChanged();
+        }
+    }
+
+    private async Task<List<AbstractSkillModel>> RefreshDataAsync()
     {
         var db = await Factory.CreateDbContextAsync();
         var ownedSkills = db.UsersSkills.Where(x => x.UserId == User.Id).ToList();
@@ -71,17 +88,9 @@
         {
             _userSkills.Add(skill, ownedSkills.Select(x => x.SkillId).Contains(skill.Id)); // Sets if the user already has the iterated skill
         }
-        
         await db.DisposeAsync();
-    }
 
-    private void OnCheckChanged(bool? check, AbstractSkillModel skill)
-    {
-        if (check.HasValue)
-        {
-            _userSkills[skill] = check.Value;
-            StateHasChanged();
-        }
+        return allSkills;
     }
 
     private void Submit() => Dialog.Close(_userSkills.Where(x => x.Value).Select(x => x.Key));

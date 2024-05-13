@@ -15,4 +15,11 @@ public static class Hardcoded
         CloseButton = true,
         NoHeader = true
     };
+    
+    public static Action<SnackbarOptions> SnackbarOptions = options =>
+    {
+        options.ShowCloseIcon = false;
+        options.VisibleStateDuration = 1500;
+        options.DuplicatesBehavior = SnackbarDuplicatesBehavior.Prevent;
+    };
 }

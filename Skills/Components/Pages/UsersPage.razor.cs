@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.EntityFrameworkCore;
 using MudBlazor;
+using Skills.Components.Components;
 using Skills.Databases;
 using Skills.Models;
 using Skills.Services;
@@ -11,12 +12,11 @@ using Icons = MudBlazor.Icons.Material.Filled;
 
 namespace Skills.Components.Pages;
 
-public partial class UsersPage : ComponentBase
+public partial class UsersPage : FullComponentBase
 {
     [CascadingParameter] public Task<AuthenticationState> AuthenticationState { get; set; } = null!;
     [Inject] public IDbContextFactory<SkillsContext> Factory { get; set; } = null!;
     [Inject] public ADAuthenticationService AuthenticationService { get; set; } = null!;
-    [Inject] public NavigationManager NavManager { get; set; } = null!;
     [Inject] public IDialogService DialogService { get; set; } = null!;
     [Inject] public ISnackbar Snackbar { get; set; } = null!;
 

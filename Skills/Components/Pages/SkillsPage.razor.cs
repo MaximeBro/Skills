@@ -10,7 +10,6 @@ namespace Skills.Components.Pages;
 public partial class SkillsPage : FullComponentBase
 {
     [Inject] public IDbContextFactory<SkillsContext> Factory { get; set; } = null!;
-    [Inject] public NavigationManager NavManager { get; set; } = null!;
 
     private List<BreadcrumbItem> _breadcrumbs = new();
     private Dictionary<Guid, List<TypeLevel>> _skillTypeLevels = new();

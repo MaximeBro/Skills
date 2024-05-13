@@ -37,6 +37,23 @@ public partial class CvEditorPage_Experiences : FullComponentBase
         }
     }
 
+    private async Task EditExperienceAsync(CvExperienceInfo experience)
+    {
+        var parameters = new DialogParameters<ExperienceDialog> { { x => x.CvExperience, experience } };
+        var options = Hardcoded.DialogOptions;
+        options.MaxWidth = MaxWidth.Medium;
+        var instance = await DialogService.ShowAsync<ExperienceDialog>(string.Empty, parameters, options);
+        var result = await instance.Result;
+        if (result is { Data: CvExperienceInfo model })
+        {
+            Editor.EditDone();
+            model.CvId = Cv.Id;
+            Editor.CvExperiences.Remove(experience);
+            Editor.CvExperiences.Add(model);
+            StateHasChanged();
+        }
+    }
+
     private void RemoveExperience(CvExperienceInfo experience)
     {
         Editor.CvExperiences.Remove(experience);

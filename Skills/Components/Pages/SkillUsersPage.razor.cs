@@ -11,7 +11,6 @@ namespace Skills.Components.Pages;
 public partial class SkillUsersPage : FullComponentBase
 {
     [Inject] public IDbContextFactory<SkillsContext> Factory { get; set; } = null!;
-    [Inject] public NavigationManager NavManager { get; set; } = null!;
     [Parameter] public Guid Id { get; set; }
     
     private AbstractSkillModel? _skill;

@@ -36,6 +36,23 @@ public partial class CvEditorPage_Education : FullComponentBase
             StateHasChanged();
         }
     }
+    
+    private async Task EditEducationAsync(CvEducationInfo education)
+    {
+        var parameters = new DialogParameters<EducationDialog> { { x => x.CvEducation, education } };
+        var options = Hardcoded.DialogOptions;
+        options.MaxWidth = MaxWidth.Medium;
+        var instance = await DialogService.ShowAsync<EducationDialog>(string.Empty, parameters, options);
+        var result = await instance.Result;
+        if (result is { Data: CvEducationInfo model })
+        {
+            Editor.EditDone();
+            model.CvId = Cv.Id;
+            Editor.CvEducations.Remove(education);
+            Editor.CvEducations.Add(model);
+            StateHasChanged();
+        }
+    }
 
     private void RemoveEducation(CvEducationInfo education)
     {

@@ -13,7 +13,6 @@ public partial class AuthorizedComponent : FullComponentBase, IDisposable
     [CascadingParameter] public Task<AuthenticationState> AuthenticationState { get; set; } = null!; 
     [Inject] public ADAuthenticationService AuthenticationService { get; set; } = null!;
     [Inject] public IDialogService DialogService { get; set; } = null!;
-    [Inject] public NavigationManager NavManager { get; set; } = null!;
 
     [Parameter] public RenderFragment? Content { get; set; }
     [Parameter] public string? Roles { get; set; }

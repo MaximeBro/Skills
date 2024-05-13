@@ -15,10 +15,11 @@
             </MudSelect>
         </MudStack>
         <MudStack Row="false" Spacing="0" Style="max-height: 400px; overflow-y: auto;">
+            <MudCheckBox T="bool" ValueChanged="@SelectAllChanged" Value="@_selectAll" Label="Tout sélectionner"/>
             @foreach (var skill in Editor.ChosenSkills.OrderByDescending(x => x.Value))
             {
                 <MudPaper Class="d-flex mb-1 px-4 py-1" Style="flex-direction: row; align-items: center;">
-                    <MudCheckBox T="bool" Value="@Editor.ChosenSkills[skill.Key]" ValueChanged="@((value) => OnCheckChanged(value, skill.Key))" />
+                    <MudCheckBox T="bool" Value="@Editor.ChosenSkills[skill.Key]" ValueChanged="@((value) => OnCheckChanged(value, skill.Key))"/>
                     <MudText Class="open-sans-600">@skill.Key.ToString()</MudText>
                 </MudPaper>
             }

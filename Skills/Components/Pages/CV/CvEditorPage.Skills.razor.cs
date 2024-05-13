@@ -13,21 +13,37 @@ public partial class CvEditorPage_Skills : FullComponentBase
     
     [CascadingParameter(Name = "cv-editor")] public CvEditorPage Editor { get; set; } = null!;
     [Parameter] public CvInfo Cv { get; set; } = null!;
+
+    private bool _selectAll;
     
     protected override async Task OnInitializedAsync()
     {
         await RefreshDataAsync();
+        StateHasChanged();
     }
 
     private async Task LevelChangedAsync(int level)
     {
         Cv.MinLevel = level;
         await RefreshDataAsync();
+        _selectAll = false;
+        StateHasChanged();
     }
 
     private void OnCheckChanged(bool value, AbstractSkillModel skill)
     {
         Editor.ChosenSkills[skill] = value;
+        _selectAll = Editor.ChosenSkills.All(x => x.Value);
+        Editor.EditDone();
+    }
+
+    private void SelectAllChanged(bool value)
+    {
+        foreach (var key in Editor.ChosenSkills.Keys)
+        {
+            Editor.ChosenSkills[key] = value;
+        }
+        _selectAll = Editor.ChosenSkills.All(x => x.Value);
         Editor.EditDone();
     }
 
@@ -47,6 +63,7 @@ public partial class CvEditorPage_Skills : FullComponentBase
             Editor.ChosenSkills.Add(skill, cvSkills.Contains(skill.Id));
         }
         await db.DisposeAsync();
-        StateHasChanged();
+        
+        _selectAll = Editor.ChosenSkills.All(x => x.Value);
     }
 }

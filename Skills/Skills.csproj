@@ -11,6 +11,11 @@
       <_ContentIncludedByDefault Remove="wwwroot\bootstrap\bootstrap.min.css.map" />
       <_ContentIncludedByDefault Remove="Components\Pages\SkillsPages\Edition\SkillsManagement.razor" />
       <_ContentIncludedByDefault Remove="Components\Pages\SkillsPages\Edition\SkillsTypes.razor" />
+      <_ContentIncludedByDefault Remove="pub\web.config" />
+      <_ContentIncludedByDefault Remove="pub\appsettings.Development.json" />
+      <_ContentIncludedByDefault Remove="pub\appsettings.json" />
+      <_ContentIncludedByDefault Remove="pub\Skills.deps.json" />
+      <_ContentIncludedByDefault Remove="pub\Skills.runtimeconfig.json" />
     </ItemGroup>
 
     <ItemGroup>
@@ -18,6 +23,7 @@
       <PackageReference Include="Humanizer" Version="3.0.0-beta.13" />
       <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.3" />
       <PackageReference Include="Microsoft.AspNetCore.Authentication.OpenIdConnect" Version="8.0.3" />
+      <PackageReference Include="Microsoft.AspNetCore.SignalR.Client" Version="8.0.4" />
       <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.3" />
       <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.3">
         <PrivateAssets>all</PrivateAssets>

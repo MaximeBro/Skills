@@ -1,3 +1,5 @@
+@inherits FullComponentBase
+
 <MudTabPanel Text="CV">
     <MudGrid Justify="Justify.Center" Spacing="0">
         <MudItem Class="px-2 px-md-16" xs="12">
@@ -24,8 +26,8 @@
                 <MudItem Class="px-2 px-md-16 mb-6" xs="12">
                     <MudPaper Elevation="2">
                         <MudToolBar Dense>
-                            <MudTooltip Text="@_sortActionText" Placement="Placement.Right" Arrow>
-                                <MudIconButton Icon="@_sortActionIcon" Size="Size.Small" Style="border-radius: 6px!important; padding: 4px!important;" Color="Color.Dark" OnClick="@OnSortChanged"/>
+                            <MudTooltip Text="@SortActionText" Placement="Placement.Right" Arrow>
+                                <MudIconButton Icon="@SortActionIcon" Size="Size.Small" Style="border-radius: 6px!important; padding: 4px!important;" Color="Color.Dark" OnClick="@OnSortChanged"/>
                             </MudTooltip>
                             <MudTooltip Class="ml-2" Text="Créer un CV" Placement="Placement.Top" Arrow>
                                 <MudIconButton Class="ml-4" Icon="@IconsF.AddBox" Style="border-radius: 6px!important; padding: 4px!important;" Color="Color.Tertiary" OnClick="@CreateCvAsync"/>

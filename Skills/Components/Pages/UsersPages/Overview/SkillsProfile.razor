@@ -66,6 +66,15 @@
                             </MudSelect>
                         </EditTemplate>
                     </PropertyColumn>
+                    <AuthorizeView Roles="Admin, Manager">
+                        <TemplateColumn Title="Actions" IsEditable="false" Sortable="false" Filterable="false">
+                            <CellTemplate Context="row">
+                                <MudStack Row Justify="Justify.Center">
+                                    <MudIconButton Class="hover-red" Icon="@IconsF.Delete" Size="Size.Small" OnClick="@(async() => await RevokeSkillAsync(row.Item))"/>
+                                </MudStack>
+                            </CellTemplate>
+                        </TemplateColumn>
+                    </AuthorizeView>
                 </Columns>
                 <ChildRowContent>
                     <MudStack Row="false" Spacing="0">

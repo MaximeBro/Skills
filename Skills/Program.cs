@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.EntityFrameworkCore;
 using MudBlazor.Services;
 using Skills.Components;
@@ -45,6 +46,14 @@ builder.Services.AddSingleton<SkillService>();
 builder.Services.AddDbContextFactory<SkillsContext>();
 /* Databases */
 
+/* SignalR */
+builder.Services.AddResponseCompression(opts =>
+{
+    opts.MimeTypes = ResponseCompressionDefaults.MimeTypes.Concat(
+        new[] { "application/octet-stream" });
+});
+/* SignalR */
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -69,6 +78,8 @@ app.UseFileUpload();
 
 app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode();
+app.MapHub<SkillsHub>(SkillsHub.HubUrl);
+app.UseResponseCompression();
 
 var themeManager = app.Services.GetRequiredService<ThemeManager>();
 await themeManager.InitAsync();

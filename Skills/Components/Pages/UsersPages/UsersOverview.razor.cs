@@ -1,14 +1,14 @@
 using Microsoft.AspNetCore.Components;
 using Microsoft.EntityFrameworkCore;
+using Skills.Components.Components;
 using Skills.Databases;
 using Skills.Models;
 
 namespace Skills.Components.Pages.UsersPages;
 
-public partial class UsersOverview : ComponentBase
+public partial class UsersOverview : FullComponentBase
 {
     [Inject] public IDbContextFactory<SkillsContext> Factory { get; set; } = null!;
-    [Inject] public NavigationManager NavManager { get; set; } = null!;
 
     [Parameter] public string Id { get; set; } = null!;
     [Parameter] public int? TabIndex { get; set; }

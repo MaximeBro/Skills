@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.JSInterop;
 using MudBlazor;
+using Skills.Components.Components;
 using Skills.Components.Dialogs;
 using Skills.Databases;
 using Skills.Extensions;
@@ -12,11 +13,10 @@ using Skills.Services;
 
 namespace Skills.Components.Pages.UsersPages.Overview;
 
-public partial class CvProfile : ComponentBase
+public partial class CvProfile : FullComponentBase
 {
     [Inject] public IDbContextFactory<SkillsContext> Factory { get; set; } = null!;
     [Inject] public IDialogService DialogService { get; set; } = null!;
-    [Inject] public NavigationManager NavManager { get; set; } = null!;
     [Inject] public WordExportService WordExportService { get; set; } = null!;
     [Inject] public ISnackbar Snackbar { get; set; } = null!;
     [Inject] public IJSRuntime JsRuntime { get; set; } = null!;
@@ -26,8 +26,8 @@ public partial class CvProfile : ComponentBase
     private List<CvInfo> _cvs = new();
 
     private bool _sortMostRecent = false;
-    private string _sortActionText => _sortMostRecent ? "Du plus récent au plus ancien" : "Du plus ancien au plus récent";
-    private string _sortActionIcon => _sortMostRecent ? "fas fa-arrow-down-1-9" : "fas fa-arrow-up-9-1";
+    private string SortActionText => _sortMostRecent ? "Du plus récent au plus ancien" : "Du plus ancien au plus récent";
+    private string SortActionIcon => _sortMostRecent ? "fas fa-arrow-down-1-9" : "fas fa-arrow-up-9-1";
 
     private bool _loading;
 
@@ -39,6 +39,14 @@ public partial class CvProfile : ComponentBase
         _breadcrumbs.Add(new BreadcrumbItem("CV", null, true));
 
         await RefreshDataAsync();
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await InitSignalRAsync(new[] { $"{nameof(CvProfile)}:create", $"{nameof(CvProfile)}:edit", $"{nameof(CvProfile)}:delete" },  async() => await RefreshDataAsync());
+        }
     }
 
     private async Task CreateCvAsync()
@@ -53,6 +61,7 @@ public partial class CvProfile : ComponentBase
         await db.SaveChangesAsync();
         await db.DisposeAsync();
         
+        await SendUpdateAsync($"{nameof(CvProfile)}:create");
         NavManager.NavigateTo($"/overview/{User.Username}/cv-editor/{cv.Id}");
     }
     
@@ -71,7 +80,8 @@ public partial class CvProfile : ComponentBase
                 await db.SaveChangesAsync();
             }
             await db.DisposeAsync();
-            await RefreshDataAsync(); 
+            await RefreshDataAsync();
+            await SendUpdateAsync($"{nameof(CvProfile)}:delete");
         }
     }
 
