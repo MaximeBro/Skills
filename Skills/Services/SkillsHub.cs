@@ -5,7 +5,7 @@ namespace Skills.Services;
 public class SkillsHub : Hub
 {
     public const string HubUrl = "/api/refresh";
-    public const string HubMethod = "ReceiveMessage";
+    public const string HubMethod = "BroadcastAsync";
 
     public async Task BroadcastAsync(string message, Guid circuitId)
     {

@@ -47,9 +47,9 @@
     [Inject] public ISnackbar Snackbar { get; set; } = null!;
     [Parameter] public SkillModel? Model { get; set; }
 
-    private List<SKillInfo> _types = new();
-    private List<SKillInfo> _categories = new();
-    private List<SKillInfo> _subcategories = new();
+    private List<SKillInfo> _types = [];
+    private List<SKillInfo> _categories = [];
+    private List<SKillInfo> _subcategories = [];
 
     private SKillInfo? _selectedType;
     private SKillInfo? _selectedCategory;

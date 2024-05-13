@@ -45,7 +45,7 @@ public partial class CvProfile : FullComponentBase
     {
         if (firstRender)
         {
-            await InitSignalRAsync(new[] { $"{nameof(CvProfile)}:create", $"{nameof(CvProfile)}:edit", $"{nameof(CvProfile)}:delete" },  async() => await RefreshDataAsync());
+            // await InitSignalRAsync(nameof(CvProfile), async() => await RefreshDataAsync());
         }
     }
 
@@ -61,7 +61,7 @@ public partial class CvProfile : FullComponentBase
         await db.SaveChangesAsync();
         await db.DisposeAsync();
         
-        await SendUpdateAsync($"{nameof(CvProfile)}:create");
+        // await SendUpdateAsync(nameof(CvProfile));
         NavManager.NavigateTo($"/overview/{User.Username}/cv-editor/{cv.Id}");
     }
     
@@ -81,7 +81,7 @@ public partial class CvProfile : FullComponentBase
             }
             await db.DisposeAsync();
             await RefreshDataAsync();
-            await SendUpdateAsync($"{nameof(CvProfile)}:delete");
+            // await SendUpdateAsync(nameof(CvProfile));
         }
     }
 

@@ -1,6 +1,4 @@
-using System.Security.Principal;
 using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Authorization;
 using MudBlazor;
 using Skills.Services;
 
@@ -13,7 +11,7 @@ public partial class MainLayout
     
     private MudTheme _theme = new();
     
-    protected override async Task OnInitializedAsync()
+    protected override void OnInitialized()
     {
         _theme.Palette.Primary = ThemeManager.GetMudColor(Color.Primary);
         _theme.Palette.Secondary = ThemeManager.GetMudColor(Color.Secondary);

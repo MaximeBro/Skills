@@ -1,3 +1,4 @@
+using System.Net.Security;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.SignalR.Client;
 using Skills.Services;
@@ -12,17 +13,23 @@ public partial class FullComponentBase : ComponentBase, IAsyncDisposable
     private HubConnection? hubConnection;
     private Guid circuitId = Guid.NewGuid();
 
-    private string[] supported = [];
-
-    protected async Task InitSignalRAsync(string[] actions, Func<Task> method)
+    protected async Task InitSignalRAsync(string component, Func<Task> method)
     {
-        supported = actions;
-        hubConnection = new HubConnectionBuilder().WithUrl(NavManager.ToAbsoluteUri(SkillsHub.HubUrl)).Build();
+        hubConnection = new HubConnectionBuilder()
+            .WithUrl(NavManager.ToAbsoluteUri(SkillsHub.HubUrl), options =>
+            {
+                options.WebSocketConfiguration = sockets =>
+                {
+                    sockets.RemoteCertificateValidationCallback += new RemoteCertificateValidationCallback((sender, certificate, chain, policyErrors) => true);
+                };
+            })
+            .Build();
+        
         hubConnection.On<string, Guid>(SkillsHub.HubMethod, (message, id) =>
         {
-            // if (id == circuitId) return; // Same circuit, we don't need to perform any action
+            if (id == circuitId) return;
 
-            if (supported.Contains(message))
+            if (component == message)
             {
                 InvokeAsync(async() =>
                 {
@@ -39,7 +46,7 @@ public partial class FullComponentBase : ComponentBase, IAsyncDisposable
         await hubConnection.StartAsync();
     }
 
-    protected async Task SendUpdateAsync(string action) => await hubConnection!.SendAsync(SkillsHub.HubMethod, action, circuitId);
+    protected async Task SendUpdateAsync(string action) => await hubConnection!.InvokeAsync(SkillsHub.HubMethod, action, circuitId);
 
     public async ValueTask DisposeAsync()
     {

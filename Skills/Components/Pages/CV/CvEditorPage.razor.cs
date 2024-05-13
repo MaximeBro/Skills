@@ -76,7 +76,7 @@ public partial class CvEditorPage : FullComponentBase, IAsyncDisposable
     {
         if (firstRender)
         {
-            await InitSignalRAsync(new[] { $"{nameof(CvProfile)}:delete" }, async() => await NavigateToProfileAsync());
+            // await InitSignalRAsync(nameof(CvProfile), async() => await NavigateToProfileAsync());
         }     
     }
 
@@ -153,7 +153,7 @@ public partial class CvEditorPage : FullComponentBase, IAsyncDisposable
         });
 
         _pendingEdits = 0;
-        await SendUpdateAsync($"{nameof(CvProfile)}:edit");
+        // await SendUpdateAsync(nameof(CvProfile));
     }
 
     public void EditDone()
