@@ -3,6 +3,7 @@ using Blazored.LocalStorage;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
 using MudBlazor;
+using Skills.Models.Enums;
 using Skills.Services;
 
 namespace Skills.Components.Layout;
@@ -11,7 +12,8 @@ public partial class MainLayout
 {
     [Inject] public IWebHostEnvironment Environment { get; set; } = null!;
     [Inject] public ILocalStorageService LocalStorage { get; set; } = null!;
-    [Inject] public ThemeManager ThemeManager { get; set; } = null!; 
+    [Inject] public ThemeManager ThemeManager { get; set; } = null!;
+    [Inject] public LocalizationManager Lang { get; set; } = null!;
     [Inject] public NavigationManager NavManager { get; set; } = null!; 
     
     private MudTheme _theme = new();
@@ -30,6 +32,12 @@ public partial class MainLayout
         if (firstRender)
         {
             _isDarkMode = ThemeManager.IsDarkTheme = await LocalStorage.GetItemAsync<bool>("IsDarkTheme");
+            var language = await LocalStorage.GetItemAsStringAsync("PreferredLanguage");
+            if (!string.IsNullOrWhiteSpace(language))
+            {
+                await Lang.SetLanguageAsync(language);
+            }
+            
             StateHasChanged();
         }
     }

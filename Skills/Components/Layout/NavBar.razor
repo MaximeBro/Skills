@@ -17,7 +17,7 @@
             </MudItem>
         </MudHidden>
         <MudItem xs="6" md="3">
-            <MudStack Row AlignItems="AlignItems.Center" Justify="Justify.FlexEnd" Spacing="0">
+            <MudStack Row AlignItems="AlignItems.Center" Justify="Justify.FlexEnd" Spacing="1">
                 <MudIconButton Class="text-white mr-2 icon-hoverable" Icon="@IconsR.Notifications"/>
                 <MudBadge BadgeClass="ml-n1 mb-n1" Overlap Dot Origin="Origin.TopRight" Color="@(_identity is { IsAuthenticated: true } ? Color.Info : Color.Transparent)">
                     <ProfileMenu/>
@@ -31,7 +31,7 @@
 <MudDrawer @bind-Open="_docked" Variant="DrawerVariant.Mini" ClipMode="DrawerClipMode.Docked" OpenMiniOnHover Elevation="1" 
            Style="@($"background: {(ThemeManager.IsDarkTheme ? ThemeManager.Get("drawer-background-dark") : ThemeManager.Get("drawer-background"))}!important;")">
     <MudNavMenu Color="Color.Primary">
-        <MudNavLink Class="open-sans link-bold" Href="/" Match="NavLinkMatch.All" Icon="@IconsF.Home" IconColor="@(ThemeManager.IsDarkTheme ? Color.Default : Color.Dark)">Accueil</MudNavLink>
+        <MudNavLink Class="open-sans mt-1 link-bold" Href="/" Match="NavLinkMatch.All" Icon="@IconsF.Home" IconColor="@(ThemeManager.IsDarkTheme ? Color.Default : Color.Dark)">Accueil</MudNavLink>
         <MudNavLink Class="open-sans-600 my-2 link-bold" Href="/skills" Match="NavLinkMatch.All" Icon="@IconsF.Stars" IconColor="@(ThemeManager.IsDarkTheme ? Color.Default : Color.Dark)">Compétences</MudNavLink>
         <AuthorizeView Roles="Admin, Manager, User">
             <Authorized>

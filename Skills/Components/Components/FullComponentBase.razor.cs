@@ -9,6 +9,7 @@ public partial class FullComponentBase : ComponentBase, IAsyncDisposable
 {
     [Inject] public NavigationManager NavManager { get; set; } = null!;
     [Inject] public ThemeManager ThemeManager { get; set; } = null!;
+    [Inject] public LocalizationManager Lang { get; set; } = null!;
 
     private HubConnection? hubConnection;
     private Guid circuitId = Guid.NewGuid();
@@ -18,6 +19,7 @@ public partial class FullComponentBase : ComponentBase, IAsyncDisposable
         if (firstRender)
         {
             ThemeManager.OnPaletteChanged += Refresh;
+            Lang.OnLanguageChanged += async() => await InvokeAsync(StateHasChanged);
         }
     }
 

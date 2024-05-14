@@ -13,8 +13,8 @@
                              Color="Color.Inherit" UnCheckedColor="Color.Inherit" CheckedIcon="@IconsR.DarkMode" UncheckedIcon="@IconsR.LightMode"/>
             </div>
             <div>
-                <MudSwitch T="bool" @bind-Value="_french" Class="white-all pl-2" ThumbIcon="@(_french ? _frenchSvg : _englishSvg)"
-                           Label="@($"{(_french ? "Français (Fr)" : "English (US)")}")" Color="Color.Secondary"/>
+                <MudSwitch T="bool" Value="@_french" ValueChanged="@(async(value) => await SwitchLanguageAsync(value))" Class="white-all pl-2" 
+                           ThumbIcon="@(_french ? _frenchSvg : _englishSvg)" Label="@($"{(_french ? "Français (FR)" : "English (US)")}")" Color="Color.Secondary"/>
             </div>
         </MudStack>
     </MudStack>

@@ -42,6 +42,7 @@ builder.Services.AddSingleton<WordExportService>();
 builder.Services.AddSingleton<UserTokenHoldingService>();
 builder.Services.AddSingleton<ActiveDirectoryService>();
 builder.Services.AddSingleton<ThemeManager>();
+builder.Services.AddSingleton<LocalizationManager>();
 builder.Services.AddSingleton<SkillService>();
 /* Custom Services */
 
@@ -85,7 +86,9 @@ app.MapHub<SkillsHub>(SkillsHub.HubUrl);
 app.UseResponseCompression();
 
 var themeManager = app.Services.GetRequiredService<ThemeManager>();
+var localizationManager = app.Services.GetRequiredService<LocalizationManager>();
 await themeManager.InitAsync();
+await localizationManager.InitAsync();
 
 await RunMigrationAsync<SkillsContext>(app);
 

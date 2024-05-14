@@ -23,6 +23,7 @@ public partial class PreferencesMenu : FullComponentBase
     protected override void OnInitialized()
     {
         _isDarkMode = ThemeManager.IsDarkTheme;
+        _french = Lang.SelectedLanguage == "fr-FR";
     }
 
     private async Task SwitchThemeAsync(bool value)
@@ -30,6 +31,15 @@ public partial class PreferencesMenu : FullComponentBase
         _isDarkMode = value;
         ThemeManager.SetPalette(value);
         await LocalStorage.SetItemAsync("IsDarkTheme", value);
+        StateHasChanged();
+    }
+
+    private async Task SwitchLanguageAsync(bool value)
+    {
+        _french = value;
+        var language = _french ? "fr-FR" : "en-US";
+        await Lang.SetLanguageAsync(language);
+        await LocalStorage.SetItemAsync("PreferredLanguage", language);
         StateHasChanged();
     }
 }
