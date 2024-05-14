@@ -13,6 +13,15 @@ public partial class FullComponentBase : ComponentBase, IAsyncDisposable
     private HubConnection? hubConnection;
     private Guid circuitId = Guid.NewGuid();
 
+    protected override void OnAfterRender(bool firstRender)
+    {
+        if (firstRender)
+        {
+            ThemeManager.OnPaletteChanged += Refresh;
+        }
+    }
+
+    private void Refresh() => NavManager.Refresh(true);
     protected async Task InitSignalRAsync(string component, Func<Task> method)
     {
         hubConnection = new HubConnectionBuilder()

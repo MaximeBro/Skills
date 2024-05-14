@@ -2,7 +2,7 @@
 
 <MudDialog>
     <DialogContent>
-        <MudIconButton Class="ml-n4" Icon="@IconsF.Close" Color="Color.Dark" OnClick="@(() => Dialog.Close(false))" />
+        <CloseButton Dialog="@Dialog"/>
         <MudStack Class="pb-2 px-4" Row="false" Spacing="0">
             <MudText Class="open-sans-600" Typo="Typo.h5" Align="Align.Center" GutterBottom>Hello!</MudText>
             <MudText Class="open-sans-600" Align="Align.Center" GutterBottom>Vous devez vous connecter <br/>pour accéder à ce contenu !</MudText>

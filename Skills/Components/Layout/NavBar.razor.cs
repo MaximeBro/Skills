@@ -23,6 +23,8 @@ public partial class NavBar : FullComponentBase
             var authState = await AuthenticationState;
             _identity = authState.User.Identity;
         }
+        
+        ThemeManager.OnPaletteChanged += async() => await InvokeAsync(StateHasChanged);
     }
 
     public void Toggle()

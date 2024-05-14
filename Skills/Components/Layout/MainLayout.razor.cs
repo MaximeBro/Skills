@@ -1,4 +1,7 @@
+using System.Text.Json;
+using Blazored.LocalStorage;
 using Microsoft.AspNetCore.Components;
+using Microsoft.JSInterop;
 using MudBlazor;
 using Skills.Services;
 
@@ -7,13 +10,34 @@ namespace Skills.Components.Layout;
 public partial class MainLayout
 {
     [Inject] public IWebHostEnvironment Environment { get; set; } = null!;
+    [Inject] public ILocalStorageService LocalStorage { get; set; } = null!;
     [Inject] public ThemeManager ThemeManager { get; set; } = null!; 
+    [Inject] public NavigationManager NavManager { get; set; } = null!; 
     
     private MudTheme _theme = new();
+    private bool _isDarkMode;
     
     protected override void OnInitialized()
     {
-        _theme.Palette.Primary = ThemeManager.GetMudColor(Color.Primary);
-        _theme.Palette.Secondary = ThemeManager.GetMudColor(Color.Secondary);
+        _theme.Palette = ThemeManager.GetLightPalette();
+        _theme.PaletteDark = ThemeManager.GetDarkPalette();
+        
+        ThemeManager.OnPaletteChanged += RefreshPalettes;
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            _isDarkMode = ThemeManager.IsDarkTheme = await LocalStorage.GetItemAsync<bool>("IsDarkTheme");
+            StateHasChanged();
+        }
+    }
+
+    private void RefreshPalettes()
+    {
+        _theme.Palette = ThemeManager.GetLightPalette();
+        _theme.PaletteDark = ThemeManager.GetDarkPalette();
+        _isDarkMode = ThemeManager.IsDarkTheme;
     }
 }

@@ -1,0 +1,7 @@
+@inherits FullComponentBase
+
+<MudIconButton Class="ml-n4" Icon="@IconsF.Close" Color="@(ThemeManager.IsDarkTheme ? Color.Default : Color.Dark)" OnClick="@(() => Dialog.Close())" />
+
+@code {
+    [Parameter] public MudDialogInstance Dialog { get; set; } = null!;
+}

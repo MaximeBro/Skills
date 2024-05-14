@@ -2,7 +2,7 @@
 
 <MudDialog>
     <DialogContent>
-        <MudIconButton Class="ml-n4" Icon="@IconsF.Close" Color="Color.Dark" OnClick="@(() => Dialog.Close())" />
+        <CloseButton Dialog="@Dialog"/>
         <MudStack Class="px-4 py-2" Justify="Justify.SpaceEvenly" Row="false" Spacing="0">
             <MudTextField T="string" @bind-Value="_search" Class="flex-shrink-0" Style="width: 400px;" Placeholder="Rechercher" Immediate Clearable
                           Adornment="Adornment.Start" AdornmentIcon="@IconsF.Search" />

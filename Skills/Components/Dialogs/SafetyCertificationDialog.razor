@@ -1,7 +1,7 @@
 @using Skills.Models.CV
 <MudDialog>
     <DialogContent>
-        <MudIconButton Class="ml-n4" Icon="@IconsF.Close" Color="Color.Dark" OnClick="@(() => Dialog.Close())"/>
+        <CloseButton Dialog="@Dialog"/>
         <MudStack Class="px-4 py-2" Justify="Justify.SpaceEvenly" Row="false" Spacing="0">
             <MudStack Row>
                 <MudTextField T="string" @bind-Value="_category" Label="Catégorie" Style="width: 180px;" />

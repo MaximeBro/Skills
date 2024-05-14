@@ -6,8 +6,26 @@
     "login-banner": "login-bg.jpeg",
     "appbar-background": "#013a63",
     "drawer-background": "#f9f7f3",
+    "drawer-background-dark": "#282932",
     "other-background": "#4e7cb0",
-    "success": "#0BBA83",
-    "primary": "#174489",
-    "secondary": "#5287C4"
+    
+    "LightTheme": [
+        { "Primary": "#174489" },
+        { "Secondary": "#5287C4" },
+        { "Tertiary": "#0BBA83" },
+        { "Info": "#2196F3" },
+        { "Success": "#00C853" },
+        { "Warning": "#ffba08" },
+        { "Error": "#F44336" }
+    ],
+    
+    "DarkTheme": [
+        { "Primary": "#2464C4" },
+        { "Secondary": "#5287C4" },
+        { "Tertiary": "#10D597" },
+        { "Info": "#90e0ef" },
+        { "Success": "#0BBA83" },
+        { "Warning": "#f48c06" },
+        { "Error": "#EF5350" }
+    ]
 }

@@ -3,7 +3,7 @@
 
 <AuthorizedComponent>
     <Content>
-        <MudContainer MaxWidth="MaxWidth.ExtraLarge">
+        <MudContainer Class="mb-8" MaxWidth="MaxWidth.ExtraLarge">
             <HideableBreadcrumb Items="@_breadcrumbs" Class="open-sans" />
             <MudText Class="open-sans-600" Typo="Typo.h2" Align="Align.Center">Utilisateurs</MudText>
             <MudToolBar Class="mb-6">
@@ -36,26 +36,26 @@
             <MudGrid Class="pb-4" Justify="Justify.FlexStart">
                 @foreach (var user in _filteredUsers.Where(QuickFilter))
                 {
-                <MudItem xs="12" sm="6" md="4" lg="3" xl="2">
-                    <MudPaper Class="py-4 px-6" Elevation="5">
-                        <MudStack Row Justify="Justify.SpaceBetween" AlignItems="AlignItems.Center" Spacing="0">
-                            <MudLink Class="flex-grow-1" Href="@($"/overview/{user.Username}/")" Underline="Underline.None">
-                                <MudStack Class="flex-shrink-0" Row="false" AlignItems="AlignItems.Center" Justify="Justify.Center" Spacing="0">
-                                    <MudText Align="Align.Center">@user.Name</MudText>
-                                    <MudText Align="Align.Center">@user.Email</MudText>
-                                </MudStack>
-                            </MudLink>
-                            @if (user.IsDisabled)
-                            {
-                            <div class="mr-2 mb-n2">
-                                <MudTooltip Placement="Placement.Bottom" Text="Ce compte est désactivé !" Arrow>
-                                    <MudIcon Icon="@IconsF.Warning" Size="Size.Small" Color="Color.Warning"/>
-                                </MudTooltip>
-                            </div>
-                            }
-                        </MudStack>
-                    </MudPaper>
-                </MudItem>
+                    <MudItem xs="12" sm="6" md="4" lg="3" xl="2">
+                        <MudPaper Class="py-4 px-6" Elevation="5">
+                            <MudStack Row Justify="Justify.SpaceBetween" AlignItems="AlignItems.Center" Spacing="0">
+                                <MudLink Class="flex-grow-1" Href="@($"/overview/{user.Username}/")" Underline="Underline.None">
+                                    <MudStack Class="flex-shrink-0" Row="false" AlignItems="AlignItems.Center" Justify="Justify.Center" Spacing="0">
+                                        <MudText Class="@(ThemeManager.IsDarkTheme ? "text-white" : string.Empty)" Align="Align.Center">@user.Name</MudText>
+                                        <MudText Class="@(ThemeManager.IsDarkTheme ? "text-white" : string.Empty)" Align="Align.Center">@user.Email</MudText>
+                                    </MudStack>
+                                </MudLink>
+                                @if (user.IsDisabled)
+                                {
+                                <div class="mr-2 mb-n2">
+                                    <MudTooltip Placement="Placement.Bottom" Text="Ce compte est désactivé !" Arrow>
+                                        <MudIcon Icon="@IconsF.Warning" Size="Size.Small" Color="Color.Warning"/>
+                                    </MudTooltip>
+                                </div>
+                                }
+                            </MudStack>
+                        </MudPaper>
+                    </MudItem>
                 }
             </MudGrid>
             }

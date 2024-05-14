@@ -1,3 +1,4 @@
+using Blazored.LocalStorage;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.EntityFrameworkCore;
@@ -28,6 +29,8 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
         options.AccessDeniedPath = "/";
         options.Cookie.Name = "Skills";
     });
+
+builder.Services.AddBlazoredLocalStorage();
 
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();

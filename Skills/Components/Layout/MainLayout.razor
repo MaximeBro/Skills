@@ -1,7 +1,6 @@
 ﻿@inherits LayoutComponentBase
-@inject NavigationManager NavManager
 
-<MudThemeProvider DefaultScrollbar Theme="@_theme" IsDarkMode="false"/>
+<MudThemeProvider DefaultScrollbar Theme="@_theme" IsDarkMode="@_isDarkMode"/>
 <MudDialogProvider/>
 <MudSnackbarProvider/>
 
