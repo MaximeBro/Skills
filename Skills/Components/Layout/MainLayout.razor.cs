@@ -1,9 +1,6 @@
-using System.Text.Json;
 using Blazored.LocalStorage;
 using Microsoft.AspNetCore.Components;
-using Microsoft.JSInterop;
 using MudBlazor;
-using Skills.Models.Enums;
 using Skills.Services;
 
 namespace Skills.Components.Layout;

@@ -3,7 +3,7 @@
 @page "/overview/{Id}/{TabIndex:int}"
 @inherits FullComponentBase
 
-<AuthorizedComponent Roles="Admin, Manager, User">
+<AuthorizedComponent>
     <Content>
         <MudTabs Centered Color="Color.Primary" ActivePanelIndex="@(TabIndex ?? 0)">
             <SkillsProfile User="@_user" />

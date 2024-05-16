@@ -24,6 +24,7 @@ public partial class PreferencesMenu : FullComponentBase
     {
         _isDarkMode = ThemeManager.IsDarkTheme;
         _french = Lang.SelectedLanguage == "fr-FR";
+        StateHasChanged();
     }
 
     private async Task SwitchThemeAsync(bool value)

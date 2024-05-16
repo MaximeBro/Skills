@@ -1,4 +1,3 @@
-@using DocumentFormat.OpenXml.Drawing
 @using Underline = MudBlazor.Underline
 @inherits FullComponentBase
 
@@ -31,19 +30,19 @@
 <MudDrawer @bind-Open="_docked" Variant="DrawerVariant.Mini" ClipMode="DrawerClipMode.Docked" OpenMiniOnHover Elevation="1" 
            Style="@($"background: {(ThemeManager.IsDarkTheme ? ThemeManager.Get("drawer-background-dark") : ThemeManager.Get("drawer-background"))}!important;")">
     <MudNavMenu Color="Color.Primary">
-        <MudNavLink Class="open-sans mt-1 link-bold" Href="/" Match="NavLinkMatch.All" Icon="@IconsF.Home" IconColor="@(ThemeManager.IsDarkTheme ? Color.Default : Color.Dark)">Accueil</MudNavLink>
-        <MudNavLink Class="open-sans-600 my-2 link-bold" Href="/skills" Match="NavLinkMatch.All" Icon="@IconsF.Stars" IconColor="@(ThemeManager.IsDarkTheme ? Color.Default : Color.Dark)">Compétences</MudNavLink>
+        <MudNavLink Class="open-sans mt-1 link-bold" Href="/" Match="NavLinkMatch.All" Icon="@IconsF.Home" IconColor="@(IsDarkTheme ? Color.Default : Color.Dark)">Accueil</MudNavLink>
+        <MudNavLink Class="open-sans-600 my-2 link-bold" Href="/skills" Match="NavLinkMatch.All" Icon="@IconsF.Stars" IconColor="@(IsDarkTheme ? Color.Default : Color.Dark)">Compétences</MudNavLink>
         <AuthorizeView Roles="Admin, Manager, User">
             <Authorized>
-                <MudNavLink Class="open-sans-600 my-2 link-bold" Href="/users" Match="NavLinkMatch.All" Icon="@IconsF.People" IconColor="@(ThemeManager.IsDarkTheme ? Color.Default : Color.Dark)">Utilisateurs</MudNavLink>
+                <MudNavLink Class="open-sans-600 my-2 link-bold" Href="/users" Match="NavLinkMatch.All" Icon="@IconsF.People" IconColor="@(IsDarkTheme ? Color.Default : Color.Dark)">Utilisateurs</MudNavLink>
             </Authorized>
         </AuthorizeView>
         <AuthorizeView Roles="Admin">
             <Authorized>
                 <MudNavGroup Class="mt-3 open-sans-600 link-bold link-category" Title="Administration" Icon="@IconsF.AdminPanelSettings" IconColor="Color.Tertiary" HideExpandIcon="@(!_docked)">
-                    <MudNavLink Class="open-sans-600 my-2 link-bold" Href="/admin/skills" Match="NavLinkMatch.All" Icon="@IconsF.Checklist" IconColor="@(ThemeManager.IsDarkTheme ? Color.Default : Color.Dark)">Compétences</MudNavLink>
-                    <MudNavLink Class="open-sans-600 mt-1 mb-2 link-bold" Href="/admin/users" Match="NavLinkMatch.All" Icon="@IconsF.ManageAccounts" IconColor="@(ThemeManager.IsDarkTheme ? Color.Default : Color.Dark)">Utilisateurs</MudNavLink>
-                    <MudNavLink Class="open-sans-600 mt-1 mb-2 link-bold" Href="/admin/cv" Match="NavLinkMatch.All" Icon="@IconsFF.FileDocument" IconColor="@(ThemeManager.IsDarkTheme ? Color.Default : Color.Dark)">CV</MudNavLink>
+                    <MudNavLink Class="open-sans-600 my-2 link-bold" Href="/admin/skills" Match="NavLinkMatch.All" Icon="@IconsF.Checklist" IconColor="@(IsDarkTheme ? Color.Default : Color.Dark)">Compétences</MudNavLink>
+                    <MudNavLink Class="open-sans-600 mt-1 mb-2 link-bold" Href="/admin/users" Match="NavLinkMatch.All" Icon="@IconsF.ManageAccounts" IconColor="@(IsDarkTheme ? Color.Default : Color.Dark)">Utilisateurs</MudNavLink>
+                    <MudNavLink Class="open-sans-600 mt-1 mb-2 link-bold" Href="/admin/cv" Match="NavLinkMatch.All" Icon="@IconsFF.FileDocument" IconColor="@(IsDarkTheme ? Color.Default : Color.Dark)">CV</MudNavLink>
                 </MudNavGroup>
             </Authorized>
         </AuthorizeView>

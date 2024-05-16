@@ -13,6 +13,22 @@
                     <MudText Class="text-white">@_email</MudText>
                 </MudStack>
             </MudStack>
+            <MudStack Row Justify="Justify.Center">
+                <AuthorizeView Roles="Manager">
+                    <Authorized>
+                        <MudText Class="open-sans w700" Align="Align.Center" Style="color: #F44336; text-decoration: underline;">
+                            Manager
+                        </MudText>
+                    </Authorized>
+                </AuthorizeView>
+                <AuthorizeView Roles="Admin">
+                    <Authorized>
+                        <MudText Class="open-sans w700" Align="Align.Center" Style="color: #90e0ef; text-decoration: underline;">
+                            Administrateur
+                        </MudText>
+                    </Authorized>
+                </AuthorizeView>
+            </MudStack>
             <MudDivider Class="my-2" Style="border-color: grey!important;"/>
             <MudLink Class="text-white py-1" Href="/api/logout" Underline="Underline.Hover" Style="text-decoration-color: #fff;">
                 <MudStack Row AlignItems="AlignItems.Center" Justify="Justify.Center">

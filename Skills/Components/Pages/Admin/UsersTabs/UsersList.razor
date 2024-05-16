@@ -20,7 +20,7 @@
                     <MudIcon Class="ml-4 mt-1" Icon="@IconsF.Info" Color="Color.Info" />
                 </MudTooltip>
                 <MudSpacer/>
-                <MudTextField T="string" @bind-Value="_search" @onblur="@(async() => await RefreshDataAsync())" Immediate Adornment="Adornment.Start" Clearable
+                <MudTextField T="string" @bind-Value="_search" @onblur="@(async() => await RefreshDataAsync())" Adornment="Adornment.Start" Clearable Immediate
                               AdornmentIcon="@IconsF.Search" Placeholder="Rechercher" Class="flex-grow-0 mr-8 mt-0" Style="width: 400px;"/>
             </ToolBarContent>
             <Columns>

@@ -64,7 +64,7 @@ public class ADAuthenticationService(IConfiguration configuration, IDbContextFac
         return authState.User.Identity?.IsAuthenticated ?? false;
     }
     
-    public async Task<bool> HasRequiredRoleAsync(Task<AuthenticationState> stateTask, UserRole role)
+    public async Task<bool> HasRequiredRoleAsync(Task<AuthenticationState> stateTask, string[] roles)
     {
         var authState = await stateTask;
         var email = authState.User.FindFirstValue(ClaimTypes.Email) ?? string.Empty;
@@ -74,7 +74,7 @@ public class ADAuthenticationService(IConfiguration configuration, IDbContextFac
 
         if (user != null)
         {
-            return user.Role == role || user.Role == UserRole.Admin;
+            return roles.Contains(user.Role.ToString(), StringComparer.OrdinalIgnoreCase) || user.Role == UserRole.Admin;
         }
 
         return false;

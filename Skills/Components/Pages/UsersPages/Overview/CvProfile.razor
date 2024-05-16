@@ -21,7 +21,7 @@
             </MudStack>
         </MudItem>
 
-        <AuthorizedComponent Roles="Admin, Manager">
+        <AuthorizedComponent Roles="Admin, Manager" ShowDialog="false">
             <Content>
                 <MudItem Class="px-2 px-md-16 mb-6" xs="12">
                     <MudPaper Elevation="2">
@@ -48,11 +48,11 @@
                                 <MudStack Row>
                                     <MudText Class="open-sans-600 bold">@cv.Title</MudText>
                                     <MudSpacer/>
+                                    <MudTooltip Text="Télécharger" Placement="Placement.Bottom" Arrow>
+                                        <MudIconButton Color="Color.Primary" Size="Size.Small" Icon="@IconsFF.FileWord" OnClick="@(async() => await ExportCvAsync(cv))" />
+                                    </MudTooltip>
                                     <AuthorizedComponent Roles="Admin, Manager">
                                         <Content>
-                                            <MudTooltip Text="Télécharger" Placement="Placement.Bottom" Arrow>
-                                                <MudIconButton Color="Color.Primary" Size="Size.Small" Icon="@IconsFF.FileWord" OnClick="@(async() => await ExportCvAsync(cv))" />
-                                            </MudTooltip>
                                             <MudTooltip Text="Éditer" Placement="Placement.Top" Arrow>
                                                 <MudIconButton Color="Color.Primary" Size="Size.Small" Icon="@IconsF.Edit" OnClick="@(() => NavManager.NavigateTo($"/overview/{User.Username}/cv-editor/{cv.Id}"))"/>
                                             </MudTooltip>

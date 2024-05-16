@@ -1,12 +1,12 @@
 ﻿@inherits LayoutComponentBase
 
-<MudThemeProvider DefaultScrollbar Theme="@_theme" IsDarkMode="@_isDarkMode"/>
+<MudThemeProvider DefaultScrollbar @bind-IsDarkMode="_isDarkMode" Theme="@_theme"/>
 <MudDialogProvider/>
 <MudSnackbarProvider/>
 
 <CascadingValue Name="MainLayout" Value="@this">
     <MudLayout>
-        <NavBar/>
+        <NavBar IsDarkTheme="@_isDarkMode"/>
         <MudMainContent> @* Padding-top used for appbar space only *@
             <MudContainer MaxWidth="MaxWidth.False" Class="@($"pa-0 ma-0 {(IsEditing ? string.Empty : "mb-4")}")" Style="min-height: calc(100vh - 64px);">
                 @Body

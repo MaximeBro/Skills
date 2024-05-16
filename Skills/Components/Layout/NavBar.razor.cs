@@ -9,6 +9,7 @@ namespace Skills.Components.Layout;
 public partial class NavBar : FullComponentBase
 {
     [CascadingParameter] public Task<AuthenticationState> AuthenticationState { get; set; } = null!;
+    [Parameter] public bool IsDarkTheme { get; set; }
     [Inject] public IWebHostEnvironment Environment { get; set; } = null!;
     [Inject] public ADAuthenticationService AuthenticationService { get; set; } = null!;
     
