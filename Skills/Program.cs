@@ -33,7 +33,8 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
 builder.Services.AddBlazoredLocalStorage();
 
 builder.Services.AddRazorComponents()
-    .AddInteractiveServerComponents();
+    .AddInteractiveServerComponents()
+    .AddHubOptions(options => options.MaximumReceiveMessageSize = 1 * 1024 * 1024); // 1 MB
 builder.Services.AddMudServices();
 
 /* Custom Services */
@@ -82,6 +83,7 @@ app.UseFileUpload();
 
 app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode();
+
 app.MapHub<SkillsHub>(SkillsHub.HubUrl);
 app.UseResponseCompression();
 

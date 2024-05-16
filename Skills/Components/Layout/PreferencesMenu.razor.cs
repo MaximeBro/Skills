@@ -41,6 +41,6 @@ public partial class PreferencesMenu : FullComponentBase
         var language = _french ? "fr-FR" : "en-US";
         await Lang.SetLanguageAsync(language);
         await LocalStorage.SetItemAsync("PreferredLanguage", language);
-        StateHasChanged();
+        await InvokeAsync(StateHasChanged);
     }
 }
