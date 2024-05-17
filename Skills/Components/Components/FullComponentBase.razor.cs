@@ -1,44 +1,41 @@
 using System.Net.Security;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.SignalR.Client;
+using Skills.Components.Layout;
 using Skills.Services;
 
 namespace Skills.Components.Components;
 
 public partial class FullComponentBase : ComponentBase, IAsyncDisposable
 {
+    [CascadingParameter(Name = "MainLayout")] public MainLayout Layout { get; set; } = null!;
     [Inject] public NavigationManager NavManager { get; set; } = null!;
     [Inject] public ThemeManager ThemeManager { get; set; } = null!;
     [Inject] public LocalizationManager Lang { get; set; } = null!;
 
-    private HubConnection? hubConnection;
-    private Guid circuitId = Guid.NewGuid();
+    private HubConnection? _hubConnection;
+    private Guid _circuitId = Guid.NewGuid();
 
     protected override void OnAfterRender(bool firstRender)
     {
         if (firstRender)
         {
-            ThemeManager.OnPaletteChanged += Refresh;
-            Lang.OnLanguageChanged += async() => await InvokeAsync(StateHasChanged);
+            Lang.OnLanguageChanged += InvokeStateHasChangedAsync;
         }
     }
-
-    private void Refresh() => NavManager.Refresh(true);
+    
     protected async Task InitSignalRAsync(string component, Func<Task> method)
     {
-        hubConnection = new HubConnectionBuilder()
-            .WithUrl(NavManager.ToAbsoluteUri(SkillsHub.HubUrl), options =>
+        _hubConnection = new HubConnectionBuilder()
+            .WithUrl(NavManager.ToAbsoluteUri(SkillsHub.HubUrl), options => options.WebSocketConfiguration = sockets =>
             {
-                options.WebSocketConfiguration = sockets =>
-                {
-                    sockets.RemoteCertificateValidationCallback += new RemoteCertificateValidationCallback((sender, certificate, chain, policyErrors) => true);
-                };
+                sockets.RemoteCertificateValidationCallback += new RemoteCertificateValidationCallback((sender, certificate, chain, policyErrors) => true);
             })
             .Build();
         
-        hubConnection.On<string, Guid>(SkillsHub.HubMethod, (message, id) =>
+        _hubConnection.On<string, Guid>(SkillsHub.HubMethod, (message, id) =>
         {
-            if (id == circuitId) return;
+            if (id == _circuitId) return;
 
             if (component == message)
             {
@@ -50,20 +47,23 @@ public partial class FullComponentBase : ComponentBase, IAsyncDisposable
             }
         });
         
-        hubConnection.ServerTimeout = TimeSpan.FromSeconds(30);
-        hubConnection.HandshakeTimeout = TimeSpan.FromSeconds(30);
-        hubConnection.KeepAliveInterval = TimeSpan.FromSeconds(30);
+        _hubConnection.ServerTimeout = TimeSpan.FromSeconds(30);
+        _hubConnection.HandshakeTimeout = TimeSpan.FromSeconds(30);
+        _hubConnection.KeepAliveInterval = TimeSpan.FromSeconds(30);
 
-        await hubConnection.StartAsync();
+        await _hubConnection.StartAsync();
     }
 
-    protected async Task SendUpdateAsync(string action) => await hubConnection!.InvokeAsync(SkillsHub.HubMethod, action, circuitId);
+    protected async Task SendUpdateAsync(string action) => await _hubConnection!.InvokeAsync(SkillsHub.HubMethod, action, _circuitId);
+
+    public async Task InvokeStateHasChangedAsync() => await InvokeAsync(StateHasChanged);
 
     public async ValueTask DisposeAsync()
     {
-        if (hubConnection != null)
+        if (_hubConnection != null)
         {
-            await hubConnection.DisposeAsync();
+            Lang.OnLanguageChanged -= InvokeStateHasChangedAsync;
+            await _hubConnection.DisposeAsync();
         }
     }
 }

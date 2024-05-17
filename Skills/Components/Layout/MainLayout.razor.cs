@@ -13,22 +13,17 @@ public partial class MainLayout
     [Inject] public LocalizationManager Lang { get; set; } = null!;
     [Inject] public NavigationManager NavManager { get; set; } = null!; 
     
-    private MudTheme _theme = new();
-    private bool _isDarkMode;
-    
-    protected override void OnInitialized()
-    {
-        _theme.Palette = ThemeManager.GetLightPalette();
-        _theme.PaletteDark = ThemeManager.GetDarkPalette();
-        
-        ThemeManager.OnPaletteChanged += RefreshPalettes;
-    }
+    private readonly MudTheme _theme = new();
+    public bool IsDarkMode { get; private set; }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
         {
-            _isDarkMode = ThemeManager.IsDarkTheme = await LocalStorage.GetItemAsync<bool>("IsDarkTheme");
+            _theme.Palette = ThemeManager.GetLightPalette();
+            _theme.PaletteDark = ThemeManager.GetDarkPalette();
+            
+            IsDarkMode = await LocalStorage.GetItemAsync<bool>("IsDarkTheme");
             var language = await LocalStorage.GetItemAsStringAsync("PreferredLanguage");
             if (!string.IsNullOrWhiteSpace(language))
             {
@@ -39,10 +34,11 @@ public partial class MainLayout
         }
     }
 
-    private void RefreshPalettes()
+    public async Task RefreshPalettesAsync(bool isDarkMode)
     {
         _theme.Palette = ThemeManager.GetLightPalette();
         _theme.PaletteDark = ThemeManager.GetDarkPalette();
-        _isDarkMode = ThemeManager.IsDarkTheme;
+        IsDarkMode = isDarkMode;
+        await InvokeAsync(StateHasChanged);
     }
 }

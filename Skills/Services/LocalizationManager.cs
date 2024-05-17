@@ -8,7 +8,7 @@ public class LocalizationManager
     public string[] SupportedLanguages { get; set; } = { "fr-FR", "en-US" };
     public string SelectedLanguage { get; set; }
     private Dictionary<string, string> _translations = new();
-    public delegate void LanguageChanged();
+    public delegate Task LanguageChanged();
     public event LanguageChanged? OnLanguageChanged;
 
     public LocalizationManager()

@@ -10,7 +10,6 @@ public partial class NavBar : FullComponentBase
 {
     [CascadingParameter] public Task<AuthenticationState> AuthenticationState { get; set; } = null!;
     [Parameter] public bool IsDarkTheme { get; set; }
-    [Inject] public IWebHostEnvironment Environment { get; set; } = null!;
     [Inject] public ADAuthenticationService AuthenticationService { get; set; } = null!;
     
     private bool _docked = false;
@@ -24,11 +23,24 @@ public partial class NavBar : FullComponentBase
             var authState = await AuthenticationState;
             _identity = authState.User.Identity;
         }
-        
-        ThemeManager.OnPaletteChanged += async() => await InvokeAsync(StateHasChanged);
     }
 
-    public void Toggle()
+    protected override void OnAfterRender(bool firstRender)
+    {
+        if (firstRender)
+        {
+            IsDarkTheme = Layout.IsDarkMode;
+            StateHasChanged();
+        }
+    }
+
+    public async Task RefreshThemeAsync(bool isDarkMode)
+    {
+        IsDarkTheme = isDarkMode;
+        await InvokeStateHasChangedAsync();
+    }
+    
+    private void Toggle()
     {
         _docked = !_docked;
         StateHasChanged();

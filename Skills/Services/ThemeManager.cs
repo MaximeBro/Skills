@@ -1,4 +1,3 @@
-using Blazored.LocalStorage;
 using MudBlazor;
 using MudBlazor.Utilities;
 using Color = MudBlazor.Color;
@@ -8,25 +7,14 @@ namespace Skills.Services;
 public class ThemeManager(IConfiguration configuration)
 {
     public readonly string DefaultColor = "#fff";
-    private string SelectedTheme => IsDarkTheme ? "DarkTheme" : "LightTheme";
-    public bool IsDarkTheme { get; set; }
-
-    public delegate void PaletteChanged();
-    public event PaletteChanged? OnPaletteChanged;
-
-    public void SetPalette(bool isDarkTheme)
-    {
-        IsDarkTheme = isDarkTheme;
-        OnPaletteChanged?.Invoke();
-    }
     
     /// <summary>
     /// Tries to get the specified files in the config and copy them to the wwwroot app's folder. 
     /// </summary>
     /// <returns>A completed task.</returns>
-    public async Task InitAsync()
+    public Task InitAsync()
     {
-        var files = new string[]
+        var files = new[]
         {
             configuration["favicon"] ?? "YourBrandIcon.ico",
             configuration["drawer-icon"] ?? "YourBrandIcon.ico",
@@ -44,6 +32,8 @@ public class ThemeManager(IConfiguration configuration)
                 File.Copy(filePath, resourcePath);
             }
         }
+
+        return Task.CompletedTask;
     }
 
     /// <summary>
@@ -64,7 +54,7 @@ public class ThemeManager(IConfiguration configuration)
     /// </summary>
     /// <param name="color">A <see cref="Color"/>.</param>
     /// /// <param name="isDarkTheme">If the color is related to the dark or the light theme (optional)</param>
-    /// <returns>A <see cref="MudColor"/> object that represents the value of the specific color.</returns>
+    /// <returns>An <see cref="MudColor"/> object that represents the value of the specific color.</returns>
     public MudColor GetMudColor(Color color, bool isDarkTheme = false) => new(GetColor(color, isDarkTheme));
 
     /// <summary>

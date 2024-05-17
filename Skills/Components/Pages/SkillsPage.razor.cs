@@ -32,7 +32,7 @@ public partial class SkillsPage : FullComponentBase
         return false;
     };
 
-    protected override async Task OnInitializedAsync()
+    protected override void OnInitialized()
     {
         _breadcrumbs.Add(new BreadcrumbItem("Accueil", "/"));
         _breadcrumbs.Add(new BreadcrumbItem("Compétences", null, true));

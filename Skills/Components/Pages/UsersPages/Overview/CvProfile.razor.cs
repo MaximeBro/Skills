@@ -4,6 +4,7 @@ using Microsoft.JSInterop;
 using MudBlazor;
 using Skills.Components.Components;
 using Skills.Components.Dialogs;
+using Skills.Components.Layout;
 using Skills.Databases;
 using Skills.Extensions;
 using Skills.Models;
@@ -41,13 +42,13 @@ public partial class CvProfile : FullComponentBase
         await RefreshDataAsync();
     }
 
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        if (firstRender)
-        {
-            // await InitSignalRAsync(nameof(CvProfile), async() => await RefreshDataAsync());
-        }
-    }
+    // protected override async Task OnAfterRenderAsync(bool firstRender)
+    // {
+    //     if (firstRender)
+    //     {
+    //         await InitSignalRAsync(nameof(CvProfile), async() => await RefreshDataAsync());
+    //     }
+    // }
 
     private async Task CreateCvAsync()
     {

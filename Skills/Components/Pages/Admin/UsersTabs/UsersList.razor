@@ -8,7 +8,7 @@
                 <MudText Class="open-sans-600" Style="font-weight: bold!important">Actions</MudText>
                 <MudTooltip Class="ml-2" Placement="Placement.Bottom" Text="Purge des utilisateurs" Arrow>
                     <MudIconButton Class="ml-4 mr-n1 hover-red" Style="border-radius: 6px!important; padding: 4px!important;" Icon="@IconsF.Delete" 
-                                   Color="@(ThemeManager.IsDarkTheme ? Color.Default :Color.Dark)" OnClick="@(() => PurgeUsersAsync())"/>
+                                   Color="@(Layout.IsDarkMode ? Color.Default :Color.Dark)" OnClick="@(() => PurgeUsersAsync())"/>
                 </MudTooltip>
                 <MudTooltip Class="ml-2" Placement="Placement.Top" Text="Synchroniser avec l'AD local" Arrow>
                     <MudIconButton Class="ml-4" Style="border-radius: 6px!important; padding: 4px!important;" Icon="@IconsF.CloudSync" Color="Color.Tertiary" OnClick="@(async () => await ResyncUsersFromLocalADAsync())"/>

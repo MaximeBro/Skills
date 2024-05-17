@@ -9,7 +9,7 @@
                     <ToolBarContent>
                         <MudText Class="open-sans-600" Style="font-weight: bold!important">Actions</MudText>
                         <MudTooltip Class="ml-2" Placement="Placement.Bottom" Text="Purge des compétences" Arrow>
-                            <MudIconButton Class="ml-4 hover-red" Style="border-radius: 6px!important; padding: 4px!important;" Icon="@IconsF.Delete" Color="@(ThemeManager.IsDarkTheme ? Color.Default : Color.Dark)" OnClick="@(() => PurgeSkillsAsync())"/>
+                            <MudIconButton Class="ml-4 hover-red" Style="border-radius: 6px!important; padding: 4px!important;" Icon="@IconsF.Delete" Color="@(Layout.IsDarkMode ? Color.Default : Color.Dark)" OnClick="@(() => PurgeSkillsAsync())"/>
                         </MudTooltip>
                         <MudTooltip Class="ml-2" Placement="Placement.Top" Text="Importer des compétences" Arrow>
                             <MudIconButton Class="ml-4" Style="border-radius: 6px!important; padding: 4px!important;" Icon="@IconsFF.FileExcel" Color="Color.Tertiary" OnClick="@(() => ImportSkillsAsync())"/>

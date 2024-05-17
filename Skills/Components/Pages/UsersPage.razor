@@ -41,8 +41,8 @@
                             <MudStack Row Justify="Justify.SpaceBetween" AlignItems="AlignItems.Center" Spacing="0">
                                 <MudLink Class="flex-grow-1" Href="@($"/overview/{user.Username}/")" Underline="Underline.None">
                                     <MudStack Class="flex-shrink-0" Row="false" AlignItems="AlignItems.Center" Justify="Justify.Center" Spacing="0">
-                                        <MudText Class="@(ThemeManager.IsDarkTheme ? "text-white" : string.Empty)" Align="Align.Center">@user.Name</MudText>
-                                        <MudText Class="@(ThemeManager.IsDarkTheme ? "text-white" : string.Empty)" Align="Align.Center">@user.Email</MudText>
+                                        <MudText Class="@(Layout.IsDarkMode ? "text-white" : string.Empty)" Align="Align.Center">@user.Name</MudText>
+                                        <MudText Class="@(Layout.IsDarkMode ? "text-white" : string.Empty)" Align="Align.Center">@user.Email</MudText>
                                     </MudStack>
                                 </MudLink>
                                 @if (user.IsDisabled)

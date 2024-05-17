@@ -9,7 +9,7 @@
         <MudDivider Class="my-2" Style="border-color: grey!important;" DividerType="DividerType.FullWidth"/>
         <MudStack Row="false" Class="px-4" Justify="Justify.Center" Spacing="0">
             <div>
-                <MudCheckBox T="bool" Value="_isDarkMode" ValueChanged="@(async(value) => await SwitchThemeAsync(value))" Class="text-white" Label="@($"{(_isDarkMode ? "Thème clair" : "Thème sombre")}")" 
+                <MudCheckBox T="bool" Value="@IsDarkTheme" ValueChanged="@(async(value) => await SwitchThemeAsync(value))" Class="text-white" Label="@($"{(IsDarkTheme ? "Thème clair" : "Thème sombre")}")" 
                              Color="Color.Inherit" UnCheckedColor="Color.Inherit" CheckedIcon="@IconsR.LightMode" UncheckedIcon="@IconsR.DarkMode"/>
             </div>
             <div>

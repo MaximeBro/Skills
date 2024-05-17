@@ -72,13 +72,13 @@ public partial class CvEditorPage : FullComponentBase, IAsyncDisposable
         await db.DisposeAsync();
     }
 
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        if (firstRender)
-        {
-            // await InitSignalRAsync(nameof(CvProfile), async() => await NavigateToProfileAsync());
-        }     
-    }
+    // protected override async Task OnAfterRenderAsync(bool firstRender)
+    // {
+    //     if (firstRender)
+    //     {
+    //         await InitSignalRAsync(nameof(CvProfile), async() => await NavigateToProfileAsync());
+    //     }     
+    // }
 
     private async Task SaveDataAsync()
     {
