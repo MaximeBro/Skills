@@ -60,21 +60,24 @@
     border: 1px solid #808080!important;
 }
 
-/* Drawer */
-.link-bold, .link-bold * {
-    font-weight: 600!important;
-    font-size: 15px;
-}
-
-.link-category:hover button .mud-nav-link-text {
-    text-decoration: underline!important;
-    text-decoration-color: inherit!important;
-}
-/* Drawer */
+    /* Drawer */
+    .link-bold, .link-bold * {
+        font-weight: 600!important;
+        font-size: 15px;
+    }
+    
+    .link-category:hover button .mud-nav-link-text {
+        text-decoration: underline!important;
+        text-decoration-color: inherit!important;
+    }
+    /* Drawer */
 /* Appbar */
 
 /* Shared */
 .z-9999 { z-index: 9999!important; }
+
+.mud-tab { color: #fff!important; }
+.mud-tab-slider { background: #fff!important; }
 /* Shared */
 
 

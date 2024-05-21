@@ -3,9 +3,13 @@
 
 <AuthorizedComponent Roles="Admin">
     <Content>
-        <MudTabs Color="Color.Primary" Centered ActivePanelIndex="0">
-            <UsersList @ref="_users" Manager="@this" />
-            <UsersGroups Manager="@this" />
+        <style>
+            .blue-tabs-header { background-color: @ThemeManager.GetColor(Color.Primary)!important; }
+        </style>
+        
+        <MudTabs Centered Color="@(Layout.IsDarkMode ? Color.Transparent : Color.Primary)" TabHeaderClass="@(Layout.IsDarkMode ? "blue-tabs-header text-white" : string.Empty)" ActivePanelIndex="0">
+            <UsersList @ref="_users" Manager="@this"/>
+            <UsersGroups Manager="@this"/>
         </MudTabs>
     </Content>
 </AuthorizedComponent>

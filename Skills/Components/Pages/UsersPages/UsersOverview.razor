@@ -5,9 +5,13 @@
 
 <AuthorizedComponent>
     <Content>
-        <MudTabs Centered Color="Color.Primary" ActivePanelIndex="@(TabIndex ?? 0)">
-            <SkillsProfile User="@_user" />
-            <CvProfile User="@_user" />
+        <style>
+            .blue-tabs-header { background-color: @ThemeManager.GetColor(Color.Primary)!important; }
+        </style>
+        
+        <MudTabs Centered Color="@(Layout.IsDarkMode ? Color.Transparent : Color.Primary)" TabHeaderClass="@(Layout.IsDarkMode ? "blue-tabs-header text-white" : string.Empty)" ActivePanelIndex="@(TabIndex ?? 0)">
+            <SkillsProfile User="@_user"/>
+            <CvProfile User="@_user"/>
         </MudTabs>
     </Content>
 </AuthorizedComponent>
