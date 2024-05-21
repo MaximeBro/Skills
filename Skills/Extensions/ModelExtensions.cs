@@ -43,6 +43,14 @@ public static class ModelExtensions
     }
     
     /// <summary>
+    /// Checks if the given date is older than the current date by the given interval of days.
+    /// </summary>
+    /// <param name="this">The datetime</param>
+    /// <param name="days">The interval of days</param>
+    /// <returns>True if it is older, false otherwise.</returns>
+    public static bool IsOlderThan(this DateTime @this, int days) => (DateTime.Now - @this).TotalDays >= days;
+    
+    /// <summary>
     /// Creates an "abstract" version of this <see cref="SoftTypeLevel"/>.
     /// </summary>
     /// <param name="this">Any <see cref="SoftTypeLevel"/>.</param>

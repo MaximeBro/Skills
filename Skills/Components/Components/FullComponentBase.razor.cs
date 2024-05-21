@@ -58,7 +58,7 @@ public partial class FullComponentBase : ComponentBase, IAsyncDisposable
 
     public async Task InvokeStateHasChangedAsync() => await InvokeAsync(StateHasChanged);
 
-    public async ValueTask DisposeAsync()
+    public virtual async ValueTask DisposeAsync()
     {
         if (_hubConnection != null)
         {

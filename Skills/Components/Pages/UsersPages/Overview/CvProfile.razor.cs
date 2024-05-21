@@ -128,7 +128,7 @@ public partial class CvProfile : FullComponentBase
                      .Include(x => x.Certifications).Include(x => x.SafetyCertifications).ThenInclude(x => x.Certification)
                      .OrderByDescending(x => x.CreatedAt)
                      .ToList();
-
+        
         await db.DisposeAsync();
     }
 }

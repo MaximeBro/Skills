@@ -10,6 +10,7 @@ public class CvInfo
 
     public string Title { get; set; } = string.Empty;
     public DateTime CreatedAt { get; set; } = DateTime.Now;
+    public DateTime UpdatedAt { get; set; } = DateTime.Now;
     
     public DateTime BirthDate { get; set; }
     [MaxLength(length: 14)]

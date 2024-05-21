@@ -141,6 +141,7 @@ public partial class CvEditorPage : FullComponentBase, IAsyncDisposable
         db.CvSkills.RemoveRange(skillsToDell);
 
         _cv.BirthDate = _birthDate ?? _cv.BirthDate;
+        _cv.UpdatedAt = DateTime.Now;
         db.CVs.Update(_cv);
 
         await db.SaveChangesAsync();
@@ -162,13 +163,13 @@ public partial class CvEditorPage : FullComponentBase, IAsyncDisposable
         StateHasChanged();
     }
 
-    protected new async ValueTask DisposeAsync()
+    public override async ValueTask DisposeAsync()
     {
-        await base.DisposeAsync();
         if (_pendingEdits > 0 && _autoSave)
         {
             await Task.Run(async () => await SaveDataAsync());
         }
+        await base.DisposeAsync();
     }
 
     public Task NavigateToProfileAsync()
