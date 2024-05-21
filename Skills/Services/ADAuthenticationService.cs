@@ -34,8 +34,9 @@ public class ADAuthenticationService(IConfiguration configuration, IDbContextFac
 
         if (validated)
         {
+            var email = username == "anthony" ? "anthony.simon@sasp.fr" : $"{username}@sasp.fr";
             var db = await factory.CreateDbContextAsync();
-            var user = await db.Users.AsNoTracking().FirstOrDefaultAsync(x => x.Email == $"{username}@sasp.fr");
+            var user = await db.Users.AsNoTracking().FirstOrDefaultAsync(x => x.Email == email);
             if (user != null)
             {
                 var claims = new[]

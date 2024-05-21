@@ -37,9 +37,7 @@ public partial class LoginPage : FullComponentBase
         var guid = await AuthenticationService.TryLoginAsync(_model.Username, _model.Password);
         if (guid == Guid.Empty)
         {
-            Snackbar.Add(
-                "Votre compte est enregistré sur l'Active Directory local mais pas sur Skills ! Veuillez contacter un administrateur de la plateforme",
-                Severity.Error);
+            Snackbar.Add("Votre compte est enregistré sur l'Active Directory local mais pas sur Skills ! Veuillez contacter un administrateur de la plateforme", Severity.Error);
             return;
         }
         
