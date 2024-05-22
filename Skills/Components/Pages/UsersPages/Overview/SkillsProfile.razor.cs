@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.JSInterop;
 using MudBlazor;
+using Skills.Components.Components;
 using Skills.Components.Dialogs;
 using Skills.Databases;
 using Skills.Extensions;
@@ -12,7 +13,7 @@ using Skills.Services;
 
 namespace Skills.Components.Pages.UsersPages.Overview;
 
-public partial class SkillsProfile : ComponentBase
+public partial class SkillsProfile : FullComponentBase
 {
     [Inject] public IDbContextFactory<SkillsContext> Factory { get; set; } = null!;
     [Inject] public IDialogService DialogService { get; set; } = null!;
@@ -50,6 +51,14 @@ public partial class SkillsProfile : ComponentBase
         _breadcrumbs.Add(new BreadcrumbItem("Compétences", null, true));
         await RefreshDataAsync();
     }
+    
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await InitSignalRAsync(nameof(SkillsProfile), async() => await RefreshDataAsync());
+        }
+    }
 
     private async Task ManageSkillsAsync()
     {
@@ -71,6 +80,8 @@ public partial class SkillsProfile : ComponentBase
             await db.SaveChangesAsync();
             await db.DisposeAsync();
             await RefreshDataAsync();
+
+            await SendUpdateAsync(nameof(SkillsProfile));
         }
     }
 
@@ -92,6 +103,8 @@ public partial class SkillsProfile : ComponentBase
         
         await db.DisposeAsync();
         await RefreshDataAsync();
+        
+        await SendUpdateAsync(nameof(SkillsProfile));
     }
     
     private async Task RevokeSkillAsync(UserSkillModel model)
@@ -117,6 +130,9 @@ public partial class SkillsProfile : ComponentBase
             }
             
             await RefreshDataAsync();
+            StateHasChanged();
+            
+            await SendUpdateAsync(nameof(SkillsProfile));
         }
     }
 
@@ -178,6 +194,9 @@ public partial class SkillsProfile : ComponentBase
                 case ImportState.Successful:
                 {
                     await RefreshDataAsync();
+                    StateHasChanged();
+
+                    await SendUpdateAsync(nameof(SkillsProfile));
                     Snackbar.Add(response.Value, Severity.Success);
                     break;
                 }
@@ -231,6 +250,5 @@ public partial class SkillsProfile : ComponentBase
         _userSkills.AddRange(new List<AbstractSkillModel>(softSkillsModels));
 
         foreach (var userSkill in _userSkillsModels) userSkill.Skill = _userSkills.FirstOrDefault(x => x.Id == userSkill.SkillId);
-        StateHasChanged();
     }
 }
