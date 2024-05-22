@@ -4,13 +4,17 @@
 
 <MudGrid Justify="Justify.Center" Spacing="0">
     
+    <style>
+        .nav-menu-color * { color: @(Layout.IsDarkMode ? ThemeManager.GetColor(Color.Info) : ThemeManager.GetColor(Color.Primary))!important; }
+    </style>
+    
     @* Navigation menu on the left *@
     <MudHidden Invert Breakpoint="Breakpoint.MdAndUp">
         <MudItem xs="0" md="2" Class="d-flex" Style="border-right: 1px solid #c3c3c3; justify-content: center;">
             <MudStack Class="fixed px-4 pt-6 pb-16" Row="false" Style="height: 100%; flex: 1;">
                 <MudText Class="open-sans-600 bold" Align="Align.Center">Composition CV</MudText>
                 <MudDivider Class="mb-2" DividerType="DividerType.Middle"/>
-                <MudStack Row="false" Class="pa-2">
+                <MudStack Row="false" Class="pa-2 nav-menu-color">
                     <MudLink Class="open-sans-600 mb-2" Href="@($"overview/{Username}/cv-editor/{CvId}/#general")">
                         <MudStack Row Justify="Justify.FlexStart" AlignItems="AlignItems.Center">
                             <MudIcon Icon="fas fa-circle-info"/> Général

@@ -17,7 +17,7 @@
                 </MudItem>
             </MudHidden>
             <MudItem xs="6" md="3">
-                <MudStack Row AlignItems="AlignItems.Center" Justify="Justify.FlexEnd" Spacing="1">
+                <MudStack Class="pr-0 pr-md-3" Row AlignItems="AlignItems.Center" Justify="Justify.FlexEnd" Spacing="1">
                     <MudIconButton Class="text-white mr-2 icon-hoverable" Icon="@IconsR.Notifications"/>
                     <MudBadge BadgeClass="ml-n1 mb-n1" Overlap Dot Origin="Origin.TopRight" Color="@(_identity is { IsAuthenticated: true } ? Color.Info : Color.Transparent)">
                         <ProfileMenu/>

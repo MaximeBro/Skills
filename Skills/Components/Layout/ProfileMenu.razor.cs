@@ -25,6 +25,13 @@ public partial class ProfileMenu : FullComponentBase
         _email = _user.FindFirstValue(ClaimTypes.Email) ?? string.Empty;
     }
 
-    private void ToOverview() => NavManager.NavigateTo($"/overview/{_email.Replace("@sasp.fr", string.Empty)}", true);   
-    private void ToLogin() => NavManager.NavigateTo("/connexion", true);   
+    private void ToOverview() => NavManager.NavigateTo($"/overview/{_email.Replace("@sasp.fr", string.Empty)}", true);
+
+    private void ToLogin()
+    {
+        if (string.IsNullOrWhiteSpace(_name))
+        {
+            NavManager.NavigateTo("/connexion", true);
+        }
+    }
 }

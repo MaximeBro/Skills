@@ -1,6 +1,6 @@
+using System.Net;
 using Blazored.LocalStorage;
 using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.EntityFrameworkCore;
 using MudBlazor.Services;
 using Skills.Components;
@@ -37,6 +37,10 @@ builder.Services.AddRazorComponents()
     .AddHubOptions(options => options.MaximumReceiveMessageSize = 1 * 1024 * 1024); // 1 MB
 builder.Services.AddMudServices();
 
+builder.Services.AddSignalR();
+ServicePointManager.ServerCertificateValidationCallback += (sender, certificate, chain, sslPolicyErrors) => true;
+
+
 /* Custom Services */
 builder.Services.AddTransient<ADAuthenticationService>();
 builder.Services.AddSingleton<WordExportService>();
@@ -50,14 +54,6 @@ builder.Services.AddSingleton<SkillService>();
 /* Databases */
 builder.Services.AddDbContextFactory<SkillsContext>();
 /* Databases */
-
-/* SignalR */
-builder.Services.AddResponseCompression(opts =>
-{
-    opts.MimeTypes = ResponseCompressionDefaults.MimeTypes.Concat(
-        new[] { "application/octet-stream" });
-});
-/* SignalR */
 
 var app = builder.Build();
 
@@ -85,7 +81,6 @@ app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode();
 
 app.MapHub<SkillsHub>(SkillsHub.HubUrl);
-app.UseResponseCompression();
 
 var themeManager = app.Services.GetRequiredService<ThemeManager>();
 var localizationManager = app.Services.GetRequiredService<LocalizationManager>();

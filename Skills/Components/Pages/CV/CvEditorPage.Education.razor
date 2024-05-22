@@ -31,10 +31,10 @@
             }
         </MudStack>
         <MudStack Class="px-6 py-2" Row Justify="Justify.Center">
-            <MudPaper Class="rounded-lg" Elevation="2" Width="100%" Style="@($"border: 2px dashed {ThemeManager.GetColor(Color.Primary)};")">
+            <MudPaper Class="rounded-lg" Elevation="2" Width="100%" Style="@($"border: 2px dashed {ThemeManager.GetColor(Color.Info)};")">
                 <MudLink Underline="Underline.None" OnClick="@(async () => await CreateEducationAsync())">
                     <MudStack Class="py-2" Row Justify="Justify.Center">
-                        <MudIcon Icon="@IconsR.AddCircle" Color="Color.Primary" Size="Size.Small"/>
+                        <MudIcon Icon="@IconsR.AddCircle" Color="Color.Info" Size="Size.Small"/>
                     </MudStack>
                 </MudLink>
             </MudPaper>

@@ -29,7 +29,7 @@ public partial class FullComponentBase : ComponentBase, IAsyncDisposable
         _hubConnection = new HubConnectionBuilder()
             .WithUrl(NavManager.ToAbsoluteUri(SkillsHub.HubUrl), options => options.WebSocketConfiguration = sockets =>
             {
-                sockets.RemoteCertificateValidationCallback += new RemoteCertificateValidationCallback((sender, certificate, chain, policyErrors) => true);
+                sockets.RemoteCertificateValidationCallback += (sender, certificate, chain, policyErrors) => true;
             })
             .Build();
         
@@ -56,7 +56,7 @@ public partial class FullComponentBase : ComponentBase, IAsyncDisposable
 
     protected async Task SendUpdateAsync(string action) => await _hubConnection!.InvokeAsync(SkillsHub.HubMethod, action, _circuitId);
 
-    public async Task InvokeStateHasChangedAsync() => await InvokeAsync(StateHasChanged);
+    protected async Task InvokeStateHasChangedAsync() => await InvokeAsync(StateHasChanged);
 
     public virtual async ValueTask DisposeAsync()
     {

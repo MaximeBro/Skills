@@ -42,13 +42,13 @@ public partial class CvProfile : FullComponentBase
         await RefreshDataAsync();
     }
 
-    // protected override async Task OnAfterRenderAsync(bool firstRender)
-    // {
-    //     if (firstRender)
-    //     {
-    //         await InitSignalRAsync(nameof(CvProfile), async() => await RefreshDataAsync());
-    //     }
-    // }
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await InitSignalRAsync(nameof(CvProfile), async() => await RefreshDataAsync());
+        }
+    }
 
     private async Task CreateCvAsync()
     {
@@ -62,7 +62,7 @@ public partial class CvProfile : FullComponentBase
         await db.SaveChangesAsync();
         await db.DisposeAsync();
         
-        // await SendUpdateAsync(nameof(CvProfile));
+        await SendUpdateAsync(nameof(CvProfile));
         NavManager.NavigateTo($"/overview/{User.Username}/cv-editor/{cv.Id}");
     }
     
@@ -82,7 +82,7 @@ public partial class CvProfile : FullComponentBase
             }
             await db.DisposeAsync();
             await RefreshDataAsync();
-            // await SendUpdateAsync(nameof(CvProfile));
+            await SendUpdateAsync(nameof(CvProfile));
         }
     }
 

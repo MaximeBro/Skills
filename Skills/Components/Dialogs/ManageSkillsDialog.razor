@@ -1,3 +1,4 @@
+@inherits FullComponentBase
 @using Microsoft.EntityFrameworkCore
 
 <MudDialog>
@@ -24,11 +25,11 @@
             </MudStack>
             <MudTooltip Class="mt-6" Placement="Placement.Bottom" Arrow>
                 <TooltipContent>
-                    <MudText Class="open-sans-600"><strong>@_userSkills.Where(x => x.Value).Count()</strong> compétences attribuées</MudText>
+                    <MudText Class="open-sans-600"><strong>@_userSkills.Count(x => x.Value)</strong> compétences attribuées</MudText>
                     <MudText Class="open-sans-600"><strong>@_userSkills.Count()</strong> compétences disponibles</MudText>
                 </TooltipContent>
                 <ChildContent>
-                    <MudIcon Class="mt-4 mb-n6" Icon="@IconsF.Info" Color="Color.Dark" />
+                    <MudIcon Class="mt-4 mb-n6" Icon="@IconsF.Info" Color="@(Layout.IsDarkMode ? Color.Default : Color.Dark)" />
                 </ChildContent>
             </MudTooltip>
         </MudStack>

@@ -72,13 +72,13 @@ public partial class CvEditorPage : FullComponentBase, IAsyncDisposable
         await db.DisposeAsync();
     }
 
-    // protected override async Task OnAfterRenderAsync(bool firstRender)
-    // {
-    //     if (firstRender)
-    //     {
-    //         await InitSignalRAsync(nameof(CvProfile), async() => await NavigateToProfileAsync());
-    //     }     
-    // }
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await InitSignalRAsync(nameof(CvProfile), async() => await NavigateToProfileAsync());
+        }     
+    }
 
     private async Task SaveDataAsync()
     {
@@ -154,7 +154,7 @@ public partial class CvEditorPage : FullComponentBase, IAsyncDisposable
         });
 
         _pendingEdits = 0;
-        // await SendUpdateAsync(nameof(CvProfile));
+        await SendUpdateAsync(nameof(CvProfile));
     }
 
     public void EditDone()
@@ -172,7 +172,7 @@ public partial class CvEditorPage : FullComponentBase, IAsyncDisposable
         await base.DisposeAsync();
     }
 
-    public Task NavigateToProfileAsync()
+    private Task NavigateToProfileAsync()
     {
         Snackbar.Add("Un utilisateur vient de supprimer ce CV ! Redirection en cours...", Severity.Warning, Hardcoded.SnackbarOptions);
         NavManager.NavigateTo($"/overview/{Username}/1");

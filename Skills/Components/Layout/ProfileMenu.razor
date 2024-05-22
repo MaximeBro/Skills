@@ -1,6 +1,7 @@
 @inherits FullComponentBase
 
-<MudMenu @ref="_menu" Icon="@IconsR.AccountCircle" Class="@($"icon-hoverable white-all {Class}")" PopoverClass="dark-bg" ListClass="rounded-lg" AnchorOrigin="Origin.BottomRight" TransformOrigin="Origin.TopRight">
+<MudMenu @ref="_menu" Icon="@IconsR.AccountCircle" Class="@($"icon-hoverable white-all {Class}")" PopoverClass="dark-bg" ListClass="rounded-lg" ActivationEvent="MouseEvent.LeftClick"
+         AnchorOrigin="Origin.BottomRight" TransformOrigin="Origin.TopRight" IsOpenChanged="@((value) => ToLogin())">
     <MudStack Class="pt-1" Row="false" Spacing="0">
         @if (!string.IsNullOrWhiteSpace(_name))
         {
@@ -34,15 +35,6 @@
                 <MudStack Row AlignItems="AlignItems.Center" Justify="Justify.Center">
                     <MudIcon Class="text-white" Icon="@IconsR.Logout"/>
                     <MudText Class="text-white">Se déconnecter</MudText>
-                </MudStack>
-            </MudLink>
-        }
-        else
-        {
-            <MudLink Class="text-white open-sans-600" Underline="Underline.Hover" OnClick="@ToLogin" Style="text-decoration-color: #fff;">
-                <MudStack Class="px-4 py-1" Row AlignItems="AlignItems.Center">
-                    <MudIcon Class="text-white mr-1" Icon="@IconsR.Login"/>
-                    <MudText Class="text-white">Se connecter</MudText>
                 </MudStack>
             </MudLink>
         }
