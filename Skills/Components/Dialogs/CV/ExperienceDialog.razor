@@ -1,3 +1,4 @@
+@using Skills.Models.Overview
 @using Skills.Models.CV
 
 <MudDialog>
@@ -24,7 +25,7 @@
 
 @code {
     [CascadingParameter] public MudDialogInstance Dialog { get; set; } = null!;
-    [Parameter] public CvExperienceInfo? CvExperience { get; set; }
+    [Parameter] public UserExperienceInfo? CvExperience { get; set; }
 
     private string _category = string.Empty;
     private string _title = string.Empty;
@@ -46,7 +47,7 @@
 
     private void Submit()
     {
-        var experience = new CvExperienceInfo
+        var experience = new UserExperienceInfo
         {
             Category = _category,
             Title = _title,

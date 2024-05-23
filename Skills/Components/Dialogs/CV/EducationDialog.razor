@@ -1,3 +1,4 @@
+@using Skills.Models.Overview
 @using Skills.Models.CV
 
 <MudDialog>
@@ -39,7 +40,7 @@
 
 @code {
     [CascadingParameter] public MudDialogInstance Dialog { get; set; } = null!;
-    [Parameter] public CvEducationInfo? CvEducation { get; set; }
+    [Parameter] public UserEducationInfo? CvEducation { get; set; }
 
     private int _yearStart;
     private int _yearEnd;
@@ -67,15 +68,13 @@
 
     private void Submit()
     {
-        var education = new CvEducationInfo
-        {
-            YearStart = _yearStart,
-            YearEnd = _yearEnd,
-            Title = _title,
-            Supplier = _supplier,
-            Town = _town,
-            Description = _desc
-        };
+        var education = new UserEducationInfo();
+        education.YearStart = _yearStart;
+        education.YearEnd = _yearEnd;
+        education.Title = _title;
+        education.Supplier = _supplier;
+        education.Town = _town;
+        education.Description = _desc;
         if (CvEducation != null) education.Id = CvEducation.Id;
         Dialog.Close(education);
     }

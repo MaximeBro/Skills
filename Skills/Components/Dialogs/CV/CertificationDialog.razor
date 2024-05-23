@@ -1,3 +1,4 @@
+@using Skills.Models.Overview
 @using Skills.Models.CV
 <MudDialog>
     <DialogContent>
@@ -26,7 +27,7 @@
 
 @code {
     [CascadingParameter] public MudDialogInstance Dialog { get; set; } = null!;
-    [Parameter] public CvCertificationInfo? CvCertification { get; set; }
+    [Parameter] public UserCertificationInfo? CvCertification { get; set; }
 
     private int _year;
     private string _title = string.Empty;
@@ -50,7 +51,7 @@
 
     private void Submit()
     {
-        var certification = new CvCertificationInfo
+        var certification = new UserCertificationInfo()
         {
             Year = _year,
             Title = _title,

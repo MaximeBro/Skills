@@ -10,8 +10,14 @@
             </MudStack>
             <MudStack Row Justify="Justify.Center">
                 <MudTextField T="string" @bind-Value="_email" Label="Email" Placeholder="prénom.nom@sasp.fr" InputType="InputType.Email" Required />
+            </MudStack>
+            <MudStack Row Justify="Justify.Center">
+                <MudTextField T="string" @bind-Value="_job" Label="Poste occupé" Placeholder="Votre poste dans l'entreprise" />
+            </MudStack>
+            <MudStack Row Justify="Justify.Center">
                 <MudTextField T="string" @bind-Value="_phoneNumber" Label="Tél" Placeholder="06.32.00.00.00" InputType="InputType.Telephone" Adornment="Adornment.Start" AdornmentText="+33"
                               Mask="@(new PatternMask("00.00.00.00.00"))"/>
+                <MudDatePicker @bind-Date="_birthDate" DateFormat="dd-MM-yyyy" Label="Date de naissance" Color="Color.Primary" />
             </MudStack>
             <MudStack Row Justify="Justify.Center">
                 <MudSelect T="UserRole" @bind-Value="_role" Label="Rôle" Required AnchorOrigin="Origin.BottomLeft" TransformOrigin="Origin.TopLeft">
@@ -43,9 +49,11 @@
     [Parameter] public UserModel? User { get; set; }
 
     private string _name = string.Empty;
-    private string _email = string.Empty;
     private string _username = string.Empty;
+    private string _email = string.Empty;
+    private string _job = string.Empty;
     private string _phoneNumber = string.Empty;
+    private DateTime? _birthDate;
     private UserRole _role;
     private Guid? _selectedGroup;
     private bool _isDisabled;
@@ -67,12 +75,14 @@
         if (User != null)
         {
             _name = User.Name;
-            _email = User.Email;
             _username = User.Username;
+            _email = User.Email;
+            _job = User.Job;
             _role = User.Role;
             _isDisabled = User.IsDisabled;
             _selectedGroup = User.GroupId;
             _phoneNumber = User.PhoneNumber;
+            _birthDate = User.BirthDate;
         }
         
         var db = await Factory.CreateDbContextAsync();
@@ -86,12 +96,14 @@
         Dialog.Close(new UserModel
         {
             Name = _name,
-            Email = _email,
             Username = _username,
+            Email = _email,
+            Job = _job,
             Role = _role,
             GroupId = _selectedGroup,
             IsDisabled = _isDisabled,
-            PhoneNumber = _phoneNumber
+            PhoneNumber = _phoneNumber,
+            BirthDate = _birthDate
         });
     }
 }

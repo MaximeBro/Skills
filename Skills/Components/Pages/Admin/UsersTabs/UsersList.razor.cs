@@ -83,6 +83,8 @@ public partial class UsersList : FullComponentBase
                 old.GroupId = userModel.GroupId;
                 old.IsDisabled = userModel.IsDisabled;
                 old.PhoneNumber = userModel.PhoneNumber;
+                old.BirthDate = userModel.BirthDate;
+                old.Job = userModel.Job;
                 db.Users.Update(old);
                 await db.SaveChangesAsync();
             }

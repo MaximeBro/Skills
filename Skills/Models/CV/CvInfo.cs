@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using Microsoft.IdentityModel.Tokens;
+using Skills.Models.Overview;
 
 namespace Skills.Models.CV;
 
@@ -18,9 +19,9 @@ public class CvInfo
     public string Job { get; set; } = string.Empty;
     public int MinLevel { get; set; } = 2;
 
-    public List<CvSkillInfo> Skills { get; set; } = new();
-    public List<CvEducationInfo> Education { get; set; } = new();
-    public List<CvExperienceInfo> Experiences { get; set; } = new();
-    public List<CvCertificationInfo> Certifications { get; set; } = new();
-    public List<CvSafetyCertificationInfo> SafetyCertifications { get; set; } = new();
+    public List<CvSkillInfo> Skills { get; set; } = [];
+    public List<UserEducationInfo> Educations { get; set; } = [];
+    public List<UserExperienceInfo> Experiences { get; set; } = [];
+    public List<UserCertificationInfo> Certifications { get; set; } = [];
+    public List<CvSafetyCertificationInfo> SafetyCertifications { get; set; } = [];
 }

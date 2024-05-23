@@ -4,7 +4,6 @@ using Microsoft.JSInterop;
 using MudBlazor;
 using Skills.Components.Components;
 using Skills.Components.Dialogs;
-using Skills.Components.Layout;
 using Skills.Databases;
 using Skills.Extensions;
 using Skills.Models;
@@ -22,7 +21,7 @@ public partial class CvProfile : FullComponentBase
     [Inject] public ISnackbar Snackbar { get; set; } = null!;
     [Inject] public IJSRuntime JsRuntime { get; set; } = null!;
     [Parameter] public UserModel User { get; set; } = null!;
-    private List<BreadcrumbItem> _breadcrumbs = new();
+    private List<BreadcrumbItem> _breadcrumbs = [];
 
     private List<CvInfo> _cvs = new();
 
@@ -56,8 +55,12 @@ public partial class CvProfile : FullComponentBase
         var cv = new CvInfo
         {
             UserId = User.Id,
-            Title = $"CV{(db.CVs.AsNoTracking().Any(x => x.UserId == User.Id) ? $" ({db.CVs.AsNoTracking().Count(x => x.UserId == User.Id)})" : string.Empty)}"
+            Title = $"CV{(db.CVs.AsNoTracking().Any(x => x.UserId == User.Id) ? $" ({db.CVs.AsNoTracking().Count(x => x.UserId == User.Id)})" : string.Empty)}",
+            Job = User.Job,
+            PhoneNumber = User.PhoneNumber
         };
+        if (User.BirthDate.HasValue) cv.BirthDate = User.BirthDate.Value;
+        
         db.CVs.Add(cv);
         await db.SaveChangesAsync();
         await db.DisposeAsync();
@@ -124,7 +127,7 @@ public partial class CvProfile : FullComponentBase
         var db = await Factory.CreateDbContextAsync();
         _cvs = db.CVs.AsNoTracking()
                      .Include(x => x.Skills).ThenInclude(x => x.Skill)
-                     .Include(x => x.Education).Include(x => x.Experiences)
+                     .Include(x => x.Educations).Include(x => x.Experiences)
                      .Include(x => x.Certifications).Include(x => x.SafetyCertifications).ThenInclude(x => x.Certification)
                      .OrderByDescending(x => x.CreatedAt)
                      .ToList();

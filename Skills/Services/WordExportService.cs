@@ -108,7 +108,7 @@ public class WordExportService(IConfiguration configuration, IDbContextFactory<S
         var reference = document.Search<Paragraph>("{EDUCATION}");
         if (reference is null) return;
         
-        foreach (var education in cv.Education)
+        foreach (var education in cv.Educations)
         {
             var firstLine = DocXtensions.CreateTitle($"{education.Title} | ", DocXtensions.HeadingLevel.H2);
             firstLine.Append(DocXtensions.CreateRunAsTitle(education.Supplier, DocXtensions.HeadingLevel.Accent));

@@ -24,11 +24,20 @@
                               AdornmentIcon="@IconsF.Search" Placeholder="Rechercher" Class="flex-grow-0 mr-8 mt-0" Style="width: 400px;"/>
             </ToolBarContent>
             <Columns>
-                <PropertyColumn IsEditable Title="Nomination" Property="x => x.Name"/>
-                <PropertyColumn IsEditable Title="Email" Property="x => x.Email"/>
-                <PropertyColumn IsEditable Title="Téléphone" Property="x => x.PhoneNumber"/>
-                <PropertyColumn IsEditable Title="Identifiant" Property="x => x.Username"/>
-                <PropertyColumn IsEditable Title="Rôle" Property="x => x.Role.Humanize()">
+                <PropertyColumn Title="Nomination" Property="x => x.Name"/>
+                <PropertyColumn Title="Email" Property="x => x.Email"/>
+                <PropertyColumn Title="Téléphone" Property="x => x.PhoneNumber"/>
+                <TemplateColumn Title="Date de naissance">
+                    <CellTemplate Context="row">
+                        <MudStack Row Justify="Justify.Center" AlignItems="AlignItems.Center">
+                            <MudText Class="open-sans" Style="font-size: 14px;" Align="Align.Center">
+                                @(row.Item.BirthDate.HasValue ? row.Item.BirthDate.Value.ToString("dd-MM-yyyy") : string.Empty)
+                            </MudText>
+                        </MudStack>
+                    </CellTemplate>
+                </TemplateColumn>
+                <PropertyColumn Title="Identifiant" Property="x => x.Username"/>
+                <PropertyColumn Title="Rôle" Property="x => x.Role.Humanize()">
                     <EditTemplate Context="row">
                         <MudSelect T="UserRole" Class="my-2" @bind-Value="row.Item.Role" Required Label="Rôle">
                             <MudSelectItem Value="UserRole.User">@UserRole.User.Humanize()</MudSelectItem>
@@ -37,7 +46,8 @@
                         </MudSelect>
                     </EditTemplate>
                 </PropertyColumn>
-                <TemplateColumn Title="Groupe" IsEditable>
+                <PropertyColumn Title="Poste occupé" Property="x => x.Job"/>
+                <TemplateColumn Title="Groupe">
                     <CellTemplate Context="row">
                         <MudText Typo="Typo.body2">@(row.Item!.Group?.Name ?? string.Empty)</MudText>
                     </CellTemplate>
@@ -50,12 +60,12 @@
                         </MudSelect>
                     </EditTemplate>
                 </TemplateColumn>
-                <PropertyColumn IsEditable="false" Title="Désactivé" Property="x => x.IsDisabled" CellStyleFunc="@DisabledColor">
+                <PropertyColumn Title="Désactivé" Property="x => x.IsDisabled" CellStyleFunc="@DisabledColor">
                     <EditTemplate Context="row">
                         <MudCheckBox T="bool" @bind-Value="row.Item.IsDisabled" Label="Désactivé" />
                     </EditTemplate>
                 </PropertyColumn>
-                <TemplateColumn IsEditable="false" Sortable="false" Filterable="false">
+                <TemplateColumn Sortable="false" Filterable="false">
                     <CellTemplate Context="row">
                         <MudStack Row Justify="Justify.SpaceEvenly">
                             <MudTooltip Placement="Placement.Bottom" Text="Éditer" Arrow>

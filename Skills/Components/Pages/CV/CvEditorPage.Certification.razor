@@ -3,32 +3,23 @@
 <MudPaper id="certifications" Class="mt-6 pad-anchor" Elevation="2">
     <MudStack Class="px-4 py-3" Row="false" Spacing="2">
         <MudText Class="open-sans-600 bold">Certifications</MudText>
-        <MudStack Class="px-6 py-2" Row="false" Style="max-height: 350px; overflow-y: auto;">
-            @foreach (var certification in Editor.CvCertifications)
+        <MudStack Row="false" Spacing="0" Style="max-height: 400px; overflow-y: auto;">
+            <MudCheckBox T="bool" ValueChanged="@SelectAllChanged" Value="@_selectAll" Label="Tout sélectionner"/>
+            @foreach (var certification in Editor.CvCertifications.OrderByDescending(x => x.Value))
             {
-                <MudPaper Class="rounded-lg mb-1 d-flex px-4 py-1" Elevation="2" Width="100%" Style="flex-direction: row; align-items: center;">
+                <MudPaper Class="d-flex mb-1 px-4 py-1" Style="flex-direction: row; align-items: center;">
+                    <MudCheckBox T="bool" Value="@Editor.CvCertifications[certification.Key]" ValueChanged="@((value) => OnCheckChanged(value, certification.Key))"/>
                     <MudStack Row="false" Spacing="0">
                         <MudStack Row Justify="Justify.FlexStart" AlignItems="AlignItems.Center">
-                            <MudText Class="open-sans-600 bold" Color="Color.Primary">@certification.Title</MudText> <MudText Class="open-sans-600 bold" Color="Color.Dark">|</MudText> <MudText Class="open-sans-600 bold" Color="Color.Dark">@certification.Supplier</MudText>
+                            <MudText Class="open-sans-600 bold" Color="Color.Primary">@certification.Key.Title</MudText> <MudText Class="open-sans-600 bold" Color="Color.Dark">|</MudText> <MudText Class="open-sans-600 bold" Color="Color.Dark">@certification.Key.Supplier</MudText>
                         </MudStack>
                         <MudStack Row Justify="Justify.FlexStart" AlignItems="AlignItems.Center">
-                            <MudText Class="open-sans-600">@certification.Year</MudText> - <MudText Class="open-sans-600">@certification.Duration</MudText>
+                            <MudText Class="open-sans-600">@certification.Key.Year</MudText> - <MudText Class="open-sans-600">@certification.Key.Duration</MudText>
                         </MudStack>
                     </MudStack>
                     <MudSpacer/>
-                    <MudIconButton Class="mr-2" Icon="@IconsF.Edit" Size="Size.Small" Color="Color.Primary" OnClick="@(async() => await EditCertificationAsync(certification))"/>
-                    <MudIconButton Class="hover-red" Icon="@IconsF.Delete" Size="Size.Small" OnClick="@(() => RemoveCertification(certification))"/>
                 </MudPaper>
             }
-        </MudStack>
-        <MudStack Class="px-6 py-2" Row Justify="Justify.Center">
-            <MudPaper Class="rounded-lg" Elevation="2" Width="100%" Style="@($"border: 2px dashed {ThemeManager.GetColor(Color.Info)};")">
-                <MudLink Underline="Underline.None" OnClick="@(async () => await CreateCertificationAsync())">
-                    <MudStack Class="py-2" Row Justify="Justify.Center">
-                        <MudIcon Icon="@IconsR.AddCircle" Color="Color.Info" Size="Size.Small"/>
-                    </MudStack>
-                </MudLink>
-            </MudPaper>
         </MudStack>
     </MudStack>
 </MudPaper>

@@ -3,41 +3,32 @@
 <MudPaper id="education" Class="mt-6 pad-anchor" Elevation="2">
     <MudStack Class="px-4 py-3" Row="false" Spacing="2">
         <MudText Class="open-sans-600 bold">Diplômes</MudText>
-        <MudStack Class="px-6 py-2" Row="false" Style="max-height: 350px; overflow-y: auto;">
-            @foreach (var education in Editor.CvEducations.OrderByDescending(x => x.YearEnd))
+        <MudStack Row="false" Spacing="0" Style="max-height: 400px; overflow-y: auto;">
+            <MudCheckBox T="bool" ValueChanged="@SelectAllChanged" Value="@_selectAll" Label="Tout sélectionner"/>
+            @foreach (var education in Editor.CvEducations.OrderByDescending(x => x.Value)
+                          .ThenByDescending(x => x.Key.YearEnd))
             {
-                <MudPaper Class="rounded-lg mb-1 d-flex px-4 py-1" Elevation="2" Width="100%" Style="flex-direction: row; align-items: center;">
+                <MudPaper Class="d-flex mb-1 px-4 py-1" Style="flex-direction: row; align-items: center;">
+                    <MudCheckBox T="bool" Value="@Editor.CvEducations[education.Key]" ValueChanged="@((value) => OnCheckChanged(value, education.Key))"/>
                     <MudStack Row="false" Spacing="0">
                         <MudStack Row Justify="Justify.FlexStart" AlignItems="AlignItems.Center">
-                            <MudText Class="open-sans-600 bold" Color="Color.Primary" Align="Align.Left">@education.Title</MudText> <MudText Class="open-sans-600 bold" Color="Color.Dark" Align="Align.Left">|</MudText> <MudText Class="open-sans-600 bold" Align="Align.Left">@education.Supplier</MudText>
+                            <MudText Class="open-sans-600 bold" Color="Color.Primary" Align="Align.Left">@education.Key.Title</MudText> <MudText Class="open-sans-600 bold" Color="Color.Dark" Align="Align.Left">|</MudText> <MudText Class="open-sans-600 bold" Align="Align.Left">@education.Key.Supplier</MudText>
                         </MudStack>
                         <MudStack Row Justify="Justify.FlexStart" AlignItems="AlignItems.Center">
-                            <MudText Class="open-sans-600">@education.YearStart</MudText> - <MudText Class="open-sans-600">@education.YearEnd</MudText> | <MudText Class="open-sans-600">@education.Town</MudText>
+                            <MudText Class="open-sans-600">@education.Key.YearStart</MudText> - <MudText Class="open-sans-600">@education.Key.YearEnd</MudText> | <MudText Class="open-sans-600">@education.Key.Town</MudText>
                         </MudStack>
-                        @if (!string.IsNullOrWhiteSpace(education.Description))
+                        @if (!string.IsNullOrWhiteSpace(education.Key.Description))
                         {
-                            <MudStack Row="false" Spacing="0">
-                                @foreach (var line in education.Description.Split("\n"))
-                                {
-                                    <MudText Class="open-sans-600" Typo="Typo.subtitle2">@line</MudText>
-                                }
-                            </MudStack>
+                        <MudStack Row="false" Spacing="0">
+                            @foreach (var line in education.Key.Description.Split("\n"))
+                            {
+                            <MudText Class="open-sans-600" Typo="Typo.subtitle2">@line</MudText>
+                            }
+                        </MudStack>
                         }
                     </MudStack>
-                    <MudSpacer/>
-                    <MudIconButton Class="mr-2" Icon="@IconsF.Edit" Size="Size.Small" Color="Color.Primary" OnClick="@(async() => await EditEducationAsync(education))"/>
-                    <MudIconButton Class="hover-red" Icon="@IconsF.Delete" Size="Size.Small" OnClick="@(() => RemoveEducation(education))"/>
                 </MudPaper>
             }
-        </MudStack>
-        <MudStack Class="px-6 py-2" Row Justify="Justify.Center">
-            <MudPaper Class="rounded-lg" Elevation="2" Width="100%" Style="@($"border: 2px dashed {ThemeManager.GetColor(Color.Info)};")">
-                <MudLink Underline="Underline.None" OnClick="@(async () => await CreateEducationAsync())">
-                    <MudStack Class="py-2" Row Justify="Justify.Center">
-                        <MudIcon Icon="@IconsR.AddCircle" Color="Color.Info" Size="Size.Small"/>
-                    </MudStack>
-                </MudLink>
-            </MudPaper>
         </MudStack>
     </MudStack>
 </MudPaper>
