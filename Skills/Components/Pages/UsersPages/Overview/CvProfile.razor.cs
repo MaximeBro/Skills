@@ -39,6 +39,7 @@ public partial class CvProfile : FullComponentBase
         _breadcrumbs.Add(new BreadcrumbItem("CV", null, true));
 
         await RefreshDataAsync();
+        StateHasChanged();
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -68,6 +69,39 @@ public partial class CvProfile : FullComponentBase
         await SendUpdateAsync(nameof(CvProfile));
         NavManager.NavigateTo($"/overview/{User.Username}/cv-editor/{cv.Id}");
     }
+
+    private async Task DuplicateCvAsync(CvInfo cv)
+    {
+        var db = await Factory.CreateDbContextAsync();
+        var copy = new CvInfo
+        {
+            UserId = cv.UserId,
+            PhoneNumber = cv.PhoneNumber,
+            Title = $"{cv.Title} (Copie)",
+            BirthDate = cv.BirthDate,
+            Job = cv.Job,
+            MinLevel = cv.MinLevel
+        };
+
+        var educations = cv.Educations.Select(x => new CvEducationInfo { CvId = copy.Id, EducationId = x.Id }).ToList();
+        var certifications = cv.Certifications.Select(x => new CvCertificationInfo() { CvId = copy.Id, CertificationId = x.Id }).ToList();
+        var experiences = cv.Experiences.Select(x => new CvExperienceInfo() { CvId = copy.Id, ExperienceId = x.Id }).ToList();
+        var skills = cv.Skills.Select(x => new CvSkillInfo { CvId = copy.Id, SkillId = x.Id, IsSoftSkill = x.IsSoftSkill }).ToList();
+        var safety = cv.SafetyCertifications.Select(x => new CvSafetyCertificationInfo { CvId = copy.Id, CertId = x.CertId }).ToList();
+
+        db.CVs.Add(copy);
+        db.CvEducations.AddRange(educations);
+        db.CvCertifications.AddRange(certifications);
+        db.CvExperiences.AddRange(experiences);
+        db.CvSkills.AddRange(skills);
+        db.CvSafetyCertifications.AddRange(safety);
+        await db.SaveChangesAsync();
+        await db.DisposeAsync();
+
+        await SendUpdateAsync(nameof(CvProfile));
+        await RefreshDataAsync();
+        StateHasChanged();
+    }
     
     private async Task DeleteCvAsync(CvInfo cv)
     {
@@ -84,8 +118,9 @@ public partial class CvProfile : FullComponentBase
                 await db.SaveChangesAsync();
             }
             await db.DisposeAsync();
-            await RefreshDataAsync();
             await SendUpdateAsync(nameof(CvProfile));
+            await RefreshDataAsync();
+            StateHasChanged();
         }
     }
 
@@ -132,6 +167,7 @@ public partial class CvProfile : FullComponentBase
                      .OrderByDescending(x => x.CreatedAt)
                      .ToList();
         
+        OnSortChanged();
         await db.DisposeAsync();
     }
 }

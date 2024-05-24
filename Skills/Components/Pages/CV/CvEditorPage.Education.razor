@@ -8,7 +8,7 @@
             @foreach (var education in Editor.CvEducations.OrderByDescending(x => x.Value)
                           .ThenByDescending(x => x.Key.YearEnd))
             {
-                <MudPaper Class="d-flex mb-1 px-4 py-1" Style="flex-direction: row; align-items: center;">
+                <MudPaper Class="d-flex mb-3 px-4 py-1" Elevation="3" Style="flex-direction: row; align-items: center; background: transparent; backdrop-filter: brightness(0.90);">
                     <MudCheckBox T="bool" Value="@Editor.CvEducations[education.Key]" ValueChanged="@((value) => OnCheckChanged(value, education.Key))"/>
                     <MudStack Row="false" Spacing="0">
                         <MudStack Row Justify="Justify.FlexStart" AlignItems="AlignItems.Center">

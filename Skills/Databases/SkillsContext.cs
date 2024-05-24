@@ -103,20 +103,20 @@ public class SkillsContext : DbContext
         
         
         // CVs models constraints
-        modelBuilder.Entity<UserEducationInfo>()
-            .HasMany(e => e.CVs)
-            .WithMany(e => e.Educations)
-            .UsingEntity<CvEducationInfo>();
+        modelBuilder.Entity<CvInfo>()
+            .HasMany(e => e.Educations)
+            .WithMany(e => e.CVs)
+            .UsingEntity<CvEducationInfo>(e => e.HasKey(x => new { x.CvId, x.EducationId }));
         
-        modelBuilder.Entity<UserExperienceInfo>()
-            .HasMany(e => e.CVs)
-            .WithMany(e => e.Experiences)
-            .UsingEntity<CvExperienceInfo>();
+        modelBuilder.Entity<CvInfo>()
+            .HasMany(e => e.Certifications)
+            .WithMany(e => e.CVs)
+            .UsingEntity<CvCertificationInfo>(e => e.HasKey(x => new { x.CvId, x.CertificationId }));
         
-        modelBuilder.Entity<UserCertificationInfo>()
-            .HasMany(e => e.CVs)
-            .WithMany(e => e.Certifications)
-            .UsingEntity<CvCertificationInfo>();
+        modelBuilder.Entity<CvInfo>()
+            .HasMany(e => e.Experiences)
+            .WithMany(e => e.CVs)
+            .UsingEntity<CvExperienceInfo>(e => e.HasKey(x => new { x.CvId, x.ExperienceId }));
         
         modelBuilder.Entity<CvInfo>()
             .HasMany(e => e.Skills)

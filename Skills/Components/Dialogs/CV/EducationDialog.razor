@@ -1,15 +1,14 @@
 @using Skills.Models.Overview
-@using Skills.Models.CV
 
 <MudDialog>
     <DialogContent>
-        <MudIconButton Class="ml-n4" Icon="@IconsF.Close" Color="Color.Dark" OnClick="@(() => Dialog.Close())"/>
+        <CloseButton Dialog="@Dialog"/>
         <MudStack Class="px-4 py-2" Justify="Justify.SpaceEvenly" Row="false" Spacing="0">
             <MudStack Class="mb-2" Row>
-                <MudTextField T="string" @bind-Value="_title" Label="Diplôme" Style="width: 350px;"/>
+                <MudTextField T="string" @bind-Value="_title" Label="Diplôme" Style="width: 350px;" />
                 <MudTextField T="string" @bind-Value="_supplier" Label="Établissement" Style="width: 250px;"/>
             </MudStack>
-            <MudStack Class="mb-2" Row Justify="Justify.SpaceEvenly">
+            <MudStack Class="my-2" Row Justify="Justify.SpaceEvenly">
                 <MudSelect T="int" @bind-Value="_yearStart" Label="Début (Année)" AnchorOrigin="Origin.BottomLeft" TransformOrigin="Origin.TopLeft">
                     @for (int i = DateTime.Now.Year; i >= 1950; i--)
                     {
@@ -26,10 +25,10 @@
                 </MudSelect>
             </MudStack>
             <MudStack Class="mb-2" Row>
-                <MudTextField T="string" @bind-Value="_town" Label="Ville" />
+                <MudTextField T="string" @bind-Value="_town" Label="Ville"/>
             </MudStack>
             <MudStack Row>
-                <MudTextField T="string" @bind-Value="_desc" Label="Description" Lines="3" Clearable />
+                <MudTextField T="string" @bind-Value="_desc" Label="Description" Lines="3" Clearable/>
             </MudStack>
         </MudStack>
     </DialogContent>
@@ -40,7 +39,7 @@
 
 @code {
     [CascadingParameter] public MudDialogInstance Dialog { get; set; } = null!;
-    [Parameter] public UserEducationInfo? CvEducation { get; set; }
+    [Parameter] public UserEducationInfo? Education { get; set; }
 
     private int _yearStart;
     private int _yearEnd;
@@ -51,14 +50,14 @@
 
     protected override void OnInitialized()
     {
-        if (CvEducation != null)
+        if (Education != null)
         {
-            _yearStart = CvEducation.YearStart;
-            _yearEnd = CvEducation.YearEnd;
-            _title = CvEducation.Title;
-            _supplier = CvEducation.Supplier;
-            _town = CvEducation.Town;
-            _desc = CvEducation.Description;
+            _yearStart = Education.YearStart;
+            _yearEnd = Education.YearEnd;
+            _title = Education.Title;
+            _supplier = Education.Supplier;
+            _town = Education.Town;
+            _desc = Education.Description;
         }
         else
         {
@@ -68,14 +67,16 @@
 
     private void Submit()
     {
-        var education = new UserEducationInfo();
-        education.YearStart = _yearStart;
-        education.YearEnd = _yearEnd;
-        education.Title = _title;
-        education.Supplier = _supplier;
-        education.Town = _town;
-        education.Description = _desc;
-        if (CvEducation != null) education.Id = CvEducation.Id;
+        var education = new UserEducationInfo
+        {
+            YearStart = _yearStart,
+            YearEnd = _yearEnd,
+            Title = _title,
+            Supplier = _supplier,
+            Town = _town,
+            Description = _desc
+        };
+        if (Education != null) education.Id = Education.Id;
         Dialog.Close(education);
     }
 }

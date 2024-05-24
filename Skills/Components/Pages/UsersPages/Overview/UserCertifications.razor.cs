@@ -14,7 +14,7 @@ using Skills.Services;
 
 namespace Skills.Components.Pages.UsersPages.Overview;
 
-public partial class UserEducations : FullComponentBase
+public partial class UserCertifications : FullComponentBase
 {
     [CascadingParameter] public Task<AuthenticationState> AuthenticationState { get; set; } = null!;
     [Parameter] public UserModel User { get; set; } = null!;
@@ -24,13 +24,12 @@ public partial class UserEducations : FullComponentBase
     [Inject] public UserService UserService { get; set; } = null!;
     
     private List<BreadcrumbItem> _breadcrumbs = [];
-
-    private List<UserEducationInfo> _educations = [];
+    private List<UserCertificationInfo> _certifications = [];
     
     private bool _sortMostRecent = false;
     private string SortActionText => _sortMostRecent ? "Du plus récent au plus ancien" : "Du plus ancien au plus récent";
     private string SortActionIcon => _sortMostRecent ? "fas fa-arrow-up-9-1" : "fas fa-arrow-down-1-9";
-
+    
     protected override async Task OnInitializedAsync()
     {
         _breadcrumbs.Add(new BreadcrumbItem("Accueil", "/"));
@@ -46,24 +45,52 @@ public partial class UserEducations : FullComponentBase
     {
         if (firstRender)
         {
-            await InitSignalRAsync(nameof(UserEducations), async() => await RefreshDataAsync());
+            await InitSignalRAsync(nameof(UserCertifications), async() => await RefreshDataAsync());
         }
     }
 
-    private async Task CreateEducationAsync()
+    private async Task CreateCertificationAsync()
     {
         var authorized = await CheckPermissionsAsync();
         if (authorized)
         {
             var options = Hardcoded.DialogOptions;
             options.MaxWidth = MaxWidth.Medium;
-            var instance = await DialogService.ShowAsync<EducationDialog>(string.Empty, options);
+            var instance = await DialogService.ShowAsync<CertificationDialog>(string.Empty, options);
             var result = await instance.Result;
-            if (result is { Data: UserEducationInfo education })
+            if (result is { Data: UserCertificationInfo certification })
             {
-                education.UserId = User.Id;
+                certification.UserId = User.Id;
                 var db = await Factory.CreateDbContextAsync();
-                db.UserEducations.Add(education);
+                db.UserCertifications.Add(certification);
+                await db.SaveChangesAsync();
+                await db.DisposeAsync();
+
+                await SendUpdateAsync(nameof(UserCertifications));
+                await RefreshDataAsync();
+                StateHasChanged();
+            }
+        }
+    }
+
+    private async Task EditCertificationAsync(UserCertificationInfo certification)
+    {
+        var authorized = await CheckPermissionsAsync();
+        if (authorized)
+        {
+            var parameters = new DialogParameters<CertificationDialog> { { x=> x.Certification, certification} };
+            var options = Hardcoded.DialogOptions;
+            options.MaxWidth = MaxWidth.Medium;
+            var instance = await DialogService.ShowAsync<CertificationDialog>(string.Empty, parameters, options);
+            var result = await instance.Result;
+            if (result is { Data: UserCertificationInfo newCertification })
+            {
+                var db = await Factory.CreateDbContextAsync();
+                certification.Title = newCertification.Title;
+                certification.Supplier = newCertification.Supplier;
+                certification.Duration = newCertification.Duration;
+                certification.Year = newCertification.Year;
+                db.UserCertifications.Update(certification);
                 await db.SaveChangesAsync();
                 await db.DisposeAsync();
 
@@ -74,52 +101,22 @@ public partial class UserEducations : FullComponentBase
         }
     }
     
-    private async Task EditEducationAsync(UserEducationInfo education)
+    private async Task DeleteCertificationAsync(UserCertificationInfo certification)
     {
         var authorized = await CheckPermissionsAsync();
         if (authorized)
         {
-            var parameters = new DialogParameters<EducationDialog> { { x=> x.Education, education} };
-            var options = Hardcoded.DialogOptions;
-            options.MaxWidth = MaxWidth.Medium;
-            var instance = await DialogService.ShowAsync<EducationDialog>(string.Empty, parameters, options);
-            var result = await instance.Result;
-            if (result is { Data: UserEducationInfo newEducation })
-            {
-                var db = await Factory.CreateDbContextAsync();
-                education.YearStart = newEducation.YearStart;
-                education.YearEnd = newEducation.YearEnd;
-                education.Title = newEducation.Title;
-                education.Supplier = newEducation.Supplier;
-                education.Town = newEducation.Town;
-                education.Description = newEducation.Description;
-                db.UserEducations.Update(education);
-                await db.SaveChangesAsync();
-                await db.DisposeAsync();
-
-                await SendUpdateAsync(nameof(UserEducations));
-                await RefreshDataAsync();
-                StateHasChanged();
-            }
-        }
-    }
-
-    private async Task DeleteEducationAsync(UserEducationInfo education)
-    {
-        var authorized = await CheckPermissionsAsync();
-        if (authorized)
-        {
-            var parameters = new DialogParameters<ConfirmDialog> { { x => x.Text, $"Voulez-vous vraiment supprimer ce diplôme ? Cette action est irréversible !" } };
+            var parameters = new DialogParameters<ConfirmDialog> { { x => x.Text, $"Voulez-vous vraiment supprimer cette certification ? Cette action est irréversible !" } };
             var instance = await DialogService.ShowAsync<ConfirmDialog>(string.Empty, parameters, Hardcoded.DialogOptions);
             var result = await instance.Result;
             if (result.Data != null && (bool)result.Data)
             {
                 var db = await Factory.CreateDbContextAsync();
-                db.UserEducations.Remove(education);
+                db.UserCertifications.Remove(certification);
                 await db.SaveChangesAsync();
                 await db.DisposeAsync();
 
-                await SendUpdateAsync(nameof(UserEducations));
+                await SendUpdateAsync(nameof(UserCertifications));
                 await RefreshDataAsync();
                 StateHasChanged();
             }
@@ -137,19 +134,19 @@ public partial class UserEducations : FullComponentBase
         Snackbar.Add("Vous n'avez pas les permissions nécessaires pour effectuer des modifications sur le profil de cet utilisateur !", Severity.Error);
         return false;
     }
-    
+
     private void OnSortChanged()
     {
         _sortMostRecent = !_sortMostRecent;
-        if (_sortMostRecent) _educations = _educations.OrderByDescending(x => x.YearEnd).ToList();
-        else _educations = _educations.OrderBy(x => x.YearEnd).ToList();
+        if (_sortMostRecent) _certifications = _certifications.OrderByDescending(x => x.Year).ToList();
+        else _certifications = _certifications.OrderBy(x => x.Year).ToList();
         StateHasChanged();
     }
     
     private async Task RefreshDataAsync()
     {
         var db = await Factory.CreateDbContextAsync();
-        _educations = await db.UserEducations.AsNoTracking().Where(x => x.UserId == User.Id).ToListAsync();
+        _certifications = await db.UserCertifications.AsNoTracking().Where(x => x.UserId == User.Id).ToListAsync();
         OnSortChanged();
         await db.DisposeAsync();
     }

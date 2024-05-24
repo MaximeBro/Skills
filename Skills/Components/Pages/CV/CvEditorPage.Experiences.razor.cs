@@ -56,6 +56,7 @@ public partial class CvEditorPage_Experiences : FullComponentBase
         {
             Editor.CvExperiences.Add(experience, associatedExperiences.Contains(experience.Id));
         }
+        _selectAll = Editor.CvExperiences.All(x => x.Value);
         await db.DisposeAsync();
     }
 }

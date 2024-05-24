@@ -55,7 +55,8 @@ public partial class CvEditorPage_Certification : FullComponentBase
         {
             Editor.CvCertifications.Add(certification, certifications.Contains(certification.Id));
         }
-            
+        
+        _selectAll = Editor.CvCertifications.All(x => x.Value);
         await db.DisposeAsync();
     }
 }

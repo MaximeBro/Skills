@@ -7,11 +7,11 @@
             <MudCheckBox T="bool" ValueChanged="@SelectAllChanged" Value="@_selectAll" Label="Tout sélectionner"/>
             @foreach (var certification in Editor.CvCertifications.OrderByDescending(x => x.Value))
             {
-                <MudPaper Class="d-flex mb-1 px-4 py-1" Style="flex-direction: row; align-items: center;">
+                <MudPaper Class="d-flex mb-3 px-4 py-1" Elevation="3" Style="flex-direction: row; align-items: center; background: transparent; backdrop-filter: brightness(0.90);">
                     <MudCheckBox T="bool" Value="@Editor.CvCertifications[certification.Key]" ValueChanged="@((value) => OnCheckChanged(value, certification.Key))"/>
                     <MudStack Row="false" Spacing="0">
                         <MudStack Row Justify="Justify.FlexStart" AlignItems="AlignItems.Center">
-                            <MudText Class="open-sans-600 bold" Color="Color.Primary">@certification.Key.Title</MudText> <MudText Class="open-sans-600 bold" Color="Color.Dark">|</MudText> <MudText Class="open-sans-600 bold" Color="Color.Dark">@certification.Key.Supplier</MudText>
+                            <MudText Class="open-sans-600 bold" Color="Color.Primary">@certification.Key.Title</MudText> <MudText Class="open-sans-600 bold" Color="Color.Dark">|</MudText> <MudText Class="open-sans-600 bold" Color="@(Layout.IsDarkMode ? Color.Default : Color.Dark)">@certification.Key.Supplier</MudText>
                         </MudStack>
                         <MudStack Row Justify="Justify.FlexStart" AlignItems="AlignItems.Center">
                             <MudText Class="open-sans-600">@certification.Key.Year</MudText> - <MudText Class="open-sans-600">@certification.Key.Duration</MudText>

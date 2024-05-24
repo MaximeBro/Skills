@@ -1,8 +1,8 @@
 @using Skills.Models.Overview
-@using Skills.Models.CV
+
 <MudDialog>
     <DialogContent>
-        <MudIconButton Class="ml-n4" Icon="@IconsF.Close" Color="Color.Dark" OnClick="@(() => Dialog.Close())"/>
+        <CloseButton Dialog="@Dialog"/>
         <MudStack Class="px-4 py-2" Justify="Justify.SpaceEvenly" Row="false" Spacing="0">
             <MudStack Row>
                 <MudTextField T="string" @bind-Value="_title" Label="Nom de la formation" Style="width: 400px;"/>
@@ -27,7 +27,7 @@
 
 @code {
     [CascadingParameter] public MudDialogInstance Dialog { get; set; } = null!;
-    [Parameter] public UserCertificationInfo? CvCertification { get; set; }
+    [Parameter] public UserCertificationInfo? Certification { get; set; }
 
     private int _year;
     private string _title = string.Empty;
@@ -36,12 +36,12 @@
 
     protected override void OnInitialized()
     {
-        if (CvCertification != null)
+        if (Certification != null)
         {
-            _year = CvCertification.Year;
-            _title = CvCertification.Title;
-            _authority = CvCertification.Supplier;
-            _duration = CvCertification.Duration;
+            _year = Certification.Year;
+            _title = Certification.Title;
+            _authority = Certification.Supplier;
+            _duration = Certification.Duration;
         }
         else
         {
@@ -58,7 +58,7 @@
             Supplier = _authority,
             Duration = _duration
         };
-        if (CvCertification != null) certification.Id = CvCertification.Id;
+        if (Certification != null) certification.Id = Certification.Id;
         Dialog.Close(certification);
     }
 

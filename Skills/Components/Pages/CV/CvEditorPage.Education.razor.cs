@@ -54,7 +54,7 @@ public partial class CvEditorPage_Education : FullComponentBase
             Editor.CvEducations.Add(education, associatedEducations.Contains(education.Id));
         }
         
+        _selectAll = Editor.CvEducations.All(x => x.Value);
         await db.DisposeAsync();
-        StateHasChanged();
     }
 }
