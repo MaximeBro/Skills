@@ -1,0 +1,44 @@
+@inherits FullComponentBase
+
+<MudTabPanel Text="Info. générales">
+    <MudGrid Justify="Justify.Center" Spacing="0">
+        <MudItem Class="px-2 px-md-16" xs="12">
+            <MudStack Row>
+                <HideableBreadcrumb Items="@_breadcrumbs" Class="open-sans" />
+                <MudSpacer/>
+                <MudPaper Class="my-4 px-4 py-3" Elevation="2">
+                    <MudStack Row AlignItems="AlignItems.Center">
+                        <MudAvatar Color="Color.Dark">@User.Name[0].ToString().ToUpper()</MudAvatar>
+                        <MudStack Row="false" Spacing="0">
+                            <MudText Class="open-sans-600">@User.Name</MudText>
+                            <MudText Class="open-sans-600">@User.Email</MudText>
+                            <MudLink Href="@($"tel:{@User.PhoneNumber}")" Color="Color.Inherit">
+                                <MudText Class="open-sans-600" Typo="Typo.body2">@User.PhoneNumber</MudText>
+                            </MudLink>
+                        </MudStack>
+                    </MudStack>
+                </MudPaper>
+            </MudStack>
+        </MudItem>
+        
+        <MudItem Class="px-2 px-md-16" xs="12">
+            <MudContainer MaxWidth="MaxWidth.Medium">
+                <MudPaper Class="px-8 py-4" Elevation="2">
+                    <MudStack Row="false">
+                        <MudStack Row Justify="Justify.Center">
+                            <MudTextField T="string" @bind-Value="_job" Label="Poste occupé" Placeholder="Votre poste dans l'entreprise" Class="mr-2 flex-grow-0" Style="width: 400px;" Variant="Variant.Filled"/>
+                            <MudTextField T="string" @bind-Value="_phoneNumber" Label="Tél" Placeholder="06.32.00.00.00" Adornment="Adornment.Start" AdornmentText="+33"
+                                          Mask="@(new PatternMask("00.00.00.00.00"))" Class="ml-2 flex-grow-0" Style="width: 400px;" Variant="Variant.Filled"/>
+                        </MudStack>
+                        <MudStack Class="mt-2" Row Justify="Justify.Center">
+                            <MudDatePicker @bind-Date="_birthDate" DateFormat="dd-MM-yyyy" Label="Date de naissance" Color="Color.Primary" Class="flex-grow-0" Style="width: 400px;" Variant="Variant.Filled"/>
+                        </MudStack>
+                        <MudStack Class="mt-8" Row Justify="Justify.Center">
+                            <MudButton Color="Color.Primary" Variant="Variant.Filled" OnClick="@SaveAsync">Enregistrer</MudButton>
+                        </MudStack>
+                    </MudStack>
+                </MudPaper>
+            </MudContainer>
+        </MudItem>
+    </MudGrid>
+</MudTabPanel>

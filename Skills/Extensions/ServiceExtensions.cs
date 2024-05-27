@@ -1,6 +1,6 @@
-using System.Security.Claims;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Skills.Services;
 using WebApplication = Microsoft.AspNetCore.Builder.WebApplication;
 
@@ -42,4 +42,32 @@ public static class ServiceExtensions
             return Results.Stream(stream.BaseStream, MimeTypes.GetMimeTypeOf(Path.GetExtension(name)));
         });
     }
+    
+    // public static void UseWebSocketsHandler(this WebApplication @this, string path)
+    // {
+    //     @this.Use((next) => async (context) =>
+    //     {
+    //         if (context.Request.Path == path)
+    //         {
+    //             if (context.WebSockets.IsWebSocketRequest)
+    //             {
+    //                 var circuitId = context.Request.Query["CircuitId"].FirstOrDefault();
+    //                 if (!string.IsNullOrWhiteSpace(circuitId))
+    //                 {
+    //                     var webSocket = await context.WebSockets.AcceptWebSocketAsync();
+    //                     var webSocketService = context.RequestServices.GetRequiredService<WebSocketService>();
+    //                     await webSocketService.HandleAsync(webSocket, circuitId);
+    //                 }
+    //             }
+    //             else
+    //             {
+    //                 context.Response.StatusCode = StatusCodes.Status400BadRequest; // 400
+    //             }
+    //         }
+    //         else
+    //         {
+    //             await next(context);
+    //         }
+    //     });
+    // }
 }

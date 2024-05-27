@@ -1,0 +1,71 @@
+@inherits FullComponentBase
+
+<MudTabPanel Text="Diplômes">
+    <MudGrid Justify="Justify.Center" Spacing="0">
+        <MudItem Class="px-2 px-md-16" xs="12">
+            <MudStack Row>
+                <HideableBreadcrumb Items="@_breadcrumbs" Class="open-sans" />
+                <MudSpacer/>
+                <MudPaper Class="my-4 px-4 py-3" Elevation="2">
+                    <MudStack Row AlignItems="AlignItems.Center">
+                        <MudAvatar Color="Color.Dark">@User.Name[0].ToString().ToUpper()</MudAvatar>
+                        <MudStack Row="false" Spacing="0">
+                            <MudText Class="open-sans-600">@User.Name</MudText>
+                            <MudText Class="open-sans-600">@User.Email</MudText>
+                            <MudLink Href="@($"tel:{@User.PhoneNumber}")" Color="Color.Inherit">
+                                <MudText Class="open-sans-600" Typo="Typo.body2">@User.PhoneNumber</MudText>
+                            </MudLink>
+                        </MudStack>
+                    </MudStack>
+                </MudPaper>
+            </MudStack>
+        </MudItem>
+
+        <MudItem Class="px-2 px-md-16" xs="12">
+            <MudPaper Elevation="2">
+                <MudToolBar Dense>
+                    <MudTooltip Text="@SortActionText" Placement="Placement.Right" Arrow>
+                        <MudIconButton Icon="@SortActionIcon" Size="Size.Small" Style="border-radius: 6px!important; padding: 4px!important;" Color="@(Layout.IsDarkMode ? Color.Default : Color.Dark)" OnClick="@OnSortChanged"/>
+                    </MudTooltip>
+                    <MudTooltip Class="ml-2" Text="Ajouter un diplôme" Placement="Placement.Top" Arrow>
+                        <MudIconButton Class="ml-4" Icon="@IconsF.AddBox" Style="border-radius: 6px!important; padding: 4px!important;" Color="Color.Tertiary" OnClick="@CreateEducationAsync"/>
+                    </MudTooltip>
+                </MudToolBar>
+            </MudPaper>
+        </MudItem>
+        
+        @foreach (var education in _educations)
+        {
+            <MudItem Class="px-2 px-md-16 mt-3" xs="12" Style="max-height: 65vh; overflow-y: auto;">
+                <MudPaper Class="d-flex mb-1 px-8 py-3" Style="flex-direction: row; align-items: center;">
+                    <MudStack Class="flex-grow-1" Row="false" Spacing="0">
+                        <MudStack Row Justify="Justify.FlexStart" AlignItems="AlignItems.Center">
+                            <MudText Class="open-sans-600 bold" Color="Color.Primary" Align="Align.Left">@education.Title</MudText> <MudText Class="open-sans-600 bold" Color="Color.Dark" Align="Align.Left">|</MudText> <MudText Class="open-sans-600 bold" Align="Align.Left">@education.Supplier</MudText>
+                        </MudStack>
+                        <MudStack Row Justify="Justify.FlexStart" AlignItems="AlignItems.Center">
+                            <MudText Class="open-sans-600">@education.YearStart</MudText> - <MudText Class="open-sans-600">@education.YearEnd</MudText> | <MudText Class="open-sans-600">@education.Town</MudText>
+                        </MudStack>
+                        @if (!string.IsNullOrWhiteSpace(education.Description))
+                        {
+                            <MudStack Row="false" Spacing="0">
+                                @foreach (var line in education.Description.Split("\n"))
+                                {
+                                    <MudText Class="open-sans-600" Typo="Typo.subtitle2">@line</MudText>
+                                }
+                            </MudStack>
+                        }
+                    </MudStack>
+                    <MudStack Class="flex-grow-0" Row AlignItems="AlignItems.Center">
+                        <MudStack Row="false" AlignItems="AlignItems.Center">
+                            <MudIconButton Icon="@IconsF.Edit" Color="Color.Primary" OnClick="@(async () => await EditEducationAsync(education))"/>
+                        </MudStack>
+                        <MudStack Row="false" AlignItems="AlignItems.Center">
+                            <MudIconButton Class="hover-red" Icon="@IconsF.Delete" Color="Color.Default" OnClick="@(async () => await DeleteEducationAsync(education))"/>
+                        </MudStack>
+                    </MudStack>
+                </MudPaper>
+            </MudItem>
+        }
+    </MudGrid>
+</MudTabPanel>
+

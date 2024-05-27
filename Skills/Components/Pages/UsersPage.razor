@@ -19,11 +19,11 @@
                 </MudTooltip>
                 @if (_tableView)
                 {
-                <MudHidden Invert Breakpoint="Breakpoint.SmAndUp">
-                    <MudTooltip Placement="Placement.Right" Text="Vous pouvez faire un double clic sur une ligne pour ouvrir le profil d'un utilisateur !" Arrow>
-                        <MudIcon Class="ml-3 mt-1" Icon="@IconsF.Info" Color="Color.Info"/>
-                    </MudTooltip>
-                </MudHidden>
+                    <MudHidden Invert Breakpoint="Breakpoint.SmAndUp">
+                        <MudTooltip Placement="Placement.Right" Text="Vous pouvez faire un double clic sur une ligne pour ouvrir le profil d'un utilisateur !" Arrow>
+                            <MudIcon Class="ml-3 mt-1" Icon="@IconsF.Info" Color="Color.Info"/>
+                        </MudTooltip>
+                    </MudHidden>
                 }
                 <MudSpacer/>
                 <div>
@@ -33,54 +33,54 @@
             </MudToolBar>
             @if (!_tableView)
             {
-            <MudGrid Class="pb-4" Justify="Justify.FlexStart">
-                @foreach (var user in _filteredUsers.Where(QuickFilter))
-                {
-                    <MudItem xs="12" sm="6" md="4" lg="3" xl="2">
-                        <MudPaper Class="py-4 px-6" Elevation="5">
-                            <MudStack Row Justify="Justify.SpaceBetween" AlignItems="AlignItems.Center" Spacing="0">
-                                <MudLink Class="flex-grow-1" Href="@($"/overview/{user.Username}/")" Underline="Underline.None">
-                                    <MudStack Class="flex-shrink-0" Row="false" AlignItems="AlignItems.Center" Justify="Justify.Center" Spacing="0">
-                                        <MudText Class="@(Layout.IsDarkMode ? "text-white" : string.Empty)" Align="Align.Center">@user.Name</MudText>
-                                        <MudText Class="@(Layout.IsDarkMode ? "text-white" : string.Empty)" Align="Align.Center">@user.Email</MudText>
-                                    </MudStack>
-                                </MudLink>
-                                @if (user.IsDisabled)
-                                {
-                                <div class="mr-2 mb-n2">
-                                    <MudTooltip Placement="Placement.Bottom" Text="Ce compte est désactivé !" Arrow>
-                                        <MudIcon Icon="@IconsF.Warning" Size="Size.Small" Color="Color.Warning"/>
-                                    </MudTooltip>
-                                </div>
-                                }
-                            </MudStack>
-                        </MudPaper>
-                    </MudItem>
-                }
-            </MudGrid>
+                <MudGrid Class="pb-4" Justify="Justify.FlexStart">
+                    @foreach (var user in _filteredUsers.Where(QuickFilter))
+                    {
+                        <MudItem xs="12" sm="6" md="4" lg="3" xl="2">
+                            <MudPaper Class="py-4 px-6" Elevation="5">
+                                <MudStack Row Justify="Justify.SpaceBetween" AlignItems="AlignItems.Center" Spacing="0">
+                                    <MudLink Class="flex-grow-1" Href="@($"/overview/{user.Username}/")" Underline="Underline.None">
+                                        <MudStack Class="flex-shrink-0" Row="false" AlignItems="AlignItems.Center" Justify="Justify.Center" Spacing="0">
+                                            <MudText Class="@(Layout.IsDarkMode ? "text-white" : string.Empty)" Align="Align.Center">@user.Name</MudText>
+                                            <MudText Class="@(Layout.IsDarkMode ? "text-white" : string.Empty)" Align="Align.Center">@user.Email</MudText>
+                                        </MudStack>
+                                    </MudLink>
+                                    @if (user.IsDisabled)
+                                    {
+                                    <div class="mr-2 mb-n2">
+                                        <MudTooltip Placement="Placement.Bottom" Text="Ce compte est désactivé !" Arrow>
+                                            <MudIcon Icon="@IconsF.Warning" Size="Size.Small" Color="Color.Warning"/>
+                                        </MudTooltip>
+                                    </div>
+                                    }
+                                </MudStack>
+                            </MudPaper>
+                        </MudItem>
+                    }
+                </MudGrid>
             }
             else
             {
-            <div class="pb-6">
-                <MudDataGrid T="UserModel" Items="_filteredUsers" Bordered Hover Outlined Filterable Striped SortMode="SortMode.Multiple" Dense FixedHeader
-                             Culture="@(new CultureInfo("fr-FR"))" Height="70vh" Virtualize OverscanCount="25" QuickFilter="@QuickFilter"
-                             RowClick="@OnRowClicked">
-                    <Columns>
-                        <PropertyColumn Title="Nom" Property="x => x.Name"/>
-                        <PropertyColumn Title="Email" Property="x => x.Email"/>
-                        <PropertyColumn Title="Identifiant" Property="x => x.Username"/>
-                        <PropertyColumn Title="Désactivé" Property="x => x.IsDisabled" CellStyleFunc="@DisabledColor"/>
-                        <TemplateColumn Title="Actions" Sortable="false" Filterable="false">
-                            <CellTemplate>
-                                <MudStack Row Justify="Justify.SpaceEvenly">
-                                    <MudTooltip Placement="Placement.Bottom" Text="Voir le profil" Arrow>
-                                        <MudIconButton Class="mr-3" Size="Size.Small" Color="Color.Secondary" Icon="@IconsF.Visibility" OnClick="@(() => NavigateToProfile(context.Item))"/>
-                                    </MudTooltip>
-                                </MudStack>
-                            </CellTemplate>
-                        </TemplateColumn>
-                    </Columns>
-                </MudDataGrid>
+                <div class="pb-6">
+                    <MudDataGrid T="UserModel" Items="_filteredUsers" Bordered Hover Outlined Filterable Striped SortMode="SortMode.Multiple" Dense FixedHeader
+                                 Culture="@(new CultureInfo("fr-FR"))" Height="70vh" Virtualize OverscanCount="25" QuickFilter="@QuickFilter"
+                                 RowClick="@OnRowClicked">
+                        <Columns>
+                            <PropertyColumn Title="Nom" Property="x => x.Name"/>
+                            <PropertyColumn Title="Email" Property="x => x.Email"/>
+                            <PropertyColumn Title="Identifiant" Property="x => x.Username"/>
+                            <PropertyColumn Title="Désactivé" Property="x => x.IsDisabled" CellStyleFunc="@DisabledColor"/>
+                            <TemplateColumn Title="Actions" Sortable="false" Filterable="false">
+                                <CellTemplate>
+                                    <MudStack Row Justify="Justify.SpaceEvenly">
+                                        <MudTooltip Placement="Placement.Bottom" Text="Voir le profil" Arrow>
+                                            <MudIconButton Class="mr-3" Size="Size.Small" Color="Color.Secondary" Icon="@IconsF.Visibility" OnClick="@(() => NavigateToProfile(context.Item))"/>
+                                        </MudTooltip>
+                                    </MudStack>
+                                </CellTemplate>
+                            </TemplateColumn>
+                        </Columns>
+                    </MudDataGrid>
             </div>
             }
         </MudContainer>

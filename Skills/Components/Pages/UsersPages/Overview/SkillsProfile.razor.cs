@@ -56,7 +56,7 @@ public partial class SkillsProfile : FullComponentBase
     {
         if (firstRender)
         {
-            await InitSignalRAsync(nameof(SkillsProfile), async() => await RefreshDataAsync());
+            // await InitSignalRAsync(nameof(SkillsProfile), async() => await RefreshDataAsync());
         }
     }
 
@@ -81,7 +81,7 @@ public partial class SkillsProfile : FullComponentBase
             await db.DisposeAsync();
             await RefreshDataAsync();
 
-            await SendUpdateAsync(nameof(SkillsProfile));
+            // await (nameof(SkillsProfile));
         }
     }
 
@@ -104,7 +104,7 @@ public partial class SkillsProfile : FullComponentBase
         await db.DisposeAsync();
         await RefreshDataAsync();
         
-        await SendUpdateAsync(nameof(SkillsProfile));
+        // await (nameof(SkillsProfile));
     }
     
     private async Task RevokeSkillAsync(UserSkillModel model)
@@ -132,7 +132,7 @@ public partial class SkillsProfile : FullComponentBase
             await RefreshDataAsync();
             StateHasChanged();
             
-            await SendUpdateAsync(nameof(SkillsProfile));
+            // await (nameof(SkillsProfile));
         }
     }
 
@@ -196,7 +196,7 @@ public partial class SkillsProfile : FullComponentBase
                     await RefreshDataAsync();
                     StateHasChanged();
 
-                    await SendUpdateAsync(nameof(SkillsProfile));
+                    // await (nameof(SkillsProfile));
                     Snackbar.Add(response.Value, Severity.Success);
                     break;
                 }
@@ -204,7 +204,7 @@ public partial class SkillsProfile : FullComponentBase
         }
     }
     
-    private async Task RefreshDataAsync()
+    protected override async Task RefreshDataAsync()
     {
         var db = await Factory.CreateDbContextAsync();
         _userSkillsModels = await db.UsersSkills.AsNoTracking()

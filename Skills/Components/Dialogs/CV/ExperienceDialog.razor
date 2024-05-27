@@ -1,8 +1,9 @@
+@using Skills.Models.Overview
 @using Skills.Models.CV
 
 <MudDialog>
     <DialogContent>
-        <MudIconButton Class="ml-n4" Icon="@IconsF.Close" Color="Color.Dark" OnClick="@(() => Dialog.Close())"/>
+        <CloseButton Dialog="@Dialog"/>
         <MudStack Class="px-4 py-2" Justify="Justify.SpaceEvenly" Row="false" Spacing="0">
             <MudStack Class="mb-2" Row>
                 <MudTextField T="string" @bind-Value="_category" Label="Secteur d'activité" Style="width: 200px;"/>
@@ -24,7 +25,7 @@
 
 @code {
     [CascadingParameter] public MudDialogInstance Dialog { get; set; } = null!;
-    [Parameter] public CvExperienceInfo? CvExperience { get; set; }
+    [Parameter] public UserExperienceInfo? Experience { get; set; }
 
     private string _category = string.Empty;
     private string _title = string.Empty;
@@ -34,19 +35,19 @@
 
     protected override void OnInitialized()
     {
-        if (CvExperience != null)
+        if (Experience != null)
         {
-            _category = CvExperience.Category;
-            _title = CvExperience.Title;
-            _dateStart = CvExperience.StartsAt;
-            _dateEnd = CvExperience.EndsAt;
-            _desc = CvExperience.Description;
+            _category = Experience.Category;
+            _title = Experience.Title;
+            _dateStart = Experience.StartsAt;
+            _dateEnd = Experience.EndsAt;
+            _desc = Experience.Description;
         }
     }
 
     private void Submit()
     {
-        var experience = new CvExperienceInfo
+        var experience = new UserExperienceInfo
         {
             Category = _category,
             Title = _title,
@@ -54,7 +55,7 @@
             EndsAt = _dateEnd ?? DateTime.Now,
             Description = _desc
         };
-        if (CvExperience != null) experience.Id = CvExperience.Id;
+        if (Experience != null) experience.Id = Experience.Id;
         Dialog.Close(experience);
     }
 

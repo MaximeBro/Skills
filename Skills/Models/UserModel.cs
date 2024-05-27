@@ -11,6 +11,8 @@ public class UserModel
     
     [MaxLength(length: 14)]
     public string PhoneNumber { get; set; } = string.Empty;
+    public DateTime? BirthDate { get; set; }
+    public string Job { get; set; } = string.Empty;
     public string Username { get; set; } = string.Empty;
     public UserRole Role { get; set; } = UserRole.User;
     public bool IsDisabled { get; set; }

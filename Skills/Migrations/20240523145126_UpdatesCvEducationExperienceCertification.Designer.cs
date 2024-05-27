@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Skills.Databases;
 
@@ -10,9 +11,11 @@ using Skills.Databases;
 namespace Skills.Migrations
 {
     [DbContext(typeof(SkillsContext))]
-    partial class SkillsContextModelSnapshot : ModelSnapshot
+    [Migration("20240523145126_UpdatesCvEducationExperienceCertification")]
+    partial class UpdatesCvEducationExperienceCertification
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.3");
@@ -61,15 +64,15 @@ namespace Skills.Migrations
 
             modelBuilder.Entity("Skills.Models.CV.CvCertificationInfo", b =>
                 {
-                    b.Property<Guid>("CvId")
-                        .HasColumnType("TEXT");
-
                     b.Property<Guid>("CertificationId")
                         .HasColumnType("TEXT");
 
-                    b.HasKey("CvId", "CertificationId");
+                    b.Property<Guid>("CvId")
+                        .HasColumnType("TEXT");
 
-                    b.HasIndex("CertificationId");
+                    b.HasKey("CertificationId", "CvId");
+
+                    b.HasIndex("CvId");
 
                     b.ToTable("CvCertifications");
                 });

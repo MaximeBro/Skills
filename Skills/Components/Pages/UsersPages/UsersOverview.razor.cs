@@ -17,8 +17,19 @@ public partial class UsersOverview : FullComponentBase
     
     protected override async Task OnInitializedAsync()
     {
+        await RefreshDataAsync();
+    }
+
+    public async Task UserChangedAsync()
+    {
+        await RefreshDataAsync();
+        StateHasChanged();
+    }
+    
+    protected override async Task RefreshDataAsync()
+    {
         var db = await Factory.CreateDbContextAsync();
-        var user = await db.Users.AsNoTracking().FirstOrDefaultAsync(x => x.Email.Contains(Id));
+        var user = await db.Users.AsNoTracking().FirstOrDefaultAsync(x => x.Username.ToLower().Contains(Id.ToLower()));
         
         if (user is null) NavManager.NavigateTo("/", true);
         else _user = user;

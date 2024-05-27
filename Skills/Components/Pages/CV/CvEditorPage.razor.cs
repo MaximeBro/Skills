@@ -8,6 +8,7 @@ using Skills.Databases;
 using Skills.Extensions;
 using Skills.Models;
 using Skills.Models.CV;
+using Skills.Models.Overview;
 
 namespace Skills.Components.Pages.CV;
 
@@ -32,11 +33,11 @@ public partial class CvEditorPage : FullComponentBase, IAsyncDisposable
     private CvEditorPage_Skills _skills = null!;
     private CvEditorPage_Experiences _experiences = null!;
 
-    public List<CvEducationInfo> CvEducations { get; set; } = new();
-    public List<CvCertificationInfo> CvCertifications { get; set; } = new();
+    public Dictionary<UserEducationInfo, bool> CvEducations { get; set; } = new();
+    public Dictionary<UserCertificationInfo, bool> CvCertifications { get; set; } = new();
+    public Dictionary<UserExperienceInfo, bool> CvExperiences { get; set; } = new();
     public Dictionary<Guid, bool> HeldCertifications { get; set; } = new();
     public Dictionary<AbstractSkillModel, bool> ChosenSkills { get; set; } = new();
-    public List<CvExperienceInfo> CvExperiences { get; set; } = new();
 
     private int _pendingEdits = 0;
     private bool _autoSave = true;
@@ -67,7 +68,7 @@ public partial class CvEditorPage : FullComponentBase, IAsyncDisposable
         _breadcrumbs.Add(new BreadcrumbItem("Accueil", "/"));
         _breadcrumbs.Add(new BreadcrumbItem("Utilisateurs", "/users"));
         _breadcrumbs.Add(new BreadcrumbItem(user.Name, $"/overview/{Username}"));
-        _breadcrumbs.Add(new BreadcrumbItem("CV", $"/overview/{Username}/1"));
+        _breadcrumbs.Add(new BreadcrumbItem("CV", $"/overview/{Username}/5"));
         _breadcrumbs.Add(new BreadcrumbItem(_cv.Title, null, true));
         await db.DisposeAsync();
     }
@@ -76,7 +77,7 @@ public partial class CvEditorPage : FullComponentBase, IAsyncDisposable
     {
         if (firstRender)
         {
-            await InitSignalRAsync(nameof(CvProfile), async() => await NavigateToProfileAsync());
+            // await InitSignalRAsync(nameof(CvProfile), async() => await NavigateToProfileAsync());
         }     
     }
 
@@ -86,9 +87,16 @@ public partial class CvEditorPage : FullComponentBase, IAsyncDisposable
         
         // Adds new cv fields
         var db = await Factory.CreateDbContextAsync();
-        var educationsToAdd = CvEducations.Where(x => !db.CvEducations.AsNoTracking().Select(y => y.Id).Contains(x.Id)).ToList();
-        var certificationsToAdd = CvCertifications.Where(x => !db.CvCertifications.AsNoTracking().Select(y => y.Id).Contains(x.Id)).ToList();
-        var experiencesToAdd = CvExperiences.Where(x => !db.CvExperiences.AsNoTracking().Select(y => y.Id).Contains(x.Id)).ToList();
+
+
+        var heldEducations = CvEducations.Where(x => x.Value).Select(x => new CvEducationInfo { EducationId = x.Key.Id, CvId = _cv.Id }).ToList();
+        var educationsToAdd = heldEducations.Where(education => db.CvEducations.AsNoTracking().Where(x => x.CvId == _cv.Id).All(x => x.EducationId != education.EducationId)).ToList();
+        
+        var heldCertifications = CvCertifications.Where(x => x.Value).Select(x => new CvCertificationInfo() { CertificationId = x.Key.Id, CvId = _cv.Id }).ToList();
+        var certificationsToAdd = heldCertifications.Where(certification => db.CvCertifications.AsNoTracking().Where(x => x.CvId == _cv.Id).All(x => x.CertificationId != certification.CertificationId)).ToList();
+        
+        var heldExperiences = CvExperiences.Where(x => x.Value).Select(x => new CvExperienceInfo() { ExperienceId = x.Key.Id, CvId = _cv.Id }).ToList();
+        var experiencesToAdd = heldExperiences.Where(experience => db.CvExperiences.AsNoTracking().Where(x => x.CvId == _cv.Id).All(x => x.ExperienceId != experience.ExperienceId)).ToList();
 
         var heldSkills = ChosenSkills.Where(x => x.Value).Select(x => new CvSkillInfo
         {
@@ -114,31 +122,27 @@ public partial class CvEditorPage : FullComponentBase, IAsyncDisposable
         db.CvExperiences.AddRange(experiencesToAdd);
         db.CvSkills.AddRange(skillsToAdd);
         db.CvSafetyCertifications.AddRange(safetyCertsToAdd);
-
-        
-        // Updates old cv fields
-        var educationsToUpdate = CvEducations.Where(x => !educationsToAdd.Select(y => y.Id).Contains(x.Id)).ToList();
-        var certificationsToUpdate = CvCertifications.Where(x => !certificationsToAdd.Select(y => y.Id).Contains(x.Id)).ToList();
-        var experiencesToUpdate = CvExperiences.Where(x => !experiencesToAdd.Select(y => y.Id).Contains(x.Id)).ToList();
-        
-        db.CvEducations.UpdateRange(educationsToUpdate);
-        db.CvCertifications.UpdateRange(certificationsToUpdate);
-        db.CvExperiences.UpdateRange(experiencesToUpdate);
         
 
         // Removes old cv fields
-        var educationsToDell = db.CvEducations.AsNoTracking().Where(x => !CvEducations.Select(y => y.Id).Contains(x.Id)).ToList();
-        var certificationsToDell = db.CvCertifications.AsNoTracking().Where(x => !CvCertifications.Select(y => y.Id).Contains(x.Id)).ToList();
-        var experiencesToDell = db.CvExperiences.AsNoTracking().Where(x => !CvExperiences.Select(y => y.Id).Contains(x.Id)).ToList();
         var safetyCertsToDell = db.CvSafetyCertifications.AsNoTracking().Where(x => !safetyCerts.Select(y => y.CertId).Contains(x.CertId)).ToList();
-        var skillsIds = ChosenSkills.Where(y => y.Value).Select(y => y.Key.Id).ToList();
+        var skillsIds = ChosenSkills.Where(x => x.Value).Select(x => x.Key.Id).ToList();
         var skillsToDell = db.CvSkills.AsNoTracking().Where(x => !skillsIds.Contains(x.SkillId)).ToList();
 
+        var educationsIds = CvEducations.Where(x => x.Value).Select(x => x.Key.Id).ToList();
+        var educationsToDell = db.CvEducations.AsNoTracking().Where(x => !educationsIds.Contains(x.EducationId)).ToList();
+
+        var certificationsIds = CvCertifications.Where(x => x.Value).Select(x => x.Key.Id).ToList();
+        var certificationsToDell = db.CvCertifications.AsNoTracking().Where(x => !certificationsIds.Contains(x.CertificationId)).ToList();
+
+        var experiencesIds = CvExperiences.Where(x => x.Value).Select(x => x.Key.Id).ToList();
+        var experiencesToDell = db.CvExperiences.AsNoTracking().Where(x => !experiencesIds.Contains(x.ExperienceId)).ToList();
+        
+        db.CvSafetyCertifications.RemoveRange(safetyCertsToDell);
+        db.CvSkills.RemoveRange(skillsToDell);
         db.CvEducations.RemoveRange(educationsToDell);
         db.CvCertifications.RemoveRange(certificationsToDell);
         db.CvExperiences.RemoveRange(experiencesToDell);
-        db.CvSafetyCertifications.RemoveRange(safetyCertsToDell);
-        db.CvSkills.RemoveRange(skillsToDell);
 
         _cv.BirthDate = _birthDate ?? _cv.BirthDate;
         _cv.UpdatedAt = DateTime.Now;
@@ -154,7 +158,7 @@ public partial class CvEditorPage : FullComponentBase, IAsyncDisposable
         });
 
         _pendingEdits = 0;
-        await SendUpdateAsync(nameof(CvProfile));
+        // await (nameof(CvProfile));
     }
 
     public void EditDone()

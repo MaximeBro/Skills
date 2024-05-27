@@ -92,7 +92,7 @@ public partial class UsersGroups : FullComponentBase
         }
     }
 
-    private async Task RefreshDataAsync()
+    protected override async Task RefreshDataAsync()
     {
         var db = await Factory.CreateDbContextAsync();
         _groups = await db.Groups.AsNoTracking().ToListAsync();

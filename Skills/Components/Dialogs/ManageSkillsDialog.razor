@@ -77,7 +77,7 @@
         }
     }
 
-    private async Task<List<AbstractSkillModel>> RefreshDataAsync()
+    protected override async Task<List<AbstractSkillModel>> RefreshDataAsync()
     {
         var db = await Factory.CreateDbContextAsync();
         var ownedSkills = db.UsersSkills.Where(x => x.UserId == User.Id).ToList();

@@ -49,6 +49,7 @@ builder.Services.AddSingleton<ActiveDirectoryService>();
 builder.Services.AddSingleton<ThemeManager>();
 builder.Services.AddSingleton<LocalizationManager>();
 builder.Services.AddSingleton<SkillService>();
+builder.Services.AddScoped<UserService>();
 /* Custom Services */
 
 /* Databases */

@@ -3,41 +3,31 @@
 <MudPaper id="experiences" Class="mt-6 pad-anchor" Elevation="2">
     <MudStack Class="px-4 py-3" Row="false" Spacing="2">
         <MudText Class="open-sans-600 bold">Expériences</MudText>
-        <MudStack Class="px-6 py-2" Row="false" Style="max-height: 350px; overflow-y: auto;">
+        <MudStack Row="false" Spacing="0" Style="max-height: 400px; overflow-y: auto;">
+            <MudCheckBox T="bool" ValueChanged="@SelectAllChanged" Value="@_selectAll" Label="Tout sélectionner"/>
             @foreach (var experience in Editor.CvExperiences)
             {
-                <MudPaper Class="rounded-lg mb-1 d-flex px-4 py-1" Elevation="2" Width="100%" Style="flex-direction: row; align-items: center;">
+                <MudPaper Class="d-flex mb-3 px-4 py-1" Elevation="3" Style="flex-direction: row; align-items: center; background: transparent; backdrop-filter: brightness(0.90);">
+                    <MudCheckBox T="bool" Value="@Editor.CvExperiences[experience.Key]" ValueChanged="@((value) => OnCheckChanged(value, experience.Key))"/>
                     <MudStack Row="false" Spacing="0">
                         <MudStack Row Justify="Justify.FlexStart" AlignItems="AlignItems.Center">
-                            <MudText Class="open-sans-600 bold" Color="Color.Primary">@experience.Category</MudText> <MudText Class="open-sans-600 bold" Color="Color.Primary"> | </MudText> <MudText Class="open-sans-600 bold" Color="Color.Dark">@experience.Title</MudText>
+                            <MudText Class="open-sans-600 bold" Color="Color.Primary">@experience.Key.Category</MudText> <MudText Class="open-sans-600 bold" Color="Color.Dark"> | </MudText> <MudText Class="open-sans-600 bold" Color="@(Layout.IsDarkMode ? Color.Default : Color.Dark)">@experience.Key.Title</MudText>
                         </MudStack>
                         <MudStack Row Justify="Justify.FlexStart" AlignItems="AlignItems.Center">
-                            <MudText Class="open-sans-600">@experience.StartsAt.ToString("MM-yyyy")</MudText> <MudText Class="open-sans-600"> - </MudText> <MudText Class="open-sans-600">@experience.EndsAt.ToString("MM-yyyy")</MudText>
+                            <MudText Class="open-sans-600">@experience.Key.StartsAt.ToString("MM-yyyy")</MudText> <MudText Class="open-sans-600"> - </MudText> <MudText Class="open-sans-600">@experience.Key.EndsAt.ToString("MM-yyyy")</MudText>
                         </MudStack>
-                        @if (!string.IsNullOrWhiteSpace(experience.Description))
+                        @if (!string.IsNullOrWhiteSpace(experience.Key.Description))
                         {
                             <MudStack Row="false" Spacing="0">
-                                @foreach (var line in experience.Description.Split("\n"))
+                                @foreach (var line in experience.Key.Description.Split("\n"))
                                 {
                                 <MudText Class="open-sans-600" Typo="Typo.subtitle2">@line</MudText>
                                 }
                             </MudStack>
                         }
                     </MudStack>
-                    <MudSpacer/>
-                    <MudIconButton Class="mr-2" Icon="@IconsF.Edit" Size="Size.Small" Color="Color.Primary" OnClick="@(async() => await EditExperienceAsync(experience))"/>
-                    <MudIconButton Class="hover-red" Icon="@IconsF.Delete" Size="Size.Small" OnClick="@(() => RemoveExperience(experience))"/>
                 </MudPaper>
             }
-        </MudStack>
-        <MudStack Class="px-6 py-2" Row Justify="Justify.Center">
-            <MudPaper Class="rounded-lg" Elevation="2" Width="100%" Style="@($"border: 2px dashed {ThemeManager.GetColor(Color.Info)};")">
-                <MudLink Underline="Underline.None" OnClick="@(async () => await CreateExperienceAsync())">
-                    <MudStack Class="py-2" Row Justify="Justify.Center">
-                        <MudIcon Icon="@IconsR.AddCircle" Color="Color.Info" Size="Size.Small"/>
-                    </MudStack>
-                </MudLink>
-            </MudPaper>
         </MudStack>
     </MudStack>
 </MudPaper>

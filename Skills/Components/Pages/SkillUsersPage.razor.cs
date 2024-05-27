@@ -32,7 +32,7 @@ public partial class SkillUsersPage : FullComponentBase
         await RefreshDataAsync();
     }
 
-    private async Task RefreshDataAsync()
+    protected override async Task RefreshDataAsync()
     {
         var db = await Factory.CreateDbContextAsync();
         _users = db.UsersSkills.AsNoTracking().Where(x => x.SkillId == Id).Include(x => x.User).ToList();

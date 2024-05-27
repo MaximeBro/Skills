@@ -1,4 +1,3 @@
-using DocumentFormat.OpenXml.Drawing;
 using DocumentFormat.OpenXml.Packaging;
 using Microsoft.EntityFrameworkCore;
 using Skills.Databases;
@@ -108,7 +107,7 @@ public class WordExportService(IConfiguration configuration, IDbContextFactory<S
         var reference = document.Search<Paragraph>("{EDUCATION}");
         if (reference is null) return;
         
-        foreach (var education in cv.Education)
+        foreach (var education in cv.Educations)
         {
             var firstLine = DocXtensions.CreateTitle($"{education.Title} | ", DocXtensions.HeadingLevel.H2);
             firstLine.Append(DocXtensions.CreateRunAsTitle(education.Supplier, DocXtensions.HeadingLevel.Accent));
@@ -270,10 +269,12 @@ public class WordExportService(IConfiguration configuration, IDbContextFactory<S
                     else
                     {
                         listCreated = false;
-                        reference.InsertBeforeSelf(DocXtensions.CreateTitle(experience.Description, DocXtensions.HeadingLevel.Normal));
+                        reference.InsertBeforeSelf(DocXtensions.CreateTitle(line, DocXtensions.HeadingLevel.Normal));
                     }
                 }
             }
+
+            reference.InsertBeforeSelf(DocXtensions.AddLineBreak());
         }
         
         reference.Remove();

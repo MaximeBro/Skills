@@ -47,15 +47,13 @@ public partial class CvEditorPage_Skills : FullComponentBase
         Editor.EditDone();
     }
 
-    private async Task RefreshDataAsync()
+    protected override async Task RefreshDataAsync()
     {
         var db = await Factory.CreateDbContextAsync();
         var cvSkills = db.CvSkills.AsNoTracking().Where(x => x.CvId == Cv.Id).Select(x => x.SkillId).ToList();
         var skills = db.UsersSkills.AsNoTracking().Where(x => x.Level >= Cv.MinLevel && x.UserId == Cv.UserId)
                                                                    .Include(x => x.Skill)
                                                                    .Select(x => x.Skill).ToList() as List<AbstractSkillModel>;
-
-        var t = db.UsersSkills.AsNoTracking().Where(x => x.Level >= Cv.MinLevel && x.UserId == Cv.UserId).ToList();
         
         Editor.ChosenSkills.Clear();
         foreach (var skill in skills)

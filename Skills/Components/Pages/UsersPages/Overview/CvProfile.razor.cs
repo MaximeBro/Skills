@@ -4,7 +4,6 @@ using Microsoft.JSInterop;
 using MudBlazor;
 using Skills.Components.Components;
 using Skills.Components.Dialogs;
-using Skills.Components.Layout;
 using Skills.Databases;
 using Skills.Extensions;
 using Skills.Models;
@@ -22,7 +21,7 @@ public partial class CvProfile : FullComponentBase
     [Inject] public ISnackbar Snackbar { get; set; } = null!;
     [Inject] public IJSRuntime JsRuntime { get; set; } = null!;
     [Parameter] public UserModel User { get; set; } = null!;
-    private List<BreadcrumbItem> _breadcrumbs = new();
+    private List<BreadcrumbItem> _breadcrumbs = [];
 
     private List<CvInfo> _cvs = new();
 
@@ -40,13 +39,14 @@ public partial class CvProfile : FullComponentBase
         _breadcrumbs.Add(new BreadcrumbItem("CV", null, true));
 
         await RefreshDataAsync();
+        StateHasChanged();
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
         {
-            await InitSignalRAsync(nameof(CvProfile), async() => await RefreshDataAsync());
+            
         }
     }
 
@@ -56,14 +56,49 @@ public partial class CvProfile : FullComponentBase
         var cv = new CvInfo
         {
             UserId = User.Id,
-            Title = $"CV{(db.CVs.AsNoTracking().Any(x => x.UserId == User.Id) ? $" ({db.CVs.AsNoTracking().Count(x => x.UserId == User.Id)})" : string.Empty)}"
+            Title = $"CV{(db.CVs.AsNoTracking().Any(x => x.UserId == User.Id) ? $" ({db.CVs.AsNoTracking().Count(x => x.UserId == User.Id)})" : string.Empty)}",
+            Job = User.Job,
+            PhoneNumber = User.PhoneNumber
         };
+        if (User.BirthDate.HasValue) cv.BirthDate = User.BirthDate.Value;
+        
         db.CVs.Add(cv);
         await db.SaveChangesAsync();
         await db.DisposeAsync();
         
-        await SendUpdateAsync(nameof(CvProfile));
         NavManager.NavigateTo($"/overview/{User.Username}/cv-editor/{cv.Id}");
+    }
+
+    private async Task DuplicateCvAsync(CvInfo cv)
+    {
+        var db = await Factory.CreateDbContextAsync();
+        var copy = new CvInfo
+        {
+            UserId = cv.UserId,
+            PhoneNumber = cv.PhoneNumber,
+            Title = $"{cv.Title} (Copie)",
+            BirthDate = cv.BirthDate,
+            Job = cv.Job,
+            MinLevel = cv.MinLevel
+        };
+
+        var educations = cv.Educations.Select(x => new CvEducationInfo { CvId = copy.Id, EducationId = x.Id }).ToList();
+        var certifications = cv.Certifications.Select(x => new CvCertificationInfo() { CvId = copy.Id, CertificationId = x.Id }).ToList();
+        var experiences = cv.Experiences.Select(x => new CvExperienceInfo() { CvId = copy.Id, ExperienceId = x.Id }).ToList();
+        var skills = cv.Skills.Select(x => new CvSkillInfo { CvId = copy.Id, SkillId = x.Id, IsSoftSkill = x.IsSoftSkill }).ToList();
+        var safety = cv.SafetyCertifications.Select(x => new CvSafetyCertificationInfo { CvId = copy.Id, CertId = x.CertId }).ToList();
+
+        db.CVs.Add(copy);
+        db.CvEducations.AddRange(educations);
+        db.CvCertifications.AddRange(certifications);
+        db.CvExperiences.AddRange(experiences);
+        db.CvSkills.AddRange(skills);
+        db.CvSafetyCertifications.AddRange(safety);
+        await db.SaveChangesAsync();
+        await db.DisposeAsync();
+        
+        await RefreshDataAsync();
+        StateHasChanged();
     }
     
     private async Task DeleteCvAsync(CvInfo cv)
@@ -82,7 +117,7 @@ public partial class CvProfile : FullComponentBase
             }
             await db.DisposeAsync();
             await RefreshDataAsync();
-            await SendUpdateAsync(nameof(CvProfile));
+            StateHasChanged();
         }
     }
 
@@ -119,16 +154,17 @@ public partial class CvProfile : FullComponentBase
         StateHasChanged();
     }
 
-    private async Task RefreshDataAsync()
+    protected override async Task RefreshDataAsync()
     {
         var db = await Factory.CreateDbContextAsync();
         _cvs = db.CVs.AsNoTracking()
                      .Include(x => x.Skills).ThenInclude(x => x.Skill)
-                     .Include(x => x.Education).Include(x => x.Experiences)
+                     .Include(x => x.Educations).Include(x => x.Experiences)
                      .Include(x => x.Certifications).Include(x => x.SafetyCertifications).ThenInclude(x => x.Certification)
                      .OrderByDescending(x => x.CreatedAt)
                      .ToList();
         
+        OnSortChanged();
         await db.DisposeAsync();
     }
 }

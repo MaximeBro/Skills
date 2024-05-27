@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Skills.Databases;
 
@@ -10,9 +11,11 @@ using Skills.Databases;
 namespace Skills.Migrations
 {
     [DbContext(typeof(SkillsContext))]
-    partial class SkillsContextModelSnapshot : ModelSnapshot
+    [Migration("20240523114955_AddUserModelBirthdate")]
+    partial class AddUserModelBirthdate
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.3");
@@ -61,45 +64,103 @@ namespace Skills.Migrations
 
             modelBuilder.Entity("Skills.Models.CV.CvCertificationInfo", b =>
                 {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("TEXT");
+
                     b.Property<Guid>("CvId")
                         .HasColumnType("TEXT");
 
-                    b.Property<Guid>("CertificationId")
+                    b.Property<string>("Duration")
+                        .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.HasKey("CvId", "CertificationId");
+                    b.Property<string>("Supplier")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
 
-                    b.HasIndex("CertificationId");
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("Year")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CvId");
 
                     b.ToTable("CvCertifications");
                 });
 
             modelBuilder.Entity("Skills.Models.CV.CvEducationInfo", b =>
                 {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("TEXT");
+
                     b.Property<Guid>("CvId")
                         .HasColumnType("TEXT");
 
-                    b.Property<Guid>("EducationId")
+                    b.Property<string>("Description")
+                        .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.HasKey("CvId", "EducationId");
+                    b.Property<string>("Supplier")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
 
-                    b.HasIndex("EducationId");
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Town")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("YearEnd")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("YearStart")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CvId");
 
                     b.ToTable("CvEducations");
                 });
 
             modelBuilder.Entity("Skills.Models.CV.CvExperienceInfo", b =>
                 {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Category")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
                     b.Property<Guid>("CvId")
                         .HasColumnType("TEXT");
 
-                    b.Property<Guid>("ExperienceId")
+                    b.Property<string>("Description")
+                        .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.HasKey("CvId", "ExperienceId");
+                    b.Property<DateTime>("EndsAt")
+                        .HasColumnType("TEXT");
 
-                    b.HasIndex("ExperienceId");
+                    b.Property<DateTime>("StartsAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CvId");
 
                     b.ToTable("CvExperiences");
                 });
@@ -228,109 +289,6 @@ namespace Skills.Migrations
                     b.ToTable("Groups");
                 });
 
-            modelBuilder.Entity("Skills.Models.Overview.UserCertificationInfo", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Duration")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Supplier")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Title")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("TEXT");
-
-                    b.Property<int>("Year")
-                        .HasColumnType("INTEGER");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("UserCertifications");
-                });
-
-            modelBuilder.Entity("Skills.Models.Overview.UserEducationInfo", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Supplier")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Title")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Town")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("TEXT");
-
-                    b.Property<int>("YearEnd")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("YearStart")
-                        .HasColumnType("INTEGER");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("UserEducations");
-                });
-
-            modelBuilder.Entity("Skills.Models.Overview.UserExperienceInfo", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Category")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<DateTime>("EndsAt")
-                        .HasColumnType("TEXT");
-
-                    b.Property<DateTime>("StartsAt")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Title")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("TEXT");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("UserExperiences");
-                });
-
             modelBuilder.Entity("Skills.Models.SKillInfo", b =>
                 {
                     b.Property<Guid>("Id")
@@ -413,10 +371,6 @@ namespace Skills.Migrations
 
                     b.Property<bool>("IsDisabled")
                         .HasColumnType("INTEGER");
-
-                    b.Property<string>("Job")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -505,19 +459,11 @@ namespace Skills.Migrations
 
             modelBuilder.Entity("Skills.Models.CV.CvCertificationInfo", b =>
                 {
-                    b.HasOne("Skills.Models.Overview.UserCertificationInfo", "Certification")
-                        .WithMany()
-                        .HasForeignKey("CertificationId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("Skills.Models.CV.CvInfo", "Cv")
-                        .WithMany()
+                        .WithMany("Certifications")
                         .HasForeignKey("CvId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("Certification");
 
                     b.Navigation("Cv");
                 });
@@ -525,39 +471,23 @@ namespace Skills.Migrations
             modelBuilder.Entity("Skills.Models.CV.CvEducationInfo", b =>
                 {
                     b.HasOne("Skills.Models.CV.CvInfo", "Cv")
-                        .WithMany()
+                        .WithMany("Education")
                         .HasForeignKey("CvId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Skills.Models.Overview.UserEducationInfo", "Education")
-                        .WithMany()
-                        .HasForeignKey("EducationId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.Navigation("Cv");
-
-                    b.Navigation("Education");
                 });
 
             modelBuilder.Entity("Skills.Models.CV.CvExperienceInfo", b =>
                 {
                     b.HasOne("Skills.Models.CV.CvInfo", "Cv")
-                        .WithMany()
+                        .WithMany("Experiences")
                         .HasForeignKey("CvId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Skills.Models.Overview.UserExperienceInfo", "Experience")
-                        .WithMany()
-                        .HasForeignKey("ExperienceId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.Navigation("Cv");
-
-                    b.Navigation("Experience");
                 });
 
             modelBuilder.Entity("Skills.Models.CV.CvSafetyCertificationInfo", b =>
@@ -596,39 +526,6 @@ namespace Skills.Migrations
                     b.Navigation("Cv");
 
                     b.Navigation("Skill");
-                });
-
-            modelBuilder.Entity("Skills.Models.Overview.UserCertificationInfo", b =>
-                {
-                    b.HasOne("Skills.Models.UserModel", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("User");
-                });
-
-            modelBuilder.Entity("Skills.Models.Overview.UserEducationInfo", b =>
-                {
-                    b.HasOne("Skills.Models.UserModel", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("User");
-                });
-
-            modelBuilder.Entity("Skills.Models.Overview.UserExperienceInfo", b =>
-                {
-                    b.HasOne("Skills.Models.UserModel", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Skills.Models.SoftTypeLevel", b =>
@@ -701,6 +598,12 @@ namespace Skills.Migrations
 
             modelBuilder.Entity("Skills.Models.CV.CvInfo", b =>
                 {
+                    b.Navigation("Certifications");
+
+                    b.Navigation("Education");
+
+                    b.Navigation("Experiences");
+
                     b.Navigation("SafetyCertifications");
 
                     b.Navigation("Skills");

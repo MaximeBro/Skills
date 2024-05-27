@@ -13,11 +13,11 @@ public partial class SkillsManagement : FullComponentBase
     /// </summary>
     public async Task RefreshSkillsAsync()
     {
-        await _skillsMapping.RefreshDataAsync();
+        await _skillsMapping.RefreshPageDataAsync();
     }
 
     public async Task RefreshSkillsTypesAsync()
     {
-        await _skillsTypes.RefreshDataAsync();
+        await _skillsTypes.RefreshPageDataAsync();
     }
 }
