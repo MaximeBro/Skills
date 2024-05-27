@@ -42,7 +42,7 @@ public partial class CvEditorPage_Certification : FullComponentBase
         Editor.EditDone();
     }
 
-    private async Task RefreshDataAsync()
+    protected override async Task RefreshDataAsync()
     {
         var db = await Factory.CreateDbContextAsync();
         var userCertifications = await db.UserCertifications.AsNoTracking().Where(x => x.UserId == Cv.UserId).ToListAsync();

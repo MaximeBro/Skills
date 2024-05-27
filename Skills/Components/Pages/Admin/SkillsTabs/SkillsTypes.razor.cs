@@ -127,7 +127,7 @@ public partial class SkillsTypes : FullComponentBase
         await Manager.RefreshSkillsAsync();
     }
     
-    public async Task RefreshDataAsync()
+    public async Task RefreshPageDataAsync()
     {
         var db = await Factory.CreateDbContextAsync();
         _types = db.SkillsTypes.AsNoTracking().Where(x => x.Type == SkillDataType.Type && x.Value.ToUpper() != "SOFT-SKILL").ToList(); // It is very important to prevent anybody from editing the Soft-Skill Type or it will break a lot of stuff !

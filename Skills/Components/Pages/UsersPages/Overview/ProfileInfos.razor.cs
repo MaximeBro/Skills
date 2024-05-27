@@ -38,7 +38,7 @@ public partial class ProfileInfos : FullComponentBase
     {
         if (firstRender)
         {
-            await InitSignalRAsync(nameof(ProfileInfos), async() => await RefreshDataAsync());
+            // await InitSignalRAsync(nameof(ProfileInfos), async() => await RefreshDataAsync());
         }
     }
 
@@ -52,11 +52,11 @@ public partial class ProfileInfos : FullComponentBase
         await db.SaveChangesAsync();
         await db.DisposeAsync();
         
-        await SendUpdateAsync(nameof(ProfileInfos));
+        // await (nameof(ProfileInfos));
         await Overview.UserChangedAsync();
     }
 
-    private Task RefreshDataAsync()
+    protected override Task RefreshDataAsync()
     {
         _job = User.Job;
         _phoneNumber = User.PhoneNumber;

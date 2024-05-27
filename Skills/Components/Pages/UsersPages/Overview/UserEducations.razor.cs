@@ -46,7 +46,7 @@ public partial class UserEducations : FullComponentBase
     {
         if (firstRender)
         {
-            await InitSignalRAsync(nameof(UserEducations), async() => await RefreshDataAsync());
+            // await InitSignalRAsync(nameof(UserEducations), async() => await RefreshDataAsync());
         }
     }
 
@@ -67,7 +67,7 @@ public partial class UserEducations : FullComponentBase
                 await db.SaveChangesAsync();
                 await db.DisposeAsync();
 
-                await SendUpdateAsync(nameof(UserEducations));
+                // await (nameof(UserEducations));
                 await RefreshDataAsync();
                 StateHasChanged();
             }
@@ -97,7 +97,7 @@ public partial class UserEducations : FullComponentBase
                 await db.SaveChangesAsync();
                 await db.DisposeAsync();
 
-                await SendUpdateAsync(nameof(UserEducations));
+                // await (nameof(UserEducations));
                 await RefreshDataAsync();
                 StateHasChanged();
             }
@@ -119,7 +119,7 @@ public partial class UserEducations : FullComponentBase
                 await db.SaveChangesAsync();
                 await db.DisposeAsync();
 
-                await SendUpdateAsync(nameof(UserEducations));
+                // await (nameof(UserEducations));
                 await RefreshDataAsync();
                 StateHasChanged();
             }
@@ -146,7 +146,7 @@ public partial class UserEducations : FullComponentBase
         StateHasChanged();
     }
     
-    private async Task RefreshDataAsync()
+    protected override async Task RefreshDataAsync()
     {
         var db = await Factory.CreateDbContextAsync();
         _educations = await db.UserEducations.AsNoTracking().Where(x => x.UserId == User.Id).ToListAsync();

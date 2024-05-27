@@ -70,7 +70,7 @@ public partial class SkillTypeLevels : FullComponentBase
         };
     }
     
-    private async Task RefreshDataAsync()
+    protected override async Task RefreshDataAsync()
     {
         var db = await Factory.CreateDbContextAsync();
         var levels = db.TypesLevels.AsNoTracking().Where(x => x.TypeId == Type.Id).ToList();

@@ -304,7 +304,7 @@ public partial class SkillsMapping : FullComponentBase
         };
     }
     
-    public async Task RefreshDataAsync()
+    public async Task RefreshPageDataAsync()
     {
         _loading = true;
         await _grid.ReloadServerData();

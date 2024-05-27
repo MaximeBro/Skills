@@ -172,7 +172,7 @@ public partial class UsersList : FullComponentBase
         };
     }
     
-    public async Task RefreshDataAsync()
+    public async Task RefreshPageDataAsync()
     {
         _loading = true;
         await _grid.ReloadServerData();

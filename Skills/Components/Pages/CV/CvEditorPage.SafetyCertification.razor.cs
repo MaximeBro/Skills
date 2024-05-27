@@ -31,7 +31,7 @@ public partial class CvEditorPage_SafetyCertification : FullComponentBase
         Editor.EditDone();
     }
 
-    private async Task RefreshDataAsync()
+    protected override async Task RefreshDataAsync()
     {
         var db = await Factory.CreateDbContextAsync();
         CvSafetyCertifications = db.CvSafetyCertifications.AsNoTracking().Where(x => x.CvId == Cv.Id).Include(x => x.Certification).ToList();

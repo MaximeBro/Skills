@@ -40,7 +40,7 @@ public partial class CvEditorPage_Education : FullComponentBase
         Editor.EditDone();
     }
 
-    private async Task RefreshDataAsync()
+    protected override async Task RefreshDataAsync()
     {
         var db = await Factory.CreateDbContextAsync();
         var educations = await db.UserEducations.AsNoTracking().Where(x => x.UserId == Cv.UserId).ToListAsync();

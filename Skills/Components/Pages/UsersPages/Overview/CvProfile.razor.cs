@@ -46,7 +46,7 @@ public partial class CvProfile : FullComponentBase
     {
         if (firstRender)
         {
-            await InitSignalRAsync(nameof(CvProfile), async() => await RefreshDataAsync());
+            
         }
     }
 
@@ -66,7 +66,6 @@ public partial class CvProfile : FullComponentBase
         await db.SaveChangesAsync();
         await db.DisposeAsync();
         
-        await SendUpdateAsync(nameof(CvProfile));
         NavManager.NavigateTo($"/overview/{User.Username}/cv-editor/{cv.Id}");
     }
 
@@ -97,8 +96,7 @@ public partial class CvProfile : FullComponentBase
         db.CvSafetyCertifications.AddRange(safety);
         await db.SaveChangesAsync();
         await db.DisposeAsync();
-
-        await SendUpdateAsync(nameof(CvProfile));
+        
         await RefreshDataAsync();
         StateHasChanged();
     }
@@ -118,7 +116,6 @@ public partial class CvProfile : FullComponentBase
                 await db.SaveChangesAsync();
             }
             await db.DisposeAsync();
-            await SendUpdateAsync(nameof(CvProfile));
             await RefreshDataAsync();
             StateHasChanged();
         }
@@ -157,7 +154,7 @@ public partial class CvProfile : FullComponentBase
         StateHasChanged();
     }
 
-    private async Task RefreshDataAsync()
+    protected override async Task RefreshDataAsync()
     {
         var db = await Factory.CreateDbContextAsync();
         _cvs = db.CVs.AsNoTracking()

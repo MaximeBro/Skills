@@ -16,6 +16,15 @@
       <_ContentIncludedByDefault Remove="pub\appsettings.json" />
       <_ContentIncludedByDefault Remove="pub\Skills.deps.json" />
       <_ContentIncludedByDefault Remove="pub\Skills.runtimeconfig.json" />
+      <_ContentIncludedByDefault Remove="pub\pub\web.config" />
+      <_ContentIncludedByDefault Remove="pub\Languages\en-US.json" />
+      <_ContentIncludedByDefault Remove="pub\Languages\fr-FR.json" />
+      <_ContentIncludedByDefault Remove="pub\pub\appsettings.Development.json" />
+      <_ContentIncludedByDefault Remove="pub\pub\appsettings.json" />
+      <_ContentIncludedByDefault Remove="pub\pub\Languages\en-US.json" />
+      <_ContentIncludedByDefault Remove="pub\pub\Languages\fr-FR.json" />
+      <_ContentIncludedByDefault Remove="pub\pub\Skills.deps.json" />
+      <_ContentIncludedByDefault Remove="pub\pub\Skills.runtimeconfig.json" />
     </ItemGroup>
 
     <ItemGroup>

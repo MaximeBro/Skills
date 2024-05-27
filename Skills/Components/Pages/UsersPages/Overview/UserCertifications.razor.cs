@@ -45,7 +45,7 @@ public partial class UserCertifications : FullComponentBase
     {
         if (firstRender)
         {
-            await InitSignalRAsync(nameof(UserCertifications), async() => await RefreshDataAsync());
+            // await InitSignalRAsync(nameof(UserCertifications), async() => await RefreshDataAsync());
         }
     }
 
@@ -66,7 +66,7 @@ public partial class UserCertifications : FullComponentBase
                 await db.SaveChangesAsync();
                 await db.DisposeAsync();
 
-                await SendUpdateAsync(nameof(UserCertifications));
+                // await (nameof(UserCertifications));
                 await RefreshDataAsync();
                 StateHasChanged();
             }
@@ -94,7 +94,7 @@ public partial class UserCertifications : FullComponentBase
                 await db.SaveChangesAsync();
                 await db.DisposeAsync();
 
-                await SendUpdateAsync(nameof(UserEducations));
+                // await (nameof(UserEducations));
                 await RefreshDataAsync();
                 StateHasChanged();
             }
@@ -116,7 +116,7 @@ public partial class UserCertifications : FullComponentBase
                 await db.SaveChangesAsync();
                 await db.DisposeAsync();
 
-                await SendUpdateAsync(nameof(UserCertifications));
+                // await (nameof(UserCertifications));
                 await RefreshDataAsync();
                 StateHasChanged();
             }
@@ -143,7 +143,7 @@ public partial class UserCertifications : FullComponentBase
         StateHasChanged();
     }
     
-    private async Task RefreshDataAsync()
+    protected override async Task RefreshDataAsync()
     {
         var db = await Factory.CreateDbContextAsync();
         _certifications = await db.UserCertifications.AsNoTracking().Where(x => x.UserId == User.Id).ToListAsync();

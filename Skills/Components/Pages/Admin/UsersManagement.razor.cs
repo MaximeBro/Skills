@@ -13,6 +13,6 @@ public partial class UsersManagement : FullComponentBase
     /// </summary>
     public async Task RefreshUsersAsync()
     {
-        await _users.RefreshDataAsync();
+        await _users.RefreshPageDataAsync();
     }
 }
