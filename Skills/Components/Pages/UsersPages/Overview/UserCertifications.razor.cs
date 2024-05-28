@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
+using Microsoft.AspNetCore.Components.Web;
 using Microsoft.EntityFrameworkCore;
 using MudBlazor;
 using Skills.Components.Components;
@@ -18,6 +19,7 @@ public partial class UserCertifications : FullComponentBase
 {
     [CascadingParameter] public Task<AuthenticationState> AuthenticationState { get; set; } = null!;
     [Parameter] public UserModel User { get; set; } = null!;
+    [Parameter] public EventCallback<MouseEventArgs> OnClick { get; set; }
     [Inject] public IDbContextFactory<SkillsContext> Factory { get; set; } = null!;
     [Inject] public IDialogService DialogService { get; set; } = null!;
     [Inject] public ISnackbar Snackbar { get; set; } = null!;
@@ -41,14 +43,6 @@ public partial class UserCertifications : FullComponentBase
         StateHasChanged();
     }
     
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        if (firstRender)
-        {
-            // await InitSignalRAsync(nameof(UserCertifications), async() => await RefreshDataAsync());
-        }
-    }
-
     private async Task CreateCertificationAsync()
     {
         var authorized = await CheckPermissionsAsync();
@@ -65,10 +59,11 @@ public partial class UserCertifications : FullComponentBase
                 db.UserCertifications.Add(certification);
                 await db.SaveChangesAsync();
                 await db.DisposeAsync();
-
-                // await (nameof(UserCertifications));
+                
                 await RefreshDataAsync();
                 StateHasChanged();
+
+                await SendUpdateAsync();
             }
         }
     }
@@ -93,10 +88,11 @@ public partial class UserCertifications : FullComponentBase
                 db.UserCertifications.Update(certification);
                 await db.SaveChangesAsync();
                 await db.DisposeAsync();
-
-                // await (nameof(UserEducations));
+                
                 await RefreshDataAsync();
                 StateHasChanged();
+                
+                await SendUpdateAsync();
             }
         }
     }
@@ -115,10 +111,11 @@ public partial class UserCertifications : FullComponentBase
                 db.UserCertifications.Remove(certification);
                 await db.SaveChangesAsync();
                 await db.DisposeAsync();
-
-                // await (nameof(UserCertifications));
+                
                 await RefreshDataAsync();
                 StateHasChanged();
+                
+                await SendUpdateAsync();
             }
         }
     }

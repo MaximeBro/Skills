@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Web;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.JSInterop;
 using MudBlazor;
@@ -15,12 +16,14 @@ namespace Skills.Components.Pages.UsersPages.Overview;
 
 public partial class CvProfile : FullComponentBase
 {
+    [Parameter] public UserModel User { get; set; } = null!;
+    [Parameter] public EventCallback<MouseEventArgs> OnClick { get; set; }
     [Inject] public IDbContextFactory<SkillsContext> Factory { get; set; } = null!;
     [Inject] public IDialogService DialogService { get; set; } = null!;
     [Inject] public WordExportService WordExportService { get; set; } = null!;
     [Inject] public ISnackbar Snackbar { get; set; } = null!;
     [Inject] public IJSRuntime JsRuntime { get; set; } = null!;
-    [Parameter] public UserModel User { get; set; } = null!;
+    
     private List<BreadcrumbItem> _breadcrumbs = [];
 
     private List<CvInfo> _cvs = new();
@@ -37,17 +40,9 @@ public partial class CvProfile : FullComponentBase
         _breadcrumbs.Add(new BreadcrumbItem("Utilisateurs", "/users"));
         _breadcrumbs.Add(new BreadcrumbItem(User.Name, $"/overview/{User.Username}"));
         _breadcrumbs.Add(new BreadcrumbItem("CV", null, true));
-
+        
         await RefreshDataAsync();
         StateHasChanged();
-    }
-
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        if (firstRender)
-        {
-            
-        }
     }
 
     private async Task CreateCvAsync()
@@ -65,6 +60,8 @@ public partial class CvProfile : FullComponentBase
         db.CVs.Add(cv);
         await db.SaveChangesAsync();
         await db.DisposeAsync();
+
+        await SendUpdateAsync();
         
         NavManager.NavigateTo($"/overview/{User.Username}/cv-editor/{cv.Id}");
     }
@@ -99,6 +96,8 @@ public partial class CvProfile : FullComponentBase
         
         await RefreshDataAsync();
         StateHasChanged();
+
+        await SendUpdateAsync();
     }
     
     private async Task DeleteCvAsync(CvInfo cv)
@@ -118,6 +117,8 @@ public partial class CvProfile : FullComponentBase
             await db.DisposeAsync();
             await RefreshDataAsync();
             StateHasChanged();
+            
+            await SendUpdateAsync();
         }
     }
 

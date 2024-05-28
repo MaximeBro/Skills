@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
+using Microsoft.AspNetCore.Components.Web;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.JSInterop;
 using MudBlazor;
@@ -15,12 +16,14 @@ namespace Skills.Components.Pages.UsersPages.Overview;
 
 public partial class SkillsProfile : FullComponentBase
 {
+    [Parameter] public UserModel User { get; set; } = null!;
+    [Parameter] public EventCallback<MouseEventArgs> OnClick { get; set; }
+    
     [Inject] public IDbContextFactory<SkillsContext> Factory { get; set; } = null!;
     [Inject] public IDialogService DialogService { get; set; } = null!;
     [Inject] public ISnackbar Snackbar { get; set; } = null!;
     [Inject] public IJSRuntime JsRuntime { get; set; } = null!;
     [Inject] public SkillService SkillService { get; set; } = null!;
-    [Parameter] public UserModel User { get; set; } = null!;
 
     private List<BreadcrumbItem> _breadcrumbs = new();
     private List<UserSkillModel> _userSkillsModels = new();
@@ -49,16 +52,11 @@ public partial class SkillsProfile : FullComponentBase
         _breadcrumbs.Add(new BreadcrumbItem("Utilisateurs", "/users"));
         _breadcrumbs.Add(new BreadcrumbItem(User.Name, $"/overview/{User.Username}"));
         _breadcrumbs.Add(new BreadcrumbItem("Compétences", null, true));
+        
         await RefreshDataAsync();
+        StateHasChanged();
     }
     
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        if (firstRender)
-        {
-            // await InitSignalRAsync(nameof(SkillsProfile), async() => await RefreshDataAsync());
-        }
-    }
 
     private async Task ManageSkillsAsync()
     {
@@ -80,8 +78,9 @@ public partial class SkillsProfile : FullComponentBase
             await db.SaveChangesAsync();
             await db.DisposeAsync();
             await RefreshDataAsync();
+            StateHasChanged();
 
-            // await (nameof(SkillsProfile));
+            await SendUpdateAsync();
         }
     }
 
@@ -103,8 +102,9 @@ public partial class SkillsProfile : FullComponentBase
         
         await db.DisposeAsync();
         await RefreshDataAsync();
-        
-        // await (nameof(SkillsProfile));
+        StateHasChanged();
+
+        await SendUpdateAsync();
     }
     
     private async Task RevokeSkillAsync(UserSkillModel model)
@@ -131,8 +131,8 @@ public partial class SkillsProfile : FullComponentBase
             
             await RefreshDataAsync();
             StateHasChanged();
-            
-            // await (nameof(SkillsProfile));
+
+            await SendUpdateAsync();
         }
     }
 
@@ -195,9 +195,9 @@ public partial class SkillsProfile : FullComponentBase
                 {
                     await RefreshDataAsync();
                     StateHasChanged();
-
-                    // await (nameof(SkillsProfile));
+                    
                     Snackbar.Add(response.Value, Severity.Success);
+                    await SendUpdateAsync();
                     break;
                 }
             }

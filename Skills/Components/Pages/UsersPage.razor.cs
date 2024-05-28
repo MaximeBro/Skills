@@ -53,7 +53,7 @@ public partial class UsersPage : FullComponentBase
     {
         if (args.MouseEventArgs.Detail == 2)
         {
-            NavManager.NavigateTo($"/overview/{args.Item.Username}");
+            NavManager.NavigateTo($"/overview/{args.Item.Username}/1");
         }
     }
 
@@ -67,7 +67,7 @@ public partial class UsersPage : FullComponentBase
         }
     }
     
-    private void NavigateToProfile(UserModel model) => NavManager.NavigateTo($"/overview/{model.Username}");
+    private void NavigateToProfile(UserModel model) => NavManager.NavigateTo($"/overview/{model.Username}/1");
 
     protected override async Task RefreshDataAsync()
     {

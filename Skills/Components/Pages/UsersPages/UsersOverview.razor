@@ -10,15 +10,16 @@
         </style>
         
         <CascadingValue Value="@this" Name="@nameof(UsersOverview)">
-            <MudTabs Centered Color="@(Layout.IsDarkMode ? Color.Transparent : Color.Primary)" TabHeaderClass="@(Layout.IsDarkMode ? "blue-tabs-header text-white" : string.Empty)" ActivePanelIndex="@(TabIndex ?? 0)">
-                <ProfileInfos User="@_user"/>
-                <SkillsProfile User="@_user"/>
-                <UserEducations User="@_user"/>
-                <UserCertifications User="@_user"/>
-                <UserExperiences User="@_user"/>
+            <MudTabs Centered Color="@(Layout.IsDarkMode ? Color.Transparent : Color.Primary)" TabHeaderClass="@(Layout.IsDarkMode ? "blue-tabs-header text-white" : string.Empty)" 
+                     @bind-ActivePanelIndex="TabIndex">
+                <ProfileInfos User="@_user" OnClick="@NavToPanel"/>
+                <SkillsProfile User="@_user" OnClick="@NavToPanel"/>
+                <UserEducations User="@_user" OnClick="@NavToPanel"/>
+                <UserCertifications User="@_user" OnClick="@NavToPanel"/>
+                <UserExperiences User="@_user" OnClick="@NavToPanel"/>
                 <AuthorizeView Roles="Admin, Manager">
                     <Authorized>
-                        <CvProfile User="@_user"/>
+                        <CvProfile User="@_user" OnClick="@NavToPanel"/>
                     </Authorized>
                 </AuthorizeView>
             </MudTabs>

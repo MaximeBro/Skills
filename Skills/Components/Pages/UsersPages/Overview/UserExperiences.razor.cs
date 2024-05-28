@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
+using Microsoft.AspNetCore.Components.Web;
 using Microsoft.EntityFrameworkCore;
 using MudBlazor;
 using Skills.Components.Components;
@@ -18,6 +19,7 @@ public partial class UserExperiences : FullComponentBase
 {
     [CascadingParameter] public Task<AuthenticationState> AuthenticationState { get; set; } = null!;
     [Parameter] public UserModel User { get; set; } = null!;
+    [Parameter] public EventCallback<MouseEventArgs> OnClick { get; set; }
     [Inject] public IDbContextFactory<SkillsContext> Factory { get; set; } = null!;
     [Inject] public IDialogService DialogService { get; set; } = null!;
     [Inject] public ISnackbar Snackbar { get; set; } = null!;
@@ -36,18 +38,10 @@ public partial class UserExperiences : FullComponentBase
         _breadcrumbs.Add(new BreadcrumbItem("Accueil", "/"));
         _breadcrumbs.Add(new BreadcrumbItem("Utilisateurs", "/users"));
         _breadcrumbs.Add(new BreadcrumbItem(User.Name, $"/overview/{User.Username}"));
-        _breadcrumbs.Add(new BreadcrumbItem("Diplômes", null, true));
+        _breadcrumbs.Add(new BreadcrumbItem("Expériences", null, true));
 
         await RefreshDataAsync();
         StateHasChanged();
-    }
-    
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        if (firstRender)
-        {
-            // await InitSignalRAsync(nameof(UserExperiences), async() => await RefreshDataAsync());
-        }
     }
     
     private async Task CreateExperienceAsync()
@@ -66,10 +60,11 @@ public partial class UserExperiences : FullComponentBase
                 db.UserExperiences.Add(experience);
                 await db.SaveChangesAsync();
                 await db.DisposeAsync();
-
-                // await (nameof(UserExperiences));
+                
                 await RefreshDataAsync();
                 StateHasChanged();
+                
+                await SendUpdateAsync();
             }
         }
     }
@@ -95,10 +90,11 @@ public partial class UserExperiences : FullComponentBase
                 db.UserExperiences.Update(experience);
                 await db.SaveChangesAsync();
                 await db.DisposeAsync();
-
-                // await (nameof(UserExperiences));
+                
                 await RefreshDataAsync();
                 StateHasChanged();
+                
+                await SendUpdateAsync();
             }
         }
     }
@@ -117,10 +113,11 @@ public partial class UserExperiences : FullComponentBase
                 db.UserExperiences.Remove(experience);
                 await db.SaveChangesAsync();
                 await db.DisposeAsync();
-
-                // await (nameof(UserExperiences));
+                
                 await RefreshDataAsync();
                 StateHasChanged();
+                
+                await SendUpdateAsync();
             }
         }
     }
@@ -132,11 +129,9 @@ public partial class UserExperiences : FullComponentBase
         {
             return true;
         }
-        else
-        {
-            Snackbar.Add("Vous n'avez pas les permissions nécessaires pour effectuer des modifications sur le profil de cet utilisateur !", Severity.Error);
-            return false;
-        }
+
+        Snackbar.Add("Vous n'avez pas les permissions nécessaires pour effectuer des modifications sur le profil de cet utilisateur !", Severity.Error);
+        return false;
     }
     
     private void OnSortChanged()

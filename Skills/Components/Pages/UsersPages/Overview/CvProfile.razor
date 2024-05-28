@@ -1,7 +1,7 @@
 @inherits FullComponentBase
 @attribute [Authorize(Roles = "Admin, Manager")]
 
-<MudTabPanel Text="CV">
+<MudTabPanel Text="CV" OnClick="@OnClick">
     <MudGrid Justify="Justify.Center" Spacing="0">
         <MudItem Class="px-2 px-md-16" xs="12">
             <MudStack Row>
@@ -49,7 +49,7 @@
                                 <MudStack Row>
                                     <MudText Class="open-sans-600 bold">@cv.Title</MudText>
                                     <MudSpacer/>
-                                    <MudTooltip Text="Télécharger" Placement="Placement.Bottom" Arrow>
+                                    <MudTooltip Text="Télécharger" Placement="Placement.Top" Arrow>
                                         <MudIconButton Color="Color.Primary" Size="Size.Small" Icon="@IconsFF.FileWord" OnClick="@(async() => await ExportCvAsync(cv))" />
                                     </MudTooltip>
                                     <MudTooltip Text="Éditer" Placement="Placement.Top" Arrow>
@@ -58,7 +58,7 @@
                                     <MudTooltip Text="Dupliquer" Placement="Placement.Top" Arrow>
                                         <MudIconButton Color="Color.Primary" Size="Size.Small" Icon="@IconsF.CopyAll" OnClick="@(async() => await DuplicateCvAsync(cv))"/>
                                     </MudTooltip>
-                                    <MudTooltip Text="Supprimer" Placement="Placement.Bottom" Arrow>
+                                    <MudTooltip Text="Supprimer" Placement="Placement.Top" Arrow>
                                         <MudIconButton Class="hover-red" Size="Size.Small" Color="@(Layout.IsDarkMode ? Color.Default : Color.Dark)" Icon="@IconsO.Delete" OnClick="@(async () => await DeleteCvAsync(cv))"/>
                                     </MudTooltip>
                                 </MudStack>

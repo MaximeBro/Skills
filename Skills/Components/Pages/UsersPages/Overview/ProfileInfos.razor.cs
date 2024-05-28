@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Web;
 using Microsoft.EntityFrameworkCore;
 using MudBlazor;
 using Skills.Components.Components;
@@ -11,6 +12,7 @@ public partial class ProfileInfos : FullComponentBase
 {
     [CascadingParameter(Name = nameof(UsersOverview))] public UsersOverview Overview { get; set; } = null!;
     [Parameter] public UserModel User { get; set; } = null!;
+    [Parameter] public EventCallback<MouseEventArgs> OnClick { get; set; }
 
     [Inject] public IDbContextFactory<SkillsContext> Factory { get; set; } = null!;
 
@@ -34,14 +36,6 @@ public partial class ProfileInfos : FullComponentBase
         await RefreshDataAsync();
     }
     
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        if (firstRender)
-        {
-            // await InitSignalRAsync(nameof(ProfileInfos), async() => await RefreshDataAsync());
-        }
-    }
-
     private async Task SaveAsync()
     {
         var db = await Factory.CreateDbContextAsync();
@@ -52,8 +46,8 @@ public partial class ProfileInfos : FullComponentBase
         await db.SaveChangesAsync();
         await db.DisposeAsync();
         
-        // await (nameof(ProfileInfos));
         await Overview.UserChangedAsync();
+        await SendUpdateAsync();
     }
 
     protected override Task RefreshDataAsync()

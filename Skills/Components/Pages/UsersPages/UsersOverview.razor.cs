@@ -11,7 +11,7 @@ public partial class UsersOverview : FullComponentBase
     [Inject] public IDbContextFactory<SkillsContext> Factory { get; set; } = null!;
 
     [Parameter] public string Id { get; set; } = null!;
-    [Parameter] public int? TabIndex { get; set; }
+    [Parameter] public int TabIndex { get; set; }
     
     private UserModel _user = null!;
     
@@ -25,6 +25,8 @@ public partial class UsersOverview : FullComponentBase
         await RefreshDataAsync();
         StateHasChanged();
     }
+    
+    private void NavToPanel() => NavManager.NavigateTo($"/overview/{_user.Username}/{TabIndex}");
     
     protected override async Task RefreshDataAsync()
     {

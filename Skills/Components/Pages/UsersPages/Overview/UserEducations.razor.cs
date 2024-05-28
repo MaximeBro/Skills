@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
+using Microsoft.AspNetCore.Components.Web;
 using Microsoft.EntityFrameworkCore;
 using MudBlazor;
 using Skills.Components.Components;
@@ -18,6 +19,7 @@ public partial class UserEducations : FullComponentBase
 {
     [CascadingParameter] public Task<AuthenticationState> AuthenticationState { get; set; } = null!;
     [Parameter] public UserModel User { get; set; } = null!;
+    [Parameter] public EventCallback<MouseEventArgs> OnClick { get; set; }
     [Inject] public IDbContextFactory<SkillsContext> Factory { get; set; } = null!;
     [Inject] public IDialogService DialogService { get; set; } = null!;
     [Inject] public ISnackbar Snackbar { get; set; } = null!;
@@ -41,14 +43,6 @@ public partial class UserEducations : FullComponentBase
         await RefreshDataAsync();
         StateHasChanged();
     }
-    
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        if (firstRender)
-        {
-            // await InitSignalRAsync(nameof(UserEducations), async() => await RefreshDataAsync());
-        }
-    }
 
     private async Task CreateEducationAsync()
     {
@@ -66,10 +60,11 @@ public partial class UserEducations : FullComponentBase
                 db.UserEducations.Add(education);
                 await db.SaveChangesAsync();
                 await db.DisposeAsync();
-
-                // await (nameof(UserEducations));
+                
                 await RefreshDataAsync();
                 StateHasChanged();
+                
+                await SendUpdateAsync();
             }
         }
     }
@@ -96,10 +91,11 @@ public partial class UserEducations : FullComponentBase
                 db.UserEducations.Update(education);
                 await db.SaveChangesAsync();
                 await db.DisposeAsync();
-
-                // await (nameof(UserEducations));
+                
                 await RefreshDataAsync();
                 StateHasChanged();
+                
+                await SendUpdateAsync();
             }
         }
     }
@@ -118,10 +114,11 @@ public partial class UserEducations : FullComponentBase
                 db.UserEducations.Remove(education);
                 await db.SaveChangesAsync();
                 await db.DisposeAsync();
-
-                // await (nameof(UserEducations));
+                
                 await RefreshDataAsync();
                 StateHasChanged();
+                
+                await SendUpdateAsync();
             }
         }
     }

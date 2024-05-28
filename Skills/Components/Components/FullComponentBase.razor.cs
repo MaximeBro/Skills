@@ -7,30 +7,47 @@ namespace Skills.Components.Components;
 public partial class FullComponentBase : ComponentBase, IAsyncDisposable
 {
     [CascadingParameter(Name = "MainLayout")] public MainLayout Layout { get; set; } = null!;
+    [Inject] public RealTimeUpdateService UpdateService { get; set; } = null!;
     [Inject] public NavigationManager NavManager { get; set; } = null!;
     [Inject] public ThemeManager ThemeManager { get; set; } = null!;
     [Inject] public LocalizationManager Lang { get; set; } = null!;
     
     protected Guid CircuitId = Guid.NewGuid();
-    private string _component = string.Empty;
+    protected string Component = string.Empty;
 
     protected override void OnAfterRender(bool firstRender)
     {
         if (firstRender)
         {
+            Component = this.GetType().Name;
             Lang.OnLanguageChanged += InvokeStateHasChangedAsync;
+            UpdateService.OnUpdateAsync += RefreshComponentDataAsync;
         }
     }
 
     protected async Task InvokeStateHasChangedAsync() => await InvokeAsync(StateHasChanged);
 
-    protected virtual Task RefreshDataAsync()
-    {
-        return Task.CompletedTask;
-    }
+    protected async Task SendUpdateAsync() => await UpdateService.SendUpdateAsync(Component, CircuitId);
 
-    public virtual async ValueTask DisposeAsync()
+    protected async Task RefreshComponentDataAsync(string component, Guid circuitId)
+    {
+        if (circuitId != CircuitId && component == Component)
+        {
+            await InvokeAsync(async () =>
+            {
+                await RefreshDataAsync();
+                StateHasChanged();
+            });
+        }
+    }
+    
+    protected virtual Task RefreshDataAsync() => Task.CompletedTask;
+
+    public virtual ValueTask DisposeAsync()
     {
         Lang.OnLanguageChanged -= InvokeStateHasChangedAsync;
+        UpdateService.OnUpdateAsync -= RefreshComponentDataAsync;
+
+        return new ValueTask(Task.CompletedTask);
     }
 }
