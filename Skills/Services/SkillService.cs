@@ -205,7 +205,7 @@ public class SkillService(IDbContextFactory<SkillsContext> factory)
         await InitAsync(); // Add back the Soft-Skill type (hardcoded skill type, required for the global app)
     }
 
-    public async Task<Stream> ExportUserSkillAsync(Dictionary<AbstractSkillModel, int> data, UserModel user)
+    public async Task<Stream> ExportUserSkillsAsync(Dictionary<AbstractSkillModel, int> data, UserModel user)
     {
         var values = new List<Dictionary<string, object>>();
         values.Add(new Dictionary<string, object>
@@ -233,6 +233,41 @@ public class SkillService(IDbContextFactory<SkillsContext> factory)
             row.Add("Column3", skill.Key.SubCategory ?? string.Empty);
             row.Add("Column4", skill.Key.Description ?? string.Empty);
             row.Add("Column5", skill.Value == 0 ? string.Empty : skill.Value);
+            values.Add(row);
+        }
+
+        var memoryStream = new MemoryStream();
+        await memoryStream.SaveAsAsync(values, false);
+        memoryStream.Seek(0, SeekOrigin.Begin);
+        return memoryStream;
+    }
+
+    public async Task<Stream> ExportSkillsAsync(List<AbstractSkillModel> data)
+    {
+        var values = new List<Dictionary<string, object>>();
+        values.Add(new Dictionary<string, object>
+        {
+            { "Column1", "TYPE" },
+            { "Column2", "CATEGORIE" },
+            { "Column3", "SS-CATEGORIE" },
+            { "Column4", "DESCRIPTION" },
+            { "Column5", "Niveau 1" },
+            { "Column6", "Niveau 2" },
+            { "Column7", "Niveau 3" },
+            { "Column8", "Niveau 4" },
+        });
+
+        foreach (var skill in data)
+        {
+            var row = new Dictionary<string, object>();
+            row.Add("Column1", skill.Type ?? string.Empty);
+            row.Add("Column2", skill.Category ?? string.Empty);
+            row.Add("Column3", skill.SubCategory ?? string.Empty);
+            row.Add("Column4", skill.Description ?? string.Empty);
+            row.Add("Column5", string.Empty);
+            row.Add("Column6", string.Empty);
+            row.Add("Column7", string.Empty);
+            row.Add("Column8", string.Empty);
             values.Add(row);
         }
 

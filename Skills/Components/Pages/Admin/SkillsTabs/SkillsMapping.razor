@@ -8,23 +8,26 @@
                              Culture="@(new CultureInfo("fr-FR"))" Height="70vh" Virtualize OverscanCount="5" ItemSize="39" RowClick="@OnRowClickedAsync">
                     <ToolBarContent>
                         <MudText Class="open-sans-600" Style="font-weight: bold!important">Actions</MudText>
-                        <MudTooltip Class="ml-2" Placement="Placement.Bottom" Text="Purge des compétences" Arrow>
-                            <MudIconButton Class="ml-4 hover-red" Style="border-radius: 6px!important; padding: 4px!important;" Icon="@IconsF.Delete" Color="@(Layout.IsDarkMode ? Color.Default : Color.Dark)" OnClick="@(() => PurgeSkillsAsync())"/>
+                        <MudTooltip Class="ml-2" Placement="Placement.Top" Text="Purge des compétences" Arrow>
+                            <MudIconButton Class="ml-4 hover-red" Style="border-radius: 6px!important; padding: 4px!important;" Icon="@IconsF.Delete" Color="@(Layout.IsDarkMode ? Color.Default : Color.Dark)" OnClick="@(async() => await PurgeSkillsAsync())"/>
+                        </MudTooltip>
+                        <MudTooltip Class="ml-2" Placement="Placement.Bottom" Text="Exporter les compétences (avec filtres)" Arrow>
+                            <MudIconButton Class="ml-4" Style="border-radius: 6px!important; padding: 4px!important;" Icon="@IconsFF.FileExcel" Color="Color.Tertiary" OnClick="@(async() => await ExportSkillsAsync())"/>
                         </MudTooltip>
                         <MudTooltip Class="ml-2" Placement="Placement.Top" Text="Importer des compétences" Arrow>
-                            <MudIconButton Class="ml-4" Style="border-radius: 6px!important; padding: 4px!important;" Icon="@IconsFF.FileExcel" Color="Color.Tertiary" OnClick="@(() => ImportSkillsAsync())"/>
+                            <MudIconButton Class="ml-4" Style="border-radius: 6px!important; padding: 4px!important;" Icon="@IconsF.UploadFile" Color="Color.Secondary" OnClick="@(async() => await ImportSkillsAsync())"/>
                         </MudTooltip>
                         <MudTooltip Class="ml-2" Placement="Placement.Bottom" Text="Créer une compétence" Arrow>
-                            <MudIconButton Class="ml-4" Style="border-radius: 6px!important; padding: 4px!important;" Icon="@IconsF.AccountTree" Color="Color.Tertiary" OnClick="@(() => CreateSkillAsync())"/>
+                            <MudIconButton Class="ml-4" Style="border-radius: 6px!important; padding: 4px!important;" Icon="@IconsF.AccountTree" Color="Color.Tertiary" OnClick="@(async() => await CreateSkillAsync())"/>
                         </MudTooltip>
                         <MudTooltip Class="ml-2" Placement="Placement.Top" Text="Créer un soft-skill" Arrow>
-                            <MudIconButton Class="ml-4" Style="border-radius: 6px!important; padding: 4px!important;" Icon="@IconsF.Handshake" Color="Color.Tertiary" OnClick="@(() => CreateSoftSkillAsync())"/>
+                            <MudIconButton Class="ml-4" Style="border-radius: 6px!important; padding: 4px!important;" Icon="@IconsF.Handshake" Color="Color.Tertiary" OnClick="@(async() => await CreateSoftSkillAsync())"/>
                         </MudTooltip>
                         <MudTooltip Placement="Placement.Right" Text="Pour éditer, faites un double clic sur une ligne !" Arrow>
                             <MudIcon Class="ml-5 mt-1" Icon="@IconsF.Info" Color="Color.Info"/>
                         </MudTooltip>
                         <MudSpacer/>
-                        <MudTextField T="string" @bind-Value="_search" OnBlur="@(async() => await RefreshDataAsync())" Immediate Adornment="Adornment.Start" Clearable
+                        <MudTextField T="string" @bind-Value="_search" OnBlur="@(async() => await RefreshPageDataAsync())" Immediate Adornment="Adornment.Start" Clearable
                                       AdornmentIcon="@IconsF.Search" Placeholder="Rechercher" Class="flex-grow-0 mr-8 mt-0" Style="width: 400px;"/>
                     </ToolBarContent>
                     <Columns>

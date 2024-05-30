@@ -20,13 +20,19 @@
                     <MudIcon Class="ml-4 mt-1" Icon="@IconsF.Info" Color="Color.Info" />
                 </MudTooltip>
                 <MudSpacer/>
-                <MudTextField T="string" @bind-Value="_search" @onblur="@(async() => await RefreshDataAsync())" Adornment="Adornment.Start" Clearable Immediate
+                <MudTextField T="string" @bind-Value="_search" @onblur="@(async() => await RefreshPageDataAsync())" Adornment="Adornment.Start" Clearable Immediate
                               AdornmentIcon="@IconsF.Search" Placeholder="Rechercher" Class="flex-grow-0 mr-8 mt-0" Style="width: 400px;"/>
             </ToolBarContent>
             <Columns>
                 <PropertyColumn Title="Nomination" Property="x => x.Name"/>
                 <PropertyColumn Title="Email" Property="x => x.Email"/>
-                <PropertyColumn Title="Téléphone" Property="x => x.PhoneNumber"/>
+                <TemplateColumn Title="Téléphone">
+                    <CellTemplate Context="row">
+                        <MudStack Row Justify="Justify.Center" AlignItems="AlignItems.Center">
+                            <MudText Class="open-sans" Style="font-size: 14px;">@row.Item.PhoneNumber</MudText>
+                        </MudStack>
+                    </CellTemplate>
+                </TemplateColumn>
                 <TemplateColumn Title="Date de naissance">
                     <CellTemplate Context="row">
                         <MudStack Row Justify="Justify.Center" AlignItems="AlignItems.Center">
@@ -51,21 +57,17 @@
                     <CellTemplate Context="row">
                         <MudText Typo="Typo.body2">@(row.Item!.Group?.Name ?? string.Empty)</MudText>
                     </CellTemplate>
-                    <EditTemplate Context="edit">
-                        <MudSelect T="Guid?" @bind-Value="edit.Item.GroupId" ToStringFunc="@(id => id.HasValue ? _groups.FirstOrDefault(x => x.Id == id.Value)?.Name ?? string.Empty : string.Empty)">
-                            @foreach (var group in _groups)
-                            {
-                                <MudSelectItem Value="(Guid?)group.Id">@group.Name</MudSelectItem>
-                            }
-                        </MudSelect>
-                    </EditTemplate>
                 </TemplateColumn>
-                <PropertyColumn Title="Désactivé" Property="x => x.IsDisabled" CellStyleFunc="@DisabledColor">
-                    <EditTemplate Context="row">
-                        <MudCheckBox T="bool" @bind-Value="row.Item.IsDisabled" Label="Désactivé" />
-                    </EditTemplate>
-                </PropertyColumn>
-                <TemplateColumn Sortable="false" Filterable="false">
+                <TemplateColumn Title="Désactivé" CellStyleFunc="@DisabledColor" SortBy="x => x.IsDisabled">
+                    <CellTemplate Context="row">
+                        <MudStack Row Justify="Justify.Center" AlignItems="AlignItems.Center">
+                            <MudText Class="open-sans" Style="font-size: 14px;" Align="Align.Center">
+                                @(row.Item.IsDisabled ? "Désactivé" : "Actif")
+                            </MudText>
+                        </MudStack>
+                    </CellTemplate>
+                </TemplateColumn>
+                <TemplateColumn Title="Actions" Sortable="false" Filterable="false">
                     <CellTemplate Context="row">
                         <MudStack Row Justify="Justify.SpaceEvenly">
                             <MudTooltip Placement="Placement.Bottom" Text="Éditer" Arrow>

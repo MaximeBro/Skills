@@ -26,9 +26,9 @@ public partial class UsersList : FullComponentBase
     private bool _loading;
     private bool _pageLoading;
 
-    public Func<UserModel, string> DisabledColor => x => x.IsDisabled ? "color: orange;" : "color: inherit;";
-    
-    public Func<UserModel, bool> QuickFilter => x =>
+    private Func<UserModel, string> DisabledColor => x => x.IsDisabled ? "color: orange;" : "color: inherit;";
+
+    private Func<UserModel, bool> QuickFilter => x =>
     {
         if (x.Name.Contains(_search, StringComparison.OrdinalIgnoreCase)) return true;
         if (x.Email.Contains(_search, StringComparison.OrdinalIgnoreCase)) return true;

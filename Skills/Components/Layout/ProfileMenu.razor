@@ -1,6 +1,6 @@
 @inherits FullComponentBase
 
-<MudMenu @ref="_menu" Icon="@IconsR.AccountCircle" Class="@($"icon-hoverable white-all {Class}")" PopoverClass="dark-bg" ListClass="rounded-lg" ActivationEvent="MouseEvent.LeftClick"
+<MudMenu @ref="_menu" Icon="@IconsR.AccountCircle" Class="@($"icon-hoverable white-all {Class}")" PopoverClass="dark-bg" ListClass="rounded-lg" ActivationEvent="MouseEvent.MouseOver"
          AnchorOrigin="Origin.BottomRight" TransformOrigin="Origin.TopRight" IsOpenChanged="@((value) => ToLogin())">
     <MudStack Class="pt-1" Row="false" Spacing="0">
         @if (!string.IsNullOrWhiteSpace(_name))

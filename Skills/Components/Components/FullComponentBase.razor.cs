@@ -29,7 +29,7 @@ public partial class FullComponentBase : ComponentBase, IAsyncDisposable
 
     protected async Task SendUpdateAsync() => await UpdateService.SendUpdateAsync(Component, CircuitId);
 
-    protected async Task RefreshComponentDataAsync(string component, Guid circuitId)
+    private async Task RefreshComponentDataAsync(string component, Guid circuitId)
     {
         if (circuitId != CircuitId && component == Component)
         {

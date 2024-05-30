@@ -3,8 +3,8 @@
 <MudPaper id="experiences" Class="mt-6 pad-anchor" Elevation="2">
     <MudStack Class="px-4 py-3" Row="false" Spacing="2">
         <MudText Class="open-sans-600 bold">Expériences</MudText>
+        <MudCheckBox T="bool" ValueChanged="@SelectAllChanged" Value="@_selectAll" Label="Tout sélectionner"/>
         <MudStack Row="false" Spacing="0" Style="max-height: 400px; overflow-y: auto;">
-            <MudCheckBox T="bool" ValueChanged="@SelectAllChanged" Value="@_selectAll" Label="Tout sélectionner"/>
             @foreach (var experience in Editor.CvExperiences)
             {
                 <MudPaper Class="d-flex mb-3 px-4 py-1" Elevation="3" Style="flex-direction: row; align-items: center; background: transparent; backdrop-filter: brightness(0.90);">

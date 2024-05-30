@@ -158,7 +158,7 @@ public partial class SkillsProfile : FullComponentBase
         }
         await db.DisposeAsync();
         
-        var stream = await SkillService.ExportUserSkillAsync(data, User);
+        var stream = await SkillService.ExportUserSkillsAsync(data, User);
         using var streamRef = new DotNetStreamReference(stream);
         await JsRuntime.InvokeVoidAsync("downloadFileFromStream", $"Compétences_{User.Username}.xlsx", streamRef);
     }

@@ -1,6 +1,8 @@
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Graph;
+using Microsoft.JSInterop;
 using MudBlazor;
 using Skills.Components.Components;
 using Skills.Components.Dialogs;
@@ -18,6 +20,7 @@ public partial class SkillsMapping : FullComponentBase
     [Inject] public SkillService SkillService { get; set; } = null!;
     [Inject] public IDialogService DialogService { get; set; } = null!;
     [Inject] public ISnackbar Snackbar { get; set; } = null!;
+    [Inject] public IJSRuntime JsRuntime { get; set; } = null!;
     [Parameter] public SkillsManagement Manager { get; set; } = null!;
     [Parameter] public string Title { get; set; } = string.Empty;
 
@@ -244,6 +247,14 @@ public partial class SkillsMapping : FullComponentBase
             _loading = false;
             StateHasChanged();
         }
+    }
+
+    private async Task ExportSkillsAsync()
+    {
+        var toExport = _models.Where(QuickFilter).ToList();
+        var stream = await SkillService.ExportSkillsAsync(toExport);
+        using var streamRef = new DotNetStreamReference(stream);
+        await JsRuntime.InvokeVoidAsync("downloadFileFromStream", $"Compétences-{DateTime.Now:dd-MM-yyyy}.xlsx", streamRef);
     }
 
     private async Task OnRowClickedAsync(DataGridRowClickEventArgs<AbstractSkillModel> args)
