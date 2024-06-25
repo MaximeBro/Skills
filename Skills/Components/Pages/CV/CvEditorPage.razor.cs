@@ -3,7 +3,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.JSInterop;
 using MudBlazor;
 using Skills.Components.Components;
-using Skills.Components.Pages.UsersPages.Overview;
 using Skills.Databases;
 using Skills.Extensions;
 using Skills.Models;
@@ -33,11 +32,10 @@ public partial class CvEditorPage : FullComponentBase, IAsyncDisposable
     private CvEditorPage_Skills _skills = null!;
     private CvEditorPage_Experiences _experiences = null!;
 
-    public Dictionary<UserEducationInfo, bool> CvEducations { get; set; } = new();
-    public Dictionary<UserCertificationInfo, bool> CvCertifications { get; set; } = new();
-    public Dictionary<UserExperienceInfo, bool> CvExperiences { get; set; } = new();
-    public Dictionary<Guid, bool> HeldCertifications { get; set; } = new();
-    public Dictionary<AbstractSkillModel, bool> ChosenSkills { get; set; } = new();
+    public Dictionary<UserEducationInfo, bool> CvEducations { get; set; } = [];
+    public Dictionary<UserCertificationInfo, bool> CvCertifications { get; set; } = [];
+    public Dictionary<UserExperienceInfo, bool> CvExperiences { get; set; } = [];
+    public Dictionary<AbstractSkillModel, bool> ChosenSkills { get; set; } = [];
 
     private int _pendingEdits = 0;
     private bool _autoSave = true;
@@ -80,7 +78,6 @@ public partial class CvEditorPage : FullComponentBase, IAsyncDisposable
         // Adds new cv fields
         var db = await Factory.CreateDbContextAsync();
 
-
         var heldEducations = CvEducations.Where(x => x.Value).Select(x => new CvEducationInfo { EducationId = x.Key.Id, CvId = _cv.Id }).ToList();
         var educationsToAdd = heldEducations.Where(education => db.CvEducations.AsNoTracking().Where(x => x.CvId == _cv.Id).All(x => x.EducationId != education.EducationId)).ToList();
         
@@ -98,26 +95,13 @@ public partial class CvEditorPage : FullComponentBase, IAsyncDisposable
         }).ToList();
         var skillsToAdd = heldSkills.Where(x => !db.CvSkills.AsNoTracking().Select(y => y.SkillId).Contains(x.SkillId)).ToList();
         
-        List<CvSafetyCertificationInfo> safetyCerts = [];
-        foreach (var cert in HeldCertifications.Where(x => x.Value))
-        {
-            if (db.SafetyCertifications.AsNoTracking().Any(x => x.Id == cert.Key))
-            {
-                safetyCerts.Add(new CvSafetyCertificationInfo { CvId = CvId, CertId = cert.Key });
-            }
-        }
-
-        var safetyCertsToAdd = safetyCerts.Where(x => !db.CvSafetyCertifications.AsNoTracking().Select(y => y.Id).Contains(x.Id)).ToList();
-
         db.CvEducations.AddRange(educationsToAdd);
         db.CvCertifications.AddRange(certificationsToAdd);
         db.CvExperiences.AddRange(experiencesToAdd);
         db.CvSkills.AddRange(skillsToAdd);
-        db.CvSafetyCertifications.AddRange(safetyCertsToAdd);
         
 
         // Removes old cv fields
-        var safetyCertsToDell = db.CvSafetyCertifications.AsNoTracking().Where(x => !safetyCerts.Select(y => y.CertId).Contains(x.CertId)).ToList();
         var skillsIds = ChosenSkills.Where(x => x.Value).Select(x => x.Key.Id).ToList();
         var skillsToDell = db.CvSkills.AsNoTracking().Where(x => !skillsIds.Contains(x.SkillId)).ToList();
 
@@ -130,7 +114,6 @@ public partial class CvEditorPage : FullComponentBase, IAsyncDisposable
         var experiencesIds = CvExperiences.Where(x => x.Value).Select(x => x.Key.Id).ToList();
         var experiencesToDell = db.CvExperiences.AsNoTracking().Where(x => !experiencesIds.Contains(x.ExperienceId)).ToList();
         
-        db.CvSafetyCertifications.RemoveRange(safetyCertsToDell);
         db.CvSkills.RemoveRange(skillsToDell);
         db.CvEducations.RemoveRange(educationsToDell);
         db.CvCertifications.RemoveRange(certificationsToDell);

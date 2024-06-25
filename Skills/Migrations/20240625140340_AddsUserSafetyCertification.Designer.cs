@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Skills.Databases;
 
@@ -10,9 +11,11 @@ using Skills.Databases;
 namespace Skills.Migrations
 {
     [DbContext(typeof(SkillsContext))]
-    partial class SkillsContextModelSnapshot : ModelSnapshot
+    [Migration("20240625140340_AddsUserSafetyCertification")]
+    partial class AddsUserSafetyCertification
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.3");
@@ -146,6 +149,27 @@ namespace Skills.Migrations
                     b.HasIndex("UserSafetyCertificationInfoId");
 
                     b.ToTable("CVs");
+                });
+
+            modelBuilder.Entity("Skills.Models.CV.CvSafetyCertificationInfo", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("TEXT");
+
+                    b.Property<Guid>("CertId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<Guid>("CvId")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CertId");
+
+                    b.HasIndex("CvId");
+
+                    b.ToTable("CvSafetyCertifications");
                 });
 
             modelBuilder.Entity("Skills.Models.CV.CvSkillInfo", b =>
@@ -324,12 +348,15 @@ namespace Skills.Migrations
                     b.Property<Guid>("CertId")
                         .HasColumnType("TEXT");
 
+                    b.Property<Guid?>("CertificationId")
+                        .HasColumnType("TEXT");
+
                     b.Property<Guid>("UserId")
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CertId");
+                    b.HasIndex("CertificationId");
 
                     b.HasIndex("UserId");
 
@@ -575,6 +602,25 @@ namespace Skills.Migrations
                         .HasForeignKey("UserSafetyCertificationInfoId");
                 });
 
+            modelBuilder.Entity("Skills.Models.CV.CvSafetyCertificationInfo", b =>
+                {
+                    b.HasOne("Skills.Models.CV.SafetyCertification", "Certification")
+                        .WithMany()
+                        .HasForeignKey("CertId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Skills.Models.CV.CvInfo", "Cv")
+                        .WithMany("SafetyCertifications")
+                        .HasForeignKey("CvId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Certification");
+
+                    b.Navigation("Cv");
+                });
+
             modelBuilder.Entity("Skills.Models.CV.CvSkillInfo", b =>
                 {
                     b.HasOne("Skills.Models.CV.CvInfo", "Cv")
@@ -631,9 +677,7 @@ namespace Skills.Migrations
                 {
                     b.HasOne("Skills.Models.CV.SafetyCertification", "Certification")
                         .WithMany()
-                        .HasForeignKey("CertId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("CertificationId");
 
                     b.HasOne("Skills.Models.UserModel", "User")
                         .WithMany()
@@ -716,6 +760,8 @@ namespace Skills.Migrations
 
             modelBuilder.Entity("Skills.Models.CV.CvInfo", b =>
                 {
+                    b.Navigation("SafetyCertifications");
+
                     b.Navigation("Skills");
                 });
 

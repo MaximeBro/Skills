@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Skills.Databases;
 
@@ -10,9 +11,11 @@ using Skills.Databases;
 namespace Skills.Migrations
 {
     [DbContext(typeof(SkillsContext))]
-    partial class SkillsContextModelSnapshot : ModelSnapshot
+    [Migration("20240625145344_AddsModelBuilderOverviewConstraints")]
+    partial class AddsModelBuilderOverviewConstraints
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.3");
@@ -324,12 +327,15 @@ namespace Skills.Migrations
                     b.Property<Guid>("CertId")
                         .HasColumnType("TEXT");
 
+                    b.Property<Guid?>("CertificationId")
+                        .HasColumnType("TEXT");
+
                     b.Property<Guid>("UserId")
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CertId");
+                    b.HasIndex("CertificationId");
 
                     b.HasIndex("UserId");
 
@@ -631,9 +637,7 @@ namespace Skills.Migrations
                 {
                     b.HasOne("Skills.Models.CV.SafetyCertification", "Certification")
                         .WithMany()
-                        .HasForeignKey("CertId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("CertificationId");
 
                     b.HasOne("Skills.Models.UserModel", "User")
                         .WithMany()

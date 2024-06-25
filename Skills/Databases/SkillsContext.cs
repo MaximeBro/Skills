@@ -14,7 +14,6 @@ public class SkillsContext : DbContext
     public DbSet<CvEducationInfo> CvEducations { get; set; }
     public DbSet<CvExperienceInfo> CvExperiences { get; set; }
     public DbSet<CvCertificationInfo> CvCertifications { get; set; }
-    public DbSet<CvSafetyCertificationInfo> CvSafetyCertifications { get; set; }
     public DbSet<CvSkillInfo> CvSkills { get; set; }
     
     public DbSet<SafetyCertification> SafetyCertifications { get; set; } // Admin certifications
@@ -23,6 +22,7 @@ public class SkillsContext : DbContext
     public DbSet<UserEducationInfo> UserEducations { get; set; }
     public DbSet<UserCertificationInfo> UserCertifications { get; set; }
     public DbSet<UserExperienceInfo> UserExperiences { get; set; }
+    public DbSet<UserSafetyCertificationInfo> UserSafetyCertifications { get; set; }
     
     // Skills
     public DbSet<SkillModel> Skills { get; set; }
@@ -57,6 +57,11 @@ public class SkillsContext : DbContext
 
         modelBuilder.Entity<UserSkillModel>()
             .HasKey(e => new { e.UserId, e.SkillId });
+
+        modelBuilder.Entity<UserSafetyCertificationInfo>()
+            .HasOne<SafetyCertification>(e => e.Certification).WithMany()
+            .HasForeignKey(e => e.CertId)
+            .IsRequired();
         
         // Skills models constraints
         modelBuilder.Entity<SkillModel>()
@@ -123,10 +128,5 @@ public class SkillsContext : DbContext
             .WithOne(e => e.Cv)
             .HasForeignKey(e => e.CvId)
             .OnDelete(DeleteBehavior.Cascade);
-
-        modelBuilder.Entity<CvSafetyCertificationInfo>()
-            .HasOne<SafetyCertification>(e => e.Certification).WithMany()
-            .HasForeignKey(e => e.CertId)
-            .IsRequired();
     }
 }

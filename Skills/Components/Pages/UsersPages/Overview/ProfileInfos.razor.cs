@@ -10,7 +10,7 @@ namespace Skills.Components.Pages.UsersPages.Overview;
 
 public partial class ProfileInfos : FullComponentBase
 {
-    [CascadingParameter(Name = nameof(UsersOverview))] public UsersOverview Overview { get; set; } = null!;
+    [CascadingParameter(Name = nameof(UserOverview))] public UserOverview Overview { get; set; } = null!;
     [Parameter] public UserModel User { get; set; } = null!;
     [Parameter] public EventCallback<MouseEventArgs> OnClick { get; set; }
 

@@ -15,7 +15,7 @@ using Skills.Services;
 
 namespace Skills.Components.Pages.UsersPages.Overview;
 
-public partial class UserExperiences : FullComponentBase
+public partial class ProfileExperiences : FullComponentBase
 {
     [CascadingParameter] public Task<AuthenticationState> AuthenticationState { get; set; } = null!;
     [Parameter] public UserModel User { get; set; } = null!;

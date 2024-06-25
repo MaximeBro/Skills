@@ -9,14 +9,15 @@
             .blue-tabs-header { background-color: @ThemeManager.GetColor(Color.Primary)!important; }
         </style>
         
-        <CascadingValue Value="@this" Name="@nameof(UsersOverview)">
+        <CascadingValue Value="@this" Name="@nameof(UserOverview)">
             <MudTabs Centered Color="@(Layout.IsDarkMode ? Color.Transparent : Color.Primary)" TabHeaderClass="@(Layout.IsDarkMode ? "blue-tabs-header text-white" : string.Empty)" 
                      @bind-ActivePanelIndex="TabIndex">
                 <ProfileInfos User="@_user" OnClick="@NavToPanel"/>
                 <SkillsProfile User="@_user" OnClick="@NavToPanel"/>
-                <UserEducations User="@_user" OnClick="@NavToPanel"/>
-                <UserCertifications User="@_user" OnClick="@NavToPanel"/>
-                <UserExperiences User="@_user" OnClick="@NavToPanel"/>
+                <ProfileEducations User="@_user" OnClick="@NavToPanel"/>
+                <ProfileCertifications User="@_user" OnClick="@NavToPanel"/>
+                <ProfileExperiences User="@_user" OnClick="@NavToPanel"/>
+                <ProfileSafetyCertifications User="@_user" OnClick="@NavToPanel" />
                 <AuthorizeView Roles="Admin, Manager">
                     <Authorized>
                         <CvProfile User="@_user" OnClick="@NavToPanel"/>

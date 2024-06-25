@@ -83,14 +83,12 @@ public partial class CvProfile : FullComponentBase
         var certifications = cv.Certifications.Select(x => new CvCertificationInfo() { CvId = copy.Id, CertificationId = x.Id }).ToList();
         var experiences = cv.Experiences.Select(x => new CvExperienceInfo() { CvId = copy.Id, ExperienceId = x.Id }).ToList();
         var skills = cv.Skills.Select(x => new CvSkillInfo { CvId = copy.Id, SkillId = x.Id, IsSoftSkill = x.IsSoftSkill }).ToList();
-        var safety = cv.SafetyCertifications.Select(x => new CvSafetyCertificationInfo { CvId = copy.Id, CertId = x.CertId }).ToList();
 
         db.CVs.Add(copy);
         db.CvEducations.AddRange(educations);
         db.CvCertifications.AddRange(certifications);
         db.CvExperiences.AddRange(experiences);
         db.CvSkills.AddRange(skills);
-        db.CvSafetyCertifications.AddRange(safety);
         await db.SaveChangesAsync();
         await db.DisposeAsync();
         
@@ -161,7 +159,7 @@ public partial class CvProfile : FullComponentBase
         _cvs = db.CVs.AsNoTracking()
                      .Include(x => x.Skills).ThenInclude(x => x.Skill)
                      .Include(x => x.Educations).Include(x => x.Experiences)
-                     .Include(x => x.Certifications).Include(x => x.SafetyCertifications).ThenInclude(x => x.Certification)
+                     .Include(x => x.Certifications)
                      .OrderByDescending(x => x.CreatedAt)
                      .ToList();
         

@@ -157,25 +157,14 @@ public partial class UsersList : FullComponentBase
             StateHasChanged();
         }
     }
-
-    private async Task<GridData<UserModel>> GetUsersAsync(GridState<UserModel> state)
-    {
-        var db = await Factory.CreateDbContextAsync();
-        _users = db.Users.AsNoTracking().Include(x => x.Group).Where(QuickFilter).OrderBy(x => x.IsDisabled).ToList();
-        _groups = await db.Groups.AsNoTracking().ToListAsync();
-        await db.DisposeAsync();
-
-        return new GridData<UserModel>
-        {
-            Items = _users,
-            TotalItems = _users.Count
-        };
-    }
     
     public async Task RefreshPageDataAsync()
     {
         _loading = true;
-        await _grid.ReloadServerData();
+        var db = await Factory.CreateDbContextAsync();
+        _users = db.Users.AsNoTracking().Include(x => x.Group).Where(QuickFilter).OrderBy(x => x.IsDisabled).ToList();
+        _groups = await db.Groups.AsNoTracking().ToListAsync();
+        await db.DisposeAsync();
         _loading = false;
     }
 }

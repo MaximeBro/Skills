@@ -22,5 +22,4 @@ public class CvInfo
     public List<UserEducationInfo> Educations { get; set; } = [];
     public List<UserExperienceInfo> Experiences { get; set; } = [];
     public List<UserCertificationInfo> Certifications { get; set; } = [];
-    public List<CvSafetyCertificationInfo> SafetyCertifications { get; set; } = [];
 }

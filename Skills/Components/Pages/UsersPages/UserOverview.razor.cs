@@ -6,7 +6,7 @@ using Skills.Models;
 
 namespace Skills.Components.Pages.UsersPages;
 
-public partial class UsersOverview : FullComponentBase
+public partial class UserOverview : FullComponentBase
 {
     [Inject] public IDbContextFactory<SkillsContext> Factory { get; set; } = null!;
 

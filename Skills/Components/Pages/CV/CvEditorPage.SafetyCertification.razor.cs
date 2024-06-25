@@ -4,6 +4,7 @@ using MudBlazor;
 using Skills.Components.Components;
 using Skills.Databases;
 using Skills.Models.CV;
+using Skills.Models.Overview;
 
 namespace Skills.Components.Pages.CV;
 
@@ -16,30 +17,22 @@ public partial class CvEditorPage_SafetyCertification : FullComponentBase
     [CascadingParameter(Name = "cv-editor")] public CvEditorPage Editor { get; set; } = null!;
     [Parameter] public CvInfo Cv { get; set; } = null!;
 
-    public List<CvSafetyCertificationInfo> CvSafetyCertifications = new();
-    public List<SafetyCertification> SafetyCertifications = new();
-    private Dictionary<string, List<SafetyCertification>> _groupedCertifications = new();
+    private List<SafetyCertification> _safetyCertifications = [];
+    private List<UserSafetyCertificationInfo> _userSafetyCertifications = [];
+    private Dictionary<string, List<SafetyCertification>> _groupedCertifications = [];
 
     protected override async Task OnInitializedAsync()
     {
         await RefreshDataAsync();
-    }
-
-    private void OnCheckChanged(bool value, Guid certId)
-    {
-        Editor.HeldCertifications[certId] = value;
-        Editor.EditDone();
+        StateHasChanged();
     }
 
     public override async Task RefreshDataAsync()
     {
         var db = await Factory.CreateDbContextAsync();
-        CvSafetyCertifications = db.CvSafetyCertifications.AsNoTracking().Where(x => x.CvId == Cv.Id).Include(x => x.Certification).ToList();
-        SafetyCertifications = db.SafetyCertifications.AsNoTracking().ToList();
-        _groupedCertifications = SafetyCertifications.GroupBy(x => x.Category).ToDictionary(x => x.Key, y => y.ToList());
-        Editor.HeldCertifications.Clear();
-        foreach (var certification in SafetyCertifications) Editor.HeldCertifications.Add(certification.Id, CvSafetyCertifications.Select(x => x.CertId).Contains(certification.Id));
+        _safetyCertifications = await db.SafetyCertifications.AsNoTracking().ToListAsync();
+        _userSafetyCertifications = await db.UserSafetyCertifications.AsNoTracking().Where(x => x.UserId == Cv.UserId).ToListAsync();
+        _groupedCertifications = _safetyCertifications.GroupBy(x => x.Category).ToDictionary(x => x.Key, y => y.ToList());
         await db.DisposeAsync();
-        StateHasChanged();
     }
 }

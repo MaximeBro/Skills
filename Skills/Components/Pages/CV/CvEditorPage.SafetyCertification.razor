@@ -8,13 +8,18 @@
             {
                 <MudStack Row AlignItems="AlignItems.Center">
                     <MudText Class="open-sans-600 bold" Align="Align.Center">@group</MudText>
-                    @foreach (var certification in _groupedCertifications[group])
-                    {
-                        @if (certification.Enabled)
+                    <MudGrid>
+                        @foreach (var certification in _groupedCertifications[group])
                         {
-                            <MudCheckBox T="bool" Value="@Editor.HeldCertifications[certification.Id]" ValueChanged="@((value) => OnCheckChanged(value, certification.Id))" Label="@certification.Name" />
+                            @if (certification.Enabled)
+                            {
+                                <MudItem xs="6" md="3" lg="2">
+                                    <MudCheckBox T="bool" Value="@(_userSafetyCertifications.Select(x => x.CertId).Contains(certification.Id))" Disabled ReadOnly
+                                                 Label="@certification.Name" />
+                                </MudItem>
+                            }
                         }
-                    }
+                    </MudGrid>
                 </MudStack>
             }
         </MudStack>

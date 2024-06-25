@@ -5,6 +5,7 @@ using Skills.Extensions;
 using Skills.Models;
 using Skills.Models.CV;
 using Skills.Models.Enums;
+using Skills.Models.Overview;
 using Paragraph = DocumentFormat.OpenXml.Wordprocessing.Paragraph;
 using Path = System.IO.Path;
 
@@ -53,13 +54,18 @@ public class WordExportService(IConfiguration configuration, IDbContextFactory<S
                     Value = null
                 };
             }
+
+            var certifications = await db.UserSafetyCertifications.AsNoTracking()
+                                                                                            .Include(x => x.User)
+                                                                                            .Include(x => x.Certification)
+                                                                                            .Where(x => x.UserId == user.Id).ToListAsync();
             await db.DisposeAsync();
             var document = WordprocessingDocument.Open(fs, true);
 
             SetHeader(cv, user, document);
             InsertEducation(cv, document);
             InsertCertifications(cv, document);
-            InsertSafety(cv, document);
+            InsertSafety(certifications, document);
             InsertSkills(cv, document);
             InsertExperiences(cv, document);
             
@@ -181,13 +187,12 @@ public class WordExportService(IConfiguration configuration, IDbContextFactory<S
         reference.Remove();
     }
 
-    private void InsertSafety(CvInfo cv, WordprocessingDocument document)
+    private void InsertSafety(List<UserSafetyCertificationInfo> certifications, WordprocessingDocument document)
     {
         var reference = document.Search<Paragraph>("{SAFETY}");
         if (reference is null) return;
-
-        var certifications = cv.SafetyCertifications.Where(x => x.Certification != null).Select(x => x.Certification);
-        var groups = certifications.GroupBy(x => x!.Category).ToDictionary(x => x.Key, y => y.ToList());
+        
+        var groups = certifications.Select(x => x.Certification).GroupBy(x => x!.Category).ToDictionary(x => x.Key, y => y.ToList());
         foreach (var safety in groups.Keys)
         {
             var line = DocXtensions.CreateTitle($"{safety} | ", DocXtensions.HeadingLevel.H2);
