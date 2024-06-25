@@ -4,8 +4,8 @@ namespace Skills.Models;
 
 public class TransactionResult<T>
 {
-    public T? Value { get; set; } = default;
-    public ImportState State { get; set; }
-    public string Message { get; set; } = string.Empty;
-    public string? ErrorMessage { get; set; }
+    public T? Value { get; init; }
+    public ImportState State { get; init; }
+    public string Message { get; init; } = string.Empty;
+    public string? ErrorMessage { get; init; }
 }

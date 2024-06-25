@@ -43,7 +43,7 @@ public partial class SkillsTypes : FullComponentBase
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
-        await RefreshDataAsync();
+        await RefreshPageDataAsync();
     }
 
     public void SetSaving(bool saving)

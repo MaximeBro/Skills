@@ -155,7 +155,7 @@ public partial class CvProfile : FullComponentBase
         StateHasChanged();
     }
 
-    protected override async Task RefreshDataAsync()
+    public override async Task RefreshDataAsync()
     {
         var db = await Factory.CreateDbContextAsync();
         _cvs = db.CVs.AsNoTracking()

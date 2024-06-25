@@ -28,7 +28,7 @@ public partial class UsersOverview : FullComponentBase
     
     private void NavToPanel() => NavManager.NavigateTo($"/overview/{_user.Username}/{TabIndex}");
     
-    protected override async Task RefreshDataAsync()
+    public override async Task RefreshDataAsync()
     {
         var db = await Factory.CreateDbContextAsync();
         var user = await db.Users.AsNoTracking().FirstOrDefaultAsync(x => x.Username.ToLower().Contains(Id.ToLower()));

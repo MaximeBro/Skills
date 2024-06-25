@@ -16,6 +16,8 @@ public partial class ProfileMenu : FullComponentBase
     private string _email = string.Empty;
 
     private MudMenu _menu = null!;
+
+    private MouseEvent ActivationEvent => string.IsNullOrWhiteSpace(_name) ? MouseEvent.LeftClick : MouseEvent.MouseOver;
     
     protected override async Task OnInitializedAsync()
     {

@@ -6,7 +6,7 @@
         <MudStack Class="px-4 py-2" Justify="Justify.SpaceEvenly" Row="false" Spacing="0">
             <MudStack Row Justify="Justify.Center">
                 <MudSelect T="SKillInfo?" @bind-Value="_selectedType" Label="Type" Required Style="min-width: 220px;" ToStringFunc="@(skill => skill?.Value ?? string.Empty)"
-                           AnchorOrigin="Origin.BottomLeft" TransformOrigin="Origin.TopLeft">
+                           AnchorOrigin="Origin.BottomLeft" TransformOrigin="Origin.TopLeft" Clearable>
                     @foreach (var type in _types)
                     {
                         <MudSelectItem Value="type">@type.Value</MudSelectItem>
@@ -14,7 +14,7 @@
                 </MudSelect>
 
                 <MudSelect T="SKillInfo?" @bind-Value="_selectedCategory" Label="Catégorie" Required Style="min-width: 220px;" ToStringFunc="@(skill => skill?.Value ?? string.Empty)"
-                           AnchorOrigin="Origin.BottomLeft" TransformOrigin="Origin.TopLeft">
+                           AnchorOrigin="Origin.BottomLeft" TransformOrigin="Origin.TopLeft" Clearable>
                     @foreach (var category in _categories)
                     {
                         <MudSelectItem Value="category">@category.Value</MudSelectItem>
@@ -24,14 +24,14 @@
             
             <MudStack Class="mt-4" Row Justify="Justify.Center">
                 <MudSelect T="SKillInfo?" @bind-Value="_selectedSubCategory" Label="Sous catégorie" Style="min-width: 220px;" ToStringFunc="@(skill => skill?.Value ?? string.Empty)"
-                           AnchorOrigin="Origin.BottomLeft" TransformOrigin="Origin.TopLeft">
+                           AnchorOrigin="Origin.BottomLeft" TransformOrigin="Origin.TopLeft" Clearable>
                     @foreach (var subcategory in _subcategories)
                     {
                         <MudSelectItem Value="subcategory">@subcategory.Value</MudSelectItem>
                     }
                 </MudSelect>
                 
-                <MudTextField T="string" @bind-Value="_desc" Label="Description" Style="min-width: 220px;" />
+                <MudTextField T="string" @bind-Value="_desc" Label="Description" Style="min-width: 220px;" Clearable />
             </MudStack>
         </MudStack>
     </DialogContent>

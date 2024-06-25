@@ -204,7 +204,7 @@ public partial class SkillsProfile : FullComponentBase
         }
     }
     
-    protected override async Task RefreshDataAsync()
+    public override async Task RefreshDataAsync()
     {
         var db = await Factory.CreateDbContextAsync();
         _userSkillsModels = await db.UsersSkills.AsNoTracking()
@@ -240,6 +240,7 @@ public partial class SkillsProfile : FullComponentBase
             var level = db.TypesLevels.AsNoTracking().FirstOrDefault(x => x.TypeId == skill.Skill!.TypeId && x.Level == skill.Level)?.ToAbstract() ??
                                           db.SoftTypesLevels.AsNoTracking().FirstOrDefault(x => x.SkillId == skill.SkillId && x.Level == skill.Level)?.ToAbstract();
             _selectedLevels.Add(skill.SkillId, level); // The level has to be not null !
+            
             var skillLevels = skill.IsSoftSkill ? db.SoftTypesLevels.Where(x => x.SkillId == skill.SkillId).Select(x => x.ToAbstract()) : 
                                                             db.TypesLevels.Where(x => x.TypeId == skill.Skill!.TypeId).Select(x => x.ToAbstract());
             _rowSkillLevels.Add(skill.SkillId, skillLevels.ToList());

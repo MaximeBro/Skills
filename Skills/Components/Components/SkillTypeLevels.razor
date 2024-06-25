@@ -1,13 +1,13 @@
 @inherits FullComponentBase
 
 <MudStack Class="mt-n1 px-9 pb-8" Row="false" Spacing="0">
-    <MudTextField T="string" @bind-Value="_levelZeroText" OnBlur="@(() => SaveAsync(0))" Style="border-radius: 0!important;" Label="Niveau 0" Variant="Variant.Filled" />
+    <MudTextField T="string" @bind-Value="_levelZeroText" Style="border-radius: 0!important;" Label="Niveau 0" Variant="Variant.Filled" Immediate Clearable />
     
-    <MudTextField T="string" @bind-Value="_levelOneText" OnBlur="@(() => SaveAsync(1))" Class="ma-0" Style="border-radius: 0!important;" Label="Niveau 1" Variant="Variant.Filled" />
+    <MudTextField T="string" @bind-Value="_levelOneText" Class="ma-0" Style="border-radius: 0!important;" Label="Niveau 1" Variant="Variant.Filled" Immediate Clearable />
     
-    <MudTextField T="string" @bind-Value="_levelTwoText" OnBlur="@(() => SaveAsync(2))" Class="ma-0" Style="border-radius: 0!important;" Label="Niveau 2" Variant="Variant.Filled" />
+    <MudTextField T="string" @bind-Value="_levelTwoText" Class="ma-0" Style="border-radius: 0!important;" Label="Niveau 2" Variant="Variant.Filled" Immediate Clearable />
     
-    <MudTextField T="string" @bind-Value="_levelThreeText" OnBlur="@(() => SaveAsync(3))" Class="ma-0" Style="border-radius: 0!important;" Label="Niveau 3" Variant="Variant.Filled" />
+    <MudTextField T="string" @bind-Value="_levelThreeText" Class="ma-0" Style="border-radius: 0!important;" Label="Niveau 3" Variant="Variant.Filled" Immediate Clearable />
     
-    <MudTextField T="string" @bind-Value="_levelFourText" OnBlur="@(() => SaveAsync(4))" Class="ma-0" Style="border-radius: 0!important;" Label="Niveau 4" Variant="Variant.Filled" />
+    <MudTextField T="string" @bind-Value="_levelFourText" Class="ma-0" Style="border-radius: 0!important;" Label="Niveau 4" Variant="Variant.Filled" Immediate Clearable />
 </MudStack>

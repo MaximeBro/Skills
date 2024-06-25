@@ -41,7 +41,7 @@ public partial class FullComponentBase : ComponentBase, IAsyncDisposable
         }
     }
     
-    protected virtual Task RefreshDataAsync() => Task.CompletedTask;
+    public virtual Task RefreshDataAsync() => Task.CompletedTask;
 
     public virtual ValueTask DisposeAsync()
     {

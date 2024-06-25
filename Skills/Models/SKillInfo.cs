@@ -7,4 +7,6 @@ public class SKillInfo
     public Guid Id { get; set; } = Guid.NewGuid();
     public string Value { get; set; } = string.Empty;
     public SkillDataType Type { get; set; }
+    
+    public string? Icon { get; set; }
 }

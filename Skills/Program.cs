@@ -32,13 +32,11 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
 
 builder.Services.AddBlazoredLocalStorage();
 
+builder.Services.AddServerSideBlazor().AddCircuitOptions(options => { options.DetailedErrors = true; });
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents()
     .AddHubOptions(options => options.MaximumReceiveMessageSize = 1 * 1024 * 1024); // 1 MB
 builder.Services.AddMudServices();
-
-builder.Services.AddSignalR();
-ServicePointManager.ServerCertificateValidationCallback += (sender, certificate, chain, sslPolicyErrors) => true;
 
 
 /* Custom Services */
@@ -49,7 +47,6 @@ builder.Services.AddSingleton<ActiveDirectoryService>();
 builder.Services.AddSingleton<ThemeManager>();
 builder.Services.AddSingleton<LocalizationManager>();
 builder.Services.AddSingleton<SkillService>();
-builder.Services.AddScoped<UserService>();
 builder.Services.AddSingleton<RealTimeUpdateService>();
 /* Custom Services */
 
@@ -81,8 +78,6 @@ app.UseFileUpload();
 
 app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode();
-
-app.MapHub<SkillsHub>(SkillsHub.HubUrl);
 
 var themeManager = app.Services.GetRequiredService<ThemeManager>();
 var localizationManager = app.Services.GetRequiredService<LocalizationManager>();

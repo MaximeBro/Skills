@@ -10,6 +10,7 @@
         <MudTabs Centered Color="@(Layout.IsDarkMode ? Color.Transparent : Color.Primary)" TabHeaderClass="@(Layout.IsDarkMode ? "blue-tabs-header text-white" : string.Empty)" ActivePanelIndex="0">
             <SkillsMapping @ref="_skillsMapping" Title="Mapping" Manager="@this"/>
             <SkillsTypes @ref="_skillsTypes" Title="Types" Manager="@this"/>
+            <SkillsCustomization @ref="_skillsCustomization" Title="Personnalisation" Manager="@this"/>
         </MudTabs>
     </Content>
 </AuthorizedComponent>

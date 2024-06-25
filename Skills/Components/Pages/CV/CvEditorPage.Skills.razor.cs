@@ -47,7 +47,7 @@ public partial class CvEditorPage_Skills : FullComponentBase
         Editor.EditDone();
     }
 
-    protected override async Task RefreshDataAsync()
+    public override async Task RefreshDataAsync()
     {
         var db = await Factory.CreateDbContextAsync();
         var cvSkills = db.CvSkills.AsNoTracking().Where(x => x.CvId == Cv.Id).Select(x => x.SkillId).ToList();

@@ -26,7 +26,7 @@
         @* Skills *@
         <MudItem Class="px-2 px-md-16" xs="12">
             
-            <MudDataGrid T="UserSkillModel" Items="_userSkillsModels" Bordered Hover Outlined Filterable Striped SortMode="SortMode.Multiple" Dense FixedHeader ReadOnly="false"
+            <MudDataGrid T="UserSkillModel" Items="@_userSkillsModels" Bordered Hover Outlined Filterable Striped SortMode="SortMode.Multiple" Dense FixedHeader ReadOnly="false"
                          Culture="@(new CultureInfo("fr-FR"))" Height="65vh" Virtualize OverscanCount="25" QuickFilter="@QuickFilter" EditMode="DataGridEditMode.Cell">
                 <ToolBarContent>
                     <MudText Class="open-sans-600">Compétences (attribuées)</MudText>
@@ -48,11 +48,10 @@
                     </AuthorizeView>
                     
                     <MudSpacer/>
-                    <MudTextField T="string" @bind-Value="_search" Placeholder="Rechercher" Clearable Adornment="Adornment.Start" AdornmentIcon="@IconsF.Search" />
+                    <MudTextField T="string" @bind-Value="_search" Placeholder="Rechercher" Clearable Adornment="Adornment.Start" AdornmentIcon="@IconsF.Search" Immediate />
                 </ToolBarContent>
                 <Columns>
                     <HierarchyColumn T="UserSkillModel" />
-                    <PropertyColumn Title="Type" Property="x => x.Skill!.Type" IsEditable="false" />
                     <PropertyColumn Title="Catégorie" Property="x => x.Skill!.Category" IsEditable="false" />
                     <PropertyColumn Title="Sous catégorie" Property="x => x.Skill!.SubCategory" IsEditable="false" />
                     <PropertyColumn Title="Description" Property="x => x.Skill!.Description" IsEditable="false" />

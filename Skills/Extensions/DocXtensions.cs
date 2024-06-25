@@ -96,7 +96,6 @@ public static class DocXtensions
 
         return newPara;
     }
-
     
     
     /// <summary>

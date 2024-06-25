@@ -25,6 +25,12 @@ public class ADAuthenticationService(IConfiguration configuration, IDbContextFac
         return Task.CompletedTask;
     }
     
+    /// <summary>
+    /// Tries to authenticate to the local AD with the given credentials.
+    /// </summary>
+    /// <param name="username">The given username</param>
+    /// <param name="pwd">The given password</param>
+    /// <returns>A <see cref="Guid"/> representing the user's claims held by the <see cref="UserTokenHoldingService"/>.</returns>
     public async Task<Guid?> TryLoginAsync(string username, string pwd)
     {
         var context = new PrincipalContext(ContextType.Domain, configuration["ip"],
@@ -59,12 +65,23 @@ public class ADAuthenticationService(IConfiguration configuration, IDbContextFac
         return null;
     }
 
+    /// <summary>
+    /// Checks if the user is currently authenticated.
+    /// </summary>
+    /// <param name="stateTask">The given <see cref="AuthenticationState"/> as an awaitable Task.</param>
+    /// <returns>True if the user is authenticated. Otherwise, false.</returns>
     public async Task<bool> IsAuthenticatedAsync(Task<AuthenticationState> stateTask)
     {
         var authState = await stateTask;
         return authState.User.Identity?.IsAuthenticated ?? false;
     }
     
+    /// <summary>
+    /// Checks the user permissions according to the app logic and the given roles.
+    /// </summary>
+    /// <param name="stateTask">The given <see cref="AuthenticationState"/> as an awaitable Task.</param>
+    /// <param name="roles">Given authorized roles.</param>
+    /// <returns>True if the user is authenticated with the required permissions. Otherwise, false.</returns>
     public async Task<bool> HasRequiredRoleAsync(Task<AuthenticationState> stateTask, string[] roles)
     {
         var authState = await stateTask;

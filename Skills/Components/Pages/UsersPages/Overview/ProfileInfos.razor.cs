@@ -50,7 +50,7 @@ public partial class ProfileInfos : FullComponentBase
         await SendUpdateAsync();
     }
 
-    protected override Task RefreshDataAsync()
+    public override Task RefreshDataAsync()
     {
         _job = User.Job;
         _phoneNumber = User.PhoneNumber;

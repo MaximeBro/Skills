@@ -120,7 +120,7 @@ public partial class SafetyCertifications : FullComponentBase
         }
     }
 
-    protected override async Task RefreshDataAsync()
+    public override async Task RefreshDataAsync()
     {
         var db = await Factory.CreateDbContextAsync();
         _certifications = db.SafetyCertifications.AsNoTracking().ToList();

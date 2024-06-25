@@ -94,6 +94,12 @@ public class WordExportService(IConfiguration configuration, IDbContextFactory<S
         }
     }
 
+    /// <summary>
+    /// Sets the header of the first page (contact, trigram, job, ...)
+    /// </summary>
+    /// <param name="cv">The CV to export</param>
+    /// <param name="user">The user of the CV</param>
+    /// <param name="document">The Word document</param>
     private void SetHeader(CvInfo cv, UserModel user, WordprocessingDocument document)
     {
         document.SearchAndReplaceInTables("{TRIGRAMME}",user.GetTrigramme());
@@ -200,28 +206,32 @@ public class WordExportService(IConfiguration configuration, IDbContextFactory<S
         var skillTypes = cv.Skills.GroupBy(x => x.Skill!.Type ?? string.Empty).ToDictionary(x => x.Key, x => x.ToList().Select(y => y.Skill));
         foreach (var type in skillTypes.Keys)
         {
-            var typeLine = DocXtensions.CreateTitle(type, DocXtensions.HeadingLevel.H2);
-            reference.InsertBeforeSelf(typeLine);
-
-            var skills = cv.Skills.Where(x => x.Skill!.Type == type).Select(x => x.Skill).ToList();
-            if (type.ToLower() == "soft-skill")
+            foreach (var category in skillTypes[type].Where(x => !string.IsNullOrWhiteSpace(x!.Category)).Select(x => x?.Category ?? string.Empty).Distinct().OrderDescending())
             {
-                var skillsLine = DocXtensions.CreateTitle(string.Empty, DocXtensions.HeadingLevel.H4);
-                skillsLine.Append(DocXtensions.CreateRunAsTitle(string.Join(" ; ", skillTypes[type].Select(x => x?.Description ?? string.Empty)), DocXtensions.HeadingLevel.Accent));
-                reference.InsertBeforeSelf(skillsLine);
-            }
-            else
-            {
-                foreach (var subCategory in skillTypes[type].Select(x => x!.SubCategory).Distinct().OrderDescending())
+                var categoryLine = DocXtensions.CreateTitle(category ?? string.Empty, DocXtensions.HeadingLevel.H2);
+                reference.InsertBeforeSelf(categoryLine);
+                
+                if (type.ToLower() == "soft-skill")
                 {
-                    var subCategoryText = string.IsNullOrWhiteSpace(subCategory) ? string.Empty : $"{subCategory}: ";
-                    var skillsLine = DocXtensions.CreateTitle(subCategoryText, DocXtensions.HeadingLevel.H4);
-                    skillsLine.Append(DocXtensions.CreateRunAsTitle(string.Join(" ; ", skillTypes[type].Where(x => x?.SubCategory == subCategory).Select(x => x?.Description ?? string.Empty)), DocXtensions.HeadingLevel.Accent));
+                    var skillsLine = DocXtensions.CreateTitle(string.Empty, DocXtensions.HeadingLevel.H4);
+                    skillsLine.Append(DocXtensions.CreateRunAsTitle(string.Join(" ; ", skillTypes[type].Select(x => x?.Description ?? string.Empty)), DocXtensions.HeadingLevel.Accent));
                     reference.InsertBeforeSelf(skillsLine);
                 }
+                else
+                {
+                    foreach (var subCategory in skillTypes[type].Where(x => x!.Category == category && !string.IsNullOrWhiteSpace(x!.SubCategory)).Select(x => x!.SubCategory).Distinct().OrderDescending())
+                    {
+                        var skillsLine = DocXtensions.CreateTitle($"{subCategory}: ", DocXtensions.HeadingLevel.H4);
+                        skillsLine.Append(DocXtensions.CreateRunAsTitle(string.Join(" ; ", skillTypes[type].Where(x => x?.SubCategory == subCategory).Select(x => x?.Description ?? string.Empty)), DocXtensions.HeadingLevel.Accent));
+                        reference.InsertBeforeSelf(skillsLine);
+                    }
+                
+                    var uncategorizedSkills = skillTypes[type].Where(x => string.IsNullOrWhiteSpace(x!.Category)).ToList();
+                    var lines = DocXtensions.CreateParagraph(string.Empty);
+                    lines.Append(DocXtensions.CreateRunAsTitle(string.Join(" ; ", uncategorizedSkills.Select(x => x?.Description ?? string.Empty)), DocXtensions.HeadingLevel.Accent));
+                    reference.InsertBeforeSelf(lines);
+                }
             }
-            
-            reference.InsertBeforeSelf(DocXtensions.AddLineBreak());
         }
         
         reference.Remove();

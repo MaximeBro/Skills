@@ -1,7 +1,6 @@
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Graph;
 using Microsoft.JSInterop;
 using MudBlazor;
 using Skills.Components.Components;
@@ -32,19 +31,29 @@ public partial class SkillsMapping : FullComponentBase
 
     private MudDataGrid<AbstractSkillModel> _grid = null!;
 
-    public Func<AbstractSkillModel, bool> QuickFilter => x =>
+    private Func<AbstractSkillModel, bool> QuickFilter => x =>
     {
-        if (!string.IsNullOrWhiteSpace(x.Type) &&
-            x.Type.Contains(_search, StringComparison.OrdinalIgnoreCase)) return true;
-        if (!string.IsNullOrWhiteSpace(x.Category) &&
-            x.Category.Contains(_search, StringComparison.OrdinalIgnoreCase)) return true;
-        if (!string.IsNullOrWhiteSpace(x.SubCategory) &&
-            x.SubCategory.Contains(_search, StringComparison.OrdinalIgnoreCase)) return true;
-        if (!string.IsNullOrWhiteSpace(x.Description) &&
-            x.Description.Contains(_search, StringComparison.OrdinalIgnoreCase)) return true;
+        if (!string.IsNullOrWhiteSpace(x.Type) && x.Type.Contains(_search, StringComparison.OrdinalIgnoreCase)) return true;
+        if (!string.IsNullOrWhiteSpace(x.Category) && x.Category.Contains(_search, StringComparison.OrdinalIgnoreCase)) return true;
+        if (!string.IsNullOrWhiteSpace(x.SubCategory) && x.SubCategory.Contains(_search, StringComparison.OrdinalIgnoreCase)) return true;
+        if (!string.IsNullOrWhiteSpace(x.Description) && x.Description.Contains(_search, StringComparison.OrdinalIgnoreCase)) return true;
 
         return false;
     };
+
+    protected override async Task OnInitializedAsync()
+    {
+        await RefreshDataAsync();
+        StateHasChanged();
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await _grid.ExtendSortAsync(nameof(AbstractSkillModel.Category), SortDirection.Ascending, x => x.Category, new MudBlazor.Utilities.NaturalComparer());
+        }
+    }
 
     private async Task CreateSkillAsync()
     {
@@ -68,7 +77,7 @@ public partial class SkillsMapping : FullComponentBase
         {
             var db = await Factory.CreateDbContextAsync();
             var type = db.SkillsTypes.AsNoTracking().First(x => x.Type == SkillDataType.Type && x.Value == "SOFT-SKILL");
-            var softSkill = new SoftSkillModel { TypeId = type.Id, Description = model.SoftSkill.Description };
+            var softSkill = new SoftSkillModel { Type = type.Value, TypeId = type.Id, Description = model.SoftSkill.Description };
             db.SoftSkills.Add(softSkill);
             foreach (var level in model.Levels) level.SkillId = softSkill.Id;
             db.SoftTypesLevels.AddRange(model.Levels);
@@ -220,31 +229,34 @@ public partial class SkillsMapping : FullComponentBase
             {
                 case ImportState.Cancelled:
                 {
+                    _loading = false;
                     Snackbar.Add(response.Value, Severity.Warning);
                     break;
                 }
                 
                 case ImportState.Crashed:
                 {
+                    _loading = false;
                     Snackbar.Add(response.Value, Severity.Error);
                     break;
                 }
                 
                 case ImportState.Skipped:
                 {
+                    _loading = false;
                     Snackbar.Add(response.Value, Severity.Info);
                     break;
                 }
                 
                 case ImportState.Successful:
                 {
+                    _loading = false;
                     await RefreshDataAsync();
-                    await Manager.RefreshSkillsTypesAsync();
                     Snackbar.Add(response.Value, Severity.Success);
+                    await Manager.RefreshSkillsTypesAsync();
                     break;
                 }
             }
-            _loading = false;
             StateHasChanged();
         }
     }
@@ -252,7 +264,10 @@ public partial class SkillsMapping : FullComponentBase
     private async Task ExportSkillsAsync()
     {
         var toExport = _models.Where(QuickFilter).ToList();
-        var stream = await SkillService.ExportSkillsAsync(toExport);
+        var levels = _skillTypeLevels.Where(x => toExport.Select(y => y.Id).Contains(x.Key)).ToDictionary();
+        var softLevels = _softSkillTypeLevels.Where(x => toExport.Select(y => y.Id).Contains(x.Key)).ToDictionary();
+
+        var stream = await SkillService.ExportSkillsAsync(toExport, levels, softLevels);
         using var streamRef = new DotNetStreamReference(stream);
         await JsRuntime.InvokeVoidAsync("downloadFileFromStream", $"Compétences-{DateTime.Now:dd-MM-yyyy}.xlsx", streamRef);
     }
@@ -283,13 +298,13 @@ public partial class SkillsMapping : FullComponentBase
             await EditSkillAsync(model);
         }
     }
-
-    private async Task<GridData<AbstractSkillModel>> GetModelsAsync(GridState<AbstractSkillModel> state)
+    
+    public override async Task RefreshDataAsync()
     {
         _loading = true;
         var db = await Factory.CreateDbContextAsync();
         var skillModels = await db.Skills.AsNoTracking()
-            .Include(x => x.TypeInfo) // Includes are use for edition, don't delete them !
+            .Include(x => x.TypeInfo) // Includes are used for edition, don't delete them !
             .Include(x => x.CategoryInfo)
             .Include(x => x.SubCategoryInfo)
             .ToListAsync();
@@ -300,25 +315,12 @@ public partial class SkillsMapping : FullComponentBase
         _models.AddRange(new List<AbstractSkillModel>(skillModels));
         _models.AddRange(new List<AbstractSkillModel>(softSkillsModels));
 
-        _models = _models.Where(QuickFilter).ToList();
-
         _skillTypeLevels.Clear();
         _softSkillTypeLevels.Clear();
         foreach (var model in _models) _skillTypeLevels.Add(model.Id, db.TypesLevels.AsNoTracking().Where(x => x.TypeId == model.TypeId).ToList());
         foreach (var model in _models) _softSkillTypeLevels.Add(model.Id, db.SoftTypesLevels.AsNoTracking().Where(x => x.SkillId == model.Id).ToList());
-        _loading = false;
-
-        return new GridData<AbstractSkillModel>
-        {   
-            Items = _models,
-            TotalItems = _models.Count
-        };
-    }
-    
-    public async Task RefreshPageDataAsync()
-    {
-        _loading = true;
-        await _grid.ReloadServerData();
+        
+        await db.DisposeAsync();
         _loading = false;
     }
 }

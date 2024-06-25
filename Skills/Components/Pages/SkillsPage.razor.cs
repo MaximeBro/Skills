@@ -32,10 +32,13 @@ public partial class SkillsPage : FullComponentBase
         return false;
     };
 
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
         _breadcrumbs.Add(new BreadcrumbItem("Accueil", "/"));
         _breadcrumbs.Add(new BreadcrumbItem("Compétences", null, true));
+        
+        await RefreshDataAsync();
+        StateHasChanged();
     }
 
     private void OnRowClicked(DataGridRowClickEventArgs<AbstractSkillModel> args)
@@ -46,7 +49,7 @@ public partial class SkillsPage : FullComponentBase
         }
     }
 
-    private async Task<GridData<AbstractSkillModel>> GetSkillsAsync(GridState<AbstractSkillModel> state)
+    public override async Task RefreshDataAsync()
     {
         _loading = true;
         var db = await Factory.CreateDbContextAsync();
@@ -64,19 +67,6 @@ public partial class SkillsPage : FullComponentBase
         foreach (var model in _models) _skillTypeLevels.Add(model.Id, db.TypesLevels.AsNoTracking().Where(x => x.TypeId == model.TypeId).ToList());
         foreach (var model in _models) _softSkillTypeLevels.Add(model.Id, db.SoftTypesLevels.AsNoTracking().Where(x => x.SkillId == model.Id).ToList());
         
-        _loading = false;
-
-        return new GridData<AbstractSkillModel>()
-        {
-            Items = _models,
-            TotalItems = _models.Count
-        };
-    }
-
-    private async Task SearchDataAsync()
-    {
-        _loading = true;
-        await _grid.ReloadServerData();
         _loading = false;
     }
 }

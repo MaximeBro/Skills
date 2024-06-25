@@ -1,0 +1,14 @@
+@inherits FullComponentBase
+
+<MudTabPanel Class="open-sans-600" Text="@Title">
+    <MudContainer MaxWidth="MaxWidth.ExtraLarge">
+        
+    </MudContainer>
+    @if (_loading)
+    {
+    <MudStack Class="absolute px-4 py-2 rounded" Style="bottom: 0; right: 5rem; backdrop-filter: blur(3px); border: 1px solid #ededed;" Row AlignItems="AlignItems.Center">
+        <MudProgressCircular Indeterminate Color="Color.Info" />
+        <MudText Class="ml-2">Sauvegarde en cours...</MudText>
+    </MudStack>
+    }
+</MudTabPanel>

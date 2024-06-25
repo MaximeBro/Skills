@@ -23,7 +23,7 @@ public partial class UserEducations : FullComponentBase
     [Inject] public IDbContextFactory<SkillsContext> Factory { get; set; } = null!;
     [Inject] public IDialogService DialogService { get; set; } = null!;
     [Inject] public ISnackbar Snackbar { get; set; } = null!;
-    [Inject] public UserService UserService { get; set; } = null!;
+    [Inject] public ADAuthenticationService AuthenticationService { get; set; } = null!;
     
     private List<BreadcrumbItem> _breadcrumbs = [];
 
@@ -125,8 +125,8 @@ public partial class UserEducations : FullComponentBase
     
     private async Task<bool> CheckPermissionsAsync()
     {
-        var state = await AuthenticationState;
-        if (UserService.HasRequiredPermission(state, User, new[] { UserRole.Manager, UserRole.Admin }))
+        var authorized = await AuthenticationService.HasRequiredRoleAsync(AuthenticationState, new[] { UserRole.Manager.ToString(), UserRole.Admin.ToString() });
+        if (authorized)
         {
             return true;
         }
@@ -143,7 +143,7 @@ public partial class UserEducations : FullComponentBase
         StateHasChanged();
     }
     
-    protected override async Task RefreshDataAsync()
+    public override async Task RefreshDataAsync()
     {
         var db = await Factory.CreateDbContextAsync();
         _educations = await db.UserEducations.AsNoTracking().Where(x => x.UserId == User.Id).ToListAsync();

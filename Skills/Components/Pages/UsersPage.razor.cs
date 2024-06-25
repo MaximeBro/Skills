@@ -69,7 +69,7 @@ public partial class UsersPage : FullComponentBase
     
     private void NavigateToProfile(UserModel model) => NavManager.NavigateTo($"/overview/{model.Username}/1");
 
-    protected override async Task RefreshDataAsync()
+    public override async Task RefreshDataAsync()
     {
         var authState = await AuthenticationState;
         _user = authState.User;
