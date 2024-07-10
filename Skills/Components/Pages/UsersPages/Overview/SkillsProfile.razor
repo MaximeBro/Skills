@@ -27,7 +27,7 @@
         <MudItem Class="px-2 px-md-16" xs="12">
             
             <MudDataGrid T="UserSkillModel" Items="@_userSkillsModels" Bordered Hover Outlined Filterable Striped SortMode="SortMode.Multiple" Dense FixedHeader ReadOnly="false"
-                         Culture="@(new CultureInfo("fr-FR"))" Height="65vh" Virtualize OverscanCount="25" QuickFilter="@QuickFilter" EditMode="DataGridEditMode.Cell">
+                         Culture="@Hardcoded.French" Height="65vh" Virtualize OverscanCount="25" QuickFilter="@QuickFilter" EditMode="DataGridEditMode.Cell">
                 <ToolBarContent>
                     <MudText Class="open-sans-600">Compétences (attribuées)</MudText>
                     <AuthorizeView Roles="Admin, Manager">
@@ -57,17 +57,27 @@
                     <PropertyColumn Title="Description" Property="x => x.Skill!.Description" IsEditable="false" />
                     <AuthorizeView Roles="Admin, Manager">
                         <Authorized>
-                            <PropertyColumn Title="Niveau" Property="x => x.Level" IsEditable>
-                                <EditTemplate Context="row">
+                            <PropertyColumn Title="Niveau" Property="x => x.Level" IsEditable="false" CellStyle="max-width: 250px!important;" HeaderStyle="max-width: 250px!important;">
+                                <CellTemplate Context="row">
                                     <MudSelect T="int" Value="row.Item.Level" ValueChanged="@(async (value) => await LevelChangedAsync(value, row.Item))"
-                                               AnchorOrigin="Origin.BottomLeft" TransformOrigin="Origin.TopLeft" Immediate>
-                                        <MudSelectItem Value="0">0</MudSelectItem>
-                                        <MudSelectItem Value="1">1</MudSelectItem>
-                                        <MudSelectItem Value="2">2</MudSelectItem>
-                                        <MudSelectItem Value="3">3</MudSelectItem>
-                                        <MudSelectItem Value="4">4</MudSelectItem>
+                                               AnchorOrigin="Origin.BottomLeft" TransformOrigin="Origin.TopLeft" DisableUnderLine Immediate Style="margin-top: 0;">
+                                        <MudSelectItem Value="0" Style="text-overflow: ellipsis;">
+                                            <MudChip Class="bold my-0" Color="Color.Dark" Size="Size.Small">0</MudChip> @_rowSkillLevels[row.Item.SkillId].FirstOrDefault(x => x.Level == 0)?.Value
+                                        </MudSelectItem>
+                                        <MudSelectItem Value="1" Style="text-overflow: ellipsis;">
+                                            <MudChip Class="bold my-0" Color="Color.Dark" Size="Size.Small">1</MudChip> @_rowSkillLevels[row.Item.SkillId].FirstOrDefault(x => x.Level == 1)?.Value
+                                        </MudSelectItem>
+                                        <MudSelectItem Value="2" Style="text-overflow: ellipsis;">
+                                            <MudChip Class="bold my-0" Color="Color.Dark" Size="Size.Small">2</MudChip> @_rowSkillLevels[row.Item.SkillId].FirstOrDefault(x => x.Level == 2)?.Value
+                                        </MudSelectItem>
+                                        <MudSelectItem Value="3" Style="text-overflow: ellipsis;">
+                                            <MudChip Class="bold my-0" Color="Color.Dark" Size="Size.Small">3</MudChip> @_rowSkillLevels[row.Item.SkillId].FirstOrDefault(x => x.Level == 3)?.Value
+                                        </MudSelectItem>
+                                        <MudSelectItem Value="4" Style="text-overflow: ellipsis;">
+                                            <MudChip Class="bold my-0" Color="Color.Dark" Size="Size.Small">4</MudChip> @_rowSkillLevels[row.Item.SkillId].FirstOrDefault(x => x.Level == 4)?.Value
+                                        </MudSelectItem>
                                     </MudSelect>
-                                </EditTemplate>
+                                </CellTemplate>
                             </PropertyColumn>
                         </Authorized>
                         <NotAuthorized>

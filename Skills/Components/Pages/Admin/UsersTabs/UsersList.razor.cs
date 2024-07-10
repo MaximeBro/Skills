@@ -38,6 +38,11 @@ public partial class UsersList : FullComponentBase
         return false;
     };
 
+    protected override async Task OnInitializedAsync()
+    {
+        await RefreshPageDataAsync();
+    }
+
     private async Task CreateUserAsync()
     {
         var options = Hardcoded.DialogOptions;

@@ -43,7 +43,11 @@
                             <MudText Class="open-sans-600 bold" Color="Color.Primary" Align="Align.Left">@experience.Category</MudText> <MudText Class="open-sans-600 bold" Color="Color.Primary" Align="Align.Left"> | </MudText> <MudText Class="open-sans-600 bold" Color="@(Layout.IsDarkMode ? Color.Default : Color.Dark)" Align="Align.Left">@experience.Title</MudText>
                         </MudStack>
                         <MudStack Class="flex-grow-1" Row Justify="Justify.FlexStart" AlignItems="AlignItems.Center" Style="width: 100%;">
-                            <MudText Class="open-sans-600" Align="Align.Left">@experience.StartsAt.ToString("MM-yyyy")</MudText> <MudText Class="open-sans-600" Align="Align.Left"> - </MudText> <MudText Class="open-sans-600" Align="Align.Left">@experience.EndsAt.ToString("MM-yyyy")</MudText>
+                            <MudText Class="open-sans-600" Align="Align.Left">@experience.StartsAt.ToString("MM-yyyy")</MudText>
+                            @if (experience.EndsAt.HasValue)
+                            {
+                                <MudText Class="open-sans-600" Align="Align.Left"> - </MudText> <MudText Class="open-sans-600" Align="Align.Left">@experience.EndsAt.Value.ToString("MM-yyyy")</MudText>
+                            }
                         </MudStack>
                         @if (!string.IsNullOrWhiteSpace(experience.Description))
                         {

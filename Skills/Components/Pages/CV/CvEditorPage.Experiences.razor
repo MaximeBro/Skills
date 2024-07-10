@@ -14,7 +14,11 @@
                             <MudText Class="open-sans-600 bold" Color="Color.Primary">@experience.Key.Category</MudText> <MudText Class="open-sans-600 bold" Color="Color.Dark"> | </MudText> <MudText Class="open-sans-600 bold" Color="@(Layout.IsDarkMode ? Color.Default : Color.Dark)">@experience.Key.Title</MudText>
                         </MudStack>
                         <MudStack Row Justify="Justify.FlexStart" AlignItems="AlignItems.Center">
-                            <MudText Class="open-sans-600">@experience.Key.StartsAt.ToString("MM-yyyy")</MudText> <MudText Class="open-sans-600"> - </MudText> <MudText Class="open-sans-600">@experience.Key.EndsAt.ToString("MM-yyyy")</MudText>
+                            <MudText Class="open-sans-600">@experience.Key.StartsAt.ToString("MM-yyyy")</MudText>
+                            @if (experience.Key.EndsAt.HasValue)
+                            {
+                                <MudText Class="open-sans-600"> - </MudText> <MudText Class="open-sans-600">@experience.Key.EndsAt.Value.ToString("MM-yyyy")</MudText>
+                            }
                         </MudStack>
                         @if (!string.IsNullOrWhiteSpace(experience.Key.Description))
                         {

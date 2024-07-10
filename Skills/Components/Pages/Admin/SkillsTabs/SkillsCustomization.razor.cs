@@ -1,7 +1,5 @@
-using System.Reflection;
 using Microsoft.AspNetCore.Components;
 using Microsoft.EntityFrameworkCore;
-using MudBlazor;
 using Skills.Components.Components;
 using Skills.Databases;
 using Skills.Models;
@@ -25,7 +23,7 @@ public partial class SkillsCustomization : FullComponentBase
         await base.OnInitializedAsync();
         await RefreshPageDataAsync();
     }
-
+    
     private async Task UpdateIconAsync(SKillInfo type, string? icon)
     {
         var db = await Factory.CreateDbContextAsync();

@@ -254,8 +254,11 @@ public class WordExportService(IConfiguration configuration, IDbContextFactory<S
             reference.InsertBeforeSelf(firstLine);
             
             var secondLine = DocXtensions.CreateTitle(experience.StartsAt.ToString("MM-yyyy"), DocXtensions.HeadingLevel.H3);
-            secondLine.Append(DocXtensions.CreateRunAsTitle(" - ", DocXtensions.HeadingLevel.H3));
-            secondLine.Append(DocXtensions.CreateRunAsTitle(experience.EndsAt.ToString("MM-yyyy"), DocXtensions.HeadingLevel.H3));
+            if (experience.EndsAt.HasValue)
+            {
+                secondLine.Append(DocXtensions.CreateRunAsTitle(" - ", DocXtensions.HeadingLevel.H3));
+                secondLine.Append(DocXtensions.CreateRunAsTitle(experience.EndsAt.Value.ToString("MM-yyyy"), DocXtensions.HeadingLevel.H3));
+            }
             reference.InsertBeforeSelf(secondLine);
 
             if (!string.IsNullOrWhiteSpace(experience.Description))

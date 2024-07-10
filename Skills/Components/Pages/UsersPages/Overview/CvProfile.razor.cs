@@ -20,6 +20,7 @@ public partial class CvProfile : FullComponentBase
     [Parameter] public EventCallback<MouseEventArgs> OnClick { get; set; }
     [Inject] public IDbContextFactory<SkillsContext> Factory { get; set; } = null!;
     [Inject] public IDialogService DialogService { get; set; } = null!;
+    [Inject] public IConfiguration Configuration { get; set; } = null!;
     [Inject] public WordExportService WordExportService { get; set; } = null!;
     [Inject] public ISnackbar Snackbar { get; set; } = null!;
     [Inject] public IJSRuntime JsRuntime { get; set; } = null!;
@@ -53,7 +54,7 @@ public partial class CvProfile : FullComponentBase
             UserId = User.Id,
             Title = $"CV{(db.CVs.AsNoTracking().Any(x => x.UserId == User.Id) ? $" ({db.CVs.AsNoTracking().Count(x => x.UserId == User.Id)})" : string.Empty)}",
             Job = User.Job,
-            PhoneNumber = User.PhoneNumber
+            PhoneNumber = Configuration.GetSection("CV")["ManagerPhoneNumber"] ?? User.PhoneNumber
         };
         if (User.BirthDate.HasValue) cv.BirthDate = User.BirthDate.Value;
         

@@ -26,6 +26,17 @@
     font-family: 'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif!important;
 }
 
+.icon-tabs {
+    margin-right: 2rem!important;
+    padding: 0!important;
+    min-width: 48px!important;
+    min-height: 48px!important;
+    text-transform: none!important;
+    font-size: 12px!important;
+    flex-direction: column!important;
+    flex-grow: 1!important;
+}
+
 .bold { font-weight: bold!important; }
 
 .mso {

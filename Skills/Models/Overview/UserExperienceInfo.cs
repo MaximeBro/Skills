@@ -12,6 +12,6 @@ public class UserExperienceInfo
     public string Category { get; set; } = string.Empty;
     public string Title { get; set; } = string.Empty;
     public DateTime StartsAt { get; set; }
-    public DateTime EndsAt { get; set; }
+    public DateTime? EndsAt { get; set; }
     public string Description { get; set; } = string.Empty;
 }

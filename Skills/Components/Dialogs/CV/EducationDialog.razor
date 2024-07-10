@@ -1,67 +1,67 @@
+@using System.ComponentModel.DataAnnotations
 @using Skills.Models.Overview
 
 <MudDialog>
     <DialogContent>
         <CloseButton Dialog="@Dialog"/>
-        <MudStack Class="px-4 py-2" Justify="Justify.SpaceEvenly" Row="false" Spacing="0">
-            <MudStack Class="mb-2" Row>
-                <MudTextField T="string" @bind-Value="_title" Label="Diplôme" Style="width: 350px;" />
-                <MudTextField T="string" @bind-Value="_supplier" Label="Établissement" Style="width: 250px;"/>
-            </MudStack>
-            <MudStack Class="my-2" Row Justify="Justify.SpaceEvenly">
-                <MudSelect T="int" @bind-Value="_yearStart" Label="Début (Année)" AnchorOrigin="Origin.BottomLeft" TransformOrigin="Origin.TopLeft">
-                    @for (int i = DateTime.Now.Year; i >= 1950; i--)
-                    {
-                        var value = i;
-                        <MudSelectItem Value="value">@value</MudSelectItem>
-                    }
-                </MudSelect>
-                <MudSelect T="int" @bind-Value="_yearEnd" Label="Fin (Année)" AnchorOrigin="Origin.BottomLeft" TransformOrigin="Origin.TopLeft">
-                    @for (int i = _yearStart; i <= (_yearEnd + 50); i++)
-                    {
-                        var value = i;
-                        <MudSelectItem Value="value">@value</MudSelectItem>
-                    }
-                </MudSelect>
-            </MudStack>
-            <MudStack Class="mb-2" Row>
-                <MudTextField T="string" @bind-Value="_town" Label="Ville"/>
+        <EditForm Model="@_model" OnValidSubmit="@Submit">
+            <DataAnnotationsValidator/>
+            <MudStack Class="px-4 py-2" Justify="Justify.SpaceEvenly" Row="false" Spacing="0">
+                <MudStack Class="mb-2" Row>
+                    <MudTextField T="string" @bind-Value="_model.Title" For="@(() => _model.Title)" Required Label="Diplôme" Style="width: 350px;" />
+                    <MudTextField T="string" @bind-Value="_model.Supplier" For="@(() => _model.Supplier)" Required Label="Établissement" Style="width: 250px;"/>
+                </MudStack>
+                <MudStack Class="my-2" Row Justify="Justify.SpaceEvenly">
+                    <MudSelect T="int" @bind-Value="_model.StartsAt" For="@(() => _model.StartsAt)" Required Label="Début (Année)" AnchorOrigin="Origin.BottomLeft" TransformOrigin="Origin.TopLeft">
+                        @for (int i = DateTime.Now.Year; i >= 1950; i--)
+                        {
+                            var value = i;
+                            <MudSelectItem Value="value">@value</MudSelectItem>
+                        }
+                    </MudSelect>
+                    <MudSelect T="int" @bind-Value="_model.EndsAt" For="@(() => _model.EndsAt)" Required Label="Fin (Année)" AnchorOrigin="Origin.BottomLeft" TransformOrigin="Origin.TopLeft">
+                        @for (int i = _model.StartsAt; i <= (_model.EndsAt + 50); i++)
+                        {
+                            var value = i;
+                            <MudSelectItem Value="value">@value</MudSelectItem>
+                        }
+                    </MudSelect>
+                </MudStack>
+                <MudStack Class="mb-2" Row>
+                    <MudTextField T="string" @bind-Value="_model.Town" For="@(() => _model.Town)" Required Label="Ville"/>
+                </MudStack>
+                <MudStack Row>
+                    <MudTextField T="string" @bind-Value="_model.Description" HelperText="Optionnel" Label="Description" Lines="3" Clearable/>
+                </MudStack>
             </MudStack>
             <MudStack Row>
-                <MudTextField T="string" @bind-Value="_desc" Label="Description" Lines="3" Clearable/>
+                <MudSpacer/>
+                <MudButton Class="open-sans-600 mr-n4" Color="Color.Success" Variant="Variant.Filled" ButtonType="ButtonType.Submit">Enregistrer</MudButton>
             </MudStack>
-        </MudStack>
+        </EditForm>
     </DialogContent>
-    <DialogActions>
-        <MudButton Class="open-sans-600" Color="Color.Success" Variant="Variant.Filled" OnClick="@Submit">Enregistrer</MudButton>
-    </DialogActions>
 </MudDialog>
 
 @code {
     [CascadingParameter] public MudDialogInstance Dialog { get; set; } = null!;
     [Parameter] public UserEducationInfo? Education { get; set; }
 
-    private int _yearStart;
-    private int _yearEnd;
-    private string _title = string.Empty;
-    private string _supplier = string.Empty;
-    private string _town = string.Empty;
-    private string _desc = string.Empty;
+    private UserEducationModel _model = new();
 
     protected override void OnInitialized()
     {
         if (Education != null)
         {
-            _yearStart = Education.YearStart;
-            _yearEnd = Education.YearEnd;
-            _title = Education.Title;
-            _supplier = Education.Supplier;
-            _town = Education.Town;
-            _desc = Education.Description;
+            _model.Title = Education.Title;
+            _model.Supplier = Education.Supplier;
+            _model.StartsAt = Education.YearStart;
+            _model.EndsAt = Education.YearEnd;
+            _model.Town = Education.Town;
+            _model.Description = Education.Description;
         }
         else
         {
-            _yearStart = _yearEnd = DateTime.Now.Year;
+            _model.EndsAt = _model.StartsAt = DateTime.Now.Year;
         }
     }
 
@@ -69,14 +69,24 @@
     {
         var education = new UserEducationInfo
         {
-            YearStart = _yearStart,
-            YearEnd = _yearEnd,
-            Title = _title,
-            Supplier = _supplier,
-            Town = _town,
-            Description = _desc
+            Title = _model.Title,
+            Supplier = _model.Supplier,
+            YearStart = _model.StartsAt,
+            YearEnd = _model.EndsAt,
+            Town = _model.Town,
+            Description = _model.Description
         };
         if (Education != null) education.Id = Education.Id;
         Dialog.Close(education);
+    }
+
+    private sealed class UserEducationModel
+    {
+        [Required(ErrorMessage = "Veuillez spécifier un titre")] public string Title { get; set; } = string.Empty;
+        [Required(ErrorMessage = "Veuillez spécifier un établissement")] public string Supplier { get; set; } = string.Empty;
+        [Required(ErrorMessage = "Veuillez spécifier une année de début")] public int StartsAt { get; set; }
+        [Required(ErrorMessage = "Veuillez spécifier une année de fin")] public int EndsAt { get; set; }
+        [Required(ErrorMessage = "Veuillez spécifier une ville")] public string Town { get; set; } = string.Empty; 
+        public string Description { get; set; } = string.Empty;
     }
 }

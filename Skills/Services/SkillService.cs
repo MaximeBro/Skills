@@ -327,7 +327,7 @@ public class SkillService(IDbContextFactory<SkillsContext> factory)
                 }
                 else
                 {
-                    var userSkill = userSkills.FirstOrDefault(x => x.UserId == user.Id && x.SkillId == skill.Id);
+                    var userSkill = userSkills.FirstOrDefault(x => x.UserId == user.Id && x.SkillId == skill!.Id);
                     if (userSkill != null)
                     {
                         db.UsersSkills.Remove(userSkill);
@@ -337,7 +337,7 @@ public class SkillService(IDbContextFactory<SkillsContext> factory)
             }
             else
             {
-                var userSkill = userSkills.FirstOrDefault(x => x.UserId == user.Id && x.SkillId == skill.Id);
+                var userSkill = userSkills.FirstOrDefault(x => x.UserId == user.Id && x.SkillId == skill!.Id);
                 if (userSkill != null)
                 {
                     db.UsersSkills.Remove(userSkill);

@@ -31,7 +31,8 @@
                                           Mask="@(new PatternMask("00.00.00.00.00"))" Class="ml-2 flex-grow-0" Style="width: 400px;" Variant="Variant.Filled"/>
                         </MudStack>
                         <MudStack Class="mt-2" Row Justify="Justify.Center">
-                            <MudDatePicker @bind-Date="_birthDate" DateFormat="dd-MM-yyyy" Label="Date de naissance" Color="Color.Primary" Class="flex-grow-0" Style="width: 400px;" Variant="Variant.Filled"/>
+                            <MudDatePicker @bind-Date="_birthDate" DateFormat="dd-MM-yyyy" Label="Date de naissance" Color="Color.Primary" AnchorOrigin="Origin.BottomLeft" TransformOrigin="Origin.TopLeft"
+                                           Editable Mask="@(new DateMask("dd-MM-yyyy"))" Class="flex-grow-0" Style="width: 400px;" Variant="Variant.Filled"/>
                         </MudStack>
                         <MudStack Class="mt-8" Row Justify="Justify.Center">
                             <MudButton Color="Color.Primary" Variant="Variant.Filled" OnClick="@SaveAsync">Enregistrer</MudButton>

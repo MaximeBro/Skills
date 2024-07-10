@@ -66,7 +66,7 @@ public partial class CvEditorPage : FullComponentBase, IAsyncDisposable
         _breadcrumbs.Add(new BreadcrumbItem("Accueil", "/"));
         _breadcrumbs.Add(new BreadcrumbItem("Utilisateurs", "/users"));
         _breadcrumbs.Add(new BreadcrumbItem(user.Name, $"/overview/{Username}"));
-        _breadcrumbs.Add(new BreadcrumbItem("CV", $"/overview/{Username}/5"));
+        _breadcrumbs.Add(new BreadcrumbItem("CV", $"/overview/{Username}/6"));
         _breadcrumbs.Add(new BreadcrumbItem(_cv.Title, null, true));
         await db.DisposeAsync();
     }

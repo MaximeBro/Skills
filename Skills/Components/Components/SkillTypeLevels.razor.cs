@@ -4,6 +4,7 @@ using Microsoft.JSInterop;
 using MudBlazor;
 using Skills.Components.Pages.Admin.SkillsTabs;
 using Skills.Databases;
+using Skills.Extensions;
 using Skills.Models;
 
 namespace Skills.Components.Components;
@@ -44,11 +45,7 @@ public partial class SkillTypeLevels : FullComponentBase
         Parent.SetSaving(false);
         _semaphore.Release(1);
         StateHasChanged();
-        Snackbar.Add("Données sauvegardées !", Severity.Success, options =>
-        {
-            options.VisibleStateDuration = 1500;
-            options.DuplicatesBehavior = SnackbarDuplicatesBehavior.Allow;
-        });
+        Snackbar.Add("Données sauvegardées !", Severity.Success, Hardcoded.SnackbarOptions);
     }
 
     private async Task SaveAsync(int level)

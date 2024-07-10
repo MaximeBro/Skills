@@ -1,51 +1,49 @@
+@using System.ComponentModel.DataAnnotations
 @using Skills.Models.Overview
 
 <MudDialog>
     <DialogContent>
         <CloseButton Dialog="@Dialog"/>
-        <MudStack Class="px-4 py-2" Justify="Justify.SpaceEvenly" Row="false" Spacing="0">
-            <MudStack Row>
-                <MudTextField T="string" @bind-Value="_title" Label="Nom de la formation" Style="width: 400px;"/>
-                <MudTextField T="string" @bind-Value="_authority" Label="Autorité de délivrance"/>
-            </MudStack>
-            <MudStack Row>
-                <MudSelect T="int" @bind-Value="_year" Label="Année" AnchorOrigin="Origin.BottomLeft" TransformOrigin="Origin.TopLeft">
-                    @for (int i = DateTime.Now.Year; i >= 1950; i--)
-                    {
+        <EditForm Model="@_model" OnValidSubmit="@Submit">
+            <DataAnnotationsValidator/>
+            <MudStack Class="px-4 py-2" Justify="Justify.SpaceEvenly" Row="false" Spacing="0">
+                <MudStack Row>
+                    <MudTextField T="string" @bind-Value="_model.Title" For="@(() => _model.Title)" Required Label="Nom de la formation" Style="width: 400px;"/>
+                    <MudTextField T="string" @bind-Value="_model.Supplier" For="@(() => _model.Supplier)" Required Label="Autorité de délivrance"/>
+                </MudStack>
+                <MudStack Class="my-2" Row>
+                    <MudSelect T="int" @bind-Value="_model.Year" For="@(() => _model.Year)" Required Label="Année" AnchorOrigin="Origin.BottomLeft" TransformOrigin="Origin.TopLeft">
+                        @for (int i = DateTime.Now.Year; i >= 1950; i--)
+                        {
                         var value = i;
                         <MudSelectItem Value="value">@value</MudSelectItem>
-                    }
-                </MudSelect>
-                <MudTextField T="string" @bind-Value="_duration" Label="Durée" />
+                        }
+                    </MudSelect>
+                    <MudTextField T="string" @bind-Value="_model.Duration" For="@(() => _model.Duration)" HelperText="Optionnel" Label="Durée" />
+                </MudStack>
             </MudStack>
-        </MudStack>
+            <MudStack Row>
+                <MudSpacer/>
+                <MudButton Class="open-sans-600 mr-n4" Color="Color.Success" Variant="Variant.Filled" ButtonType="ButtonType.Submit">Enregistrer</MudButton>
+            </MudStack>
+        </EditForm>
     </DialogContent>
-    <DialogActions>
-        <MudButton Class="open-sans-600" Color="Color.Success" Variant="Variant.Filled" OnClick="@Submit">Enregistrer</MudButton>
-    </DialogActions>
 </MudDialog>
 
 @code {
     [CascadingParameter] public MudDialogInstance Dialog { get; set; } = null!;
     [Parameter] public UserCertificationInfo? Certification { get; set; }
 
-    private int _year;
-    private string _title = string.Empty;
-    private string _authority = string.Empty;
-    private string _duration = string.Empty;
+    private UserCertificationModel _model = new();
 
     protected override void OnInitialized()
     {
         if (Certification != null)
         {
-            _year = Certification.Year;
-            _title = Certification.Title;
-            _authority = Certification.Supplier;
-            _duration = Certification.Duration;
-        }
-        else
-        {
-            _year = DateTime.Now.Year;
+            _model.Title = Certification.Title;
+            _model.Supplier = Certification.Supplier;
+            _model.Year = Certification.Year;
+            _model.Duration = Certification.Duration;
         }
     }
 
@@ -53,13 +51,20 @@
     {
         var certification = new UserCertificationInfo()
         {
-            Year = _year,
-            Title = _title,
-            Supplier = _authority,
-            Duration = _duration
+            Title = _model.Title,
+            Supplier = _model.Supplier,
+            Year = _model.Year,
+            Duration = _model.Duration
         };
         if (Certification != null) certification.Id = Certification.Id;
         Dialog.Close(certification);
     }
 
+    private sealed class UserCertificationModel
+    {
+        [Required(ErrorMessage = "Veuillez spécifier un titre")] public string Title { get; set; } = string.Empty;
+        [Required(ErrorMessage = "Veuillez spécifier une autorité")] public string Supplier { get; set; } = string.Empty;
+        [Required(ErrorMessage = "Veuillez spécifier une année")] public int Year { get; set; } = DateTime.Now.Year;
+        public string Duration { get; set; } = string.Empty;
+    }
 }

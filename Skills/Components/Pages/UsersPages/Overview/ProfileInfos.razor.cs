@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using MudBlazor;
 using Skills.Components.Components;
 using Skills.Databases;
+using Skills.Extensions;
 using Skills.Models;
 
 namespace Skills.Components.Pages.UsersPages.Overview;
@@ -15,6 +16,7 @@ public partial class ProfileInfos : FullComponentBase
     [Parameter] public EventCallback<MouseEventArgs> OnClick { get; set; }
 
     [Inject] public IDbContextFactory<SkillsContext> Factory { get; set; } = null!;
+    [Inject] public ISnackbar Snackbar { get; set; } = null!;
 
     private List<BreadcrumbItem> _breadcrumbs = [];
 
@@ -45,6 +47,8 @@ public partial class ProfileInfos : FullComponentBase
         db.Update(User);
         await db.SaveChangesAsync();
         await db.DisposeAsync();
+        
+        Snackbar.Add("Modifications sauvegardées !", Severity.Success, Hardcoded.SnackbarOptions);
         
         await Overview.UserChangedAsync();
         await SendUpdateAsync();

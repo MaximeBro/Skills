@@ -2,7 +2,7 @@
 
 <MudTabPanel Class="open-sans-600" Text="Utilisateurs">
     <MudContainer MaxWidth="MaxWidth.ExtraLarge">
-        <MudDataGrid @ref="_grid" T="UserModel" Items="@_users" Bordered Hover Outlined Filterable Striped SortMode="SortMode.Multiple" Dense FixedHeader
+        <MudDataGrid @ref="_grid" T="UserModel" Items="@_users" Bordered Hover Outlined Filterable Striped SortMode="SortMode.Multiple" Dense FixedHeader QuickFilter="@QuickFilter"
                      Culture="@Hardcoded.French" Height="70vh" Virtualize OverscanCount="5" ItemSize="39" RowClick="@OnRowClickedAsync" Class="mt-8">
             <ToolBarContent>
                 <MudText Class="open-sans-600" Style="font-weight: bold!important">Actions</MudText>

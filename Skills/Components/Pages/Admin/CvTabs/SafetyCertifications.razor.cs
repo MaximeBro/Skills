@@ -14,6 +14,7 @@ public partial class SafetyCertifications : FullComponentBase
 {
     [Inject] public IDbContextFactory<SkillsContext> Factory { get; set; } = null!;
     [Inject] public IDialogService DialogService { get; set; } = null!;
+    [Inject] public ISnackbar Snackbar { get; set; } = null!;
 
     [Parameter] public string Title { get; set; } = null!;
 
@@ -32,6 +33,7 @@ public partial class SafetyCertifications : FullComponentBase
     protected override async Task OnInitializedAsync()
     {
         await RefreshDataAsync();
+        StateHasChanged();
     }
 
     private async Task CommitChangesAsync(SafetyCertification certification)
@@ -49,6 +51,8 @@ public partial class SafetyCertifications : FullComponentBase
 
         await db.DisposeAsync();
         await RefreshDataAsync();
+        Snackbar.Add("Données sauvegardées !", Severity.Success, Hardcoded.SnackbarOptions);
+        StateHasChanged();
     }
 
     private async Task ValueChangedAsync(bool value, SafetyCertification certification)
@@ -64,6 +68,7 @@ public partial class SafetyCertifications : FullComponentBase
 
         await db.DisposeAsync();
         await RefreshDataAsync();
+        StateHasChanged();
     }
 
     private async Task CreateCertificationAsync()
@@ -77,6 +82,7 @@ public partial class SafetyCertifications : FullComponentBase
             await db.SaveChangesAsync();
             await db.DisposeAsync();
             await RefreshDataAsync();
+            StateHasChanged();
         }
     }
 
@@ -96,6 +102,7 @@ public partial class SafetyCertifications : FullComponentBase
             }
             await db.DisposeAsync();
             await RefreshDataAsync();
+            StateHasChanged();
         }
     }
 
@@ -117,6 +124,7 @@ public partial class SafetyCertifications : FullComponentBase
             await db.SaveChangesAsync();
             await db.DisposeAsync();
             await RefreshDataAsync();
+            StateHasChanged();
         }
     }
 
@@ -125,7 +133,5 @@ public partial class SafetyCertifications : FullComponentBase
         var db = await Factory.CreateDbContextAsync();
         _certifications = db.SafetyCertifications.AsNoTracking().ToList();
         await db.DisposeAsync();
-
-        StateHasChanged();
     }
 }
