@@ -9,7 +9,9 @@
         <NavBar IsDarkTheme="@IsDarkMode"/>
         <MudMainContent> @* Padding-top used for appbar space only *@
             <MudContainer MaxWidth="MaxWidth.False" Class="@($"pa-0 ma-0 {(IsEditing ? string.Empty : "mb-4")}")" Style="min-height: calc(100vh - 64px);">
-                @Body
+                <CascadingValue Value="@IsDarkMode" Name="IsDarkMode">
+                    @Body
+                </CascadingValue>
             </MudContainer>
         </MudMainContent>
 

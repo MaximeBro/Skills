@@ -91,7 +91,7 @@ public partial class CvEditorPage : FullComponentBase, IAsyncDisposable
         {
             CvId = CvId,
             SkillId = x.Key.Id,
-            IsSoftSkill = x.Key.Type?.ToLower() == "soft-skill"
+            IsSoftSkill = x.Key.Type?.ToUpper() == Hardcoded.SoftSkill
         }).ToList();
         var skillsToAdd = heldSkills.Where(x => !db.CvSkills.AsNoTracking().Select(y => y.SkillId).Contains(x.SkillId)).ToList();
         

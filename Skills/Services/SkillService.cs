@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using MiniExcelLibs;
 using MiniExcelLibs.Attributes;
 using Skills.Databases;
+using Skills.Extensions;
 using Skills.Models;
 using Skills.Models.Enums;
 
@@ -13,10 +14,10 @@ public class SkillService(IDbContextFactory<SkillsContext> factory)
     {
         var db = await factory.CreateDbContextAsync();
         var softSkillExists = db.SkillsTypes.AsNoTracking()
-            .FirstOrDefault(x => x.Type == SkillDataType.Type && x.Value == "SOFT-SKILL") != null;
+            .FirstOrDefault(x => x.Type == SkillDataType.Type && x.Value == Hardcoded.SoftSkill) != null;
         if (!softSkillExists)
         {
-            db.SkillsTypes.Add(new SKillInfo { Type = SkillDataType.Type, Value = "SOFT-SKILL" });
+            db.SkillsTypes.Add(new SKillInfo { Type = SkillDataType.Type, Value = Hardcoded.SoftSkill });
             await db.SaveChangesAsync();
         }
 
@@ -71,11 +72,11 @@ public class SkillService(IDbContextFactory<SkillsContext> factory)
                 index++;
                 
                 // Adding the soft skill
-                if (row.Type.Equals("SOFT-SKILL", StringComparison.OrdinalIgnoreCase))
+                if (row.Type.Equals(Hardcoded.SoftSkill, StringComparison.OrdinalIgnoreCase))
                 {
                     // SoftSkill Model
                     if (string.IsNullOrWhiteSpace(row.Description)) return new KeyValuePair<ImportState, string>(ImportState.Cancelled, $"Un Soft-Skill se doit d'avoir au moins une description ! (~~ligne: {index})");
-                    var softType = db.SkillsTypes.AsNoTracking().First(x => x.Type == SkillDataType.Type && x.Value == "SOFT-SKILL");
+                    var softType = db.SkillsTypes.AsNoTracking().First(x => x.Type == SkillDataType.Type && x.Value == Hardcoded.SoftSkill);
                     var softSkill = new SoftSkillModel
                     {
                         TypeId = softType.Id,
@@ -314,7 +315,6 @@ public class SkillService(IDbContextFactory<SkillsContext> factory)
                             {
                                 UserId = user.Id,
                                 SkillId = skill.Id,
-                                IsSoftSkill = skill.Type?.ToLower() == "soft-skill",
                                 Level = level
                             });
                             await db.SaveChangesAsync();
@@ -380,7 +380,7 @@ public class SkillService(IDbContextFactory<SkillsContext> factory)
             string lvl3;
             string lvl4;
             
-            if (skill.Type?.ToLower() == "soft-skill")
+            if (skill.Type?.ToUpper() == Hardcoded.SoftSkill)
             {
                 lvl1 = levels.FirstOrDefault(x => x.Key == skill.Id).Value.FirstOrDefault(x => x.Level == 1)?.Value ?? string.Empty;
                 lvl2 = levels.FirstOrDefault(x => x.Key == skill.Id).Value.FirstOrDefault(x => x.Level == 2)?.Value ?? string.Empty;

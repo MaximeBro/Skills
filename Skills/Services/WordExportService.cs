@@ -216,7 +216,7 @@ public class WordExportService(IConfiguration configuration, IDbContextFactory<S
                 var categoryLine = DocXtensions.CreateTitle(category ?? string.Empty, DocXtensions.HeadingLevel.H2);
                 reference.InsertBeforeSelf(categoryLine);
                 
-                if (type.ToLower() == "soft-skill")
+                if (type.ToUpper() == Hardcoded.SoftSkill)
                 {
                     var skillsLine = DocXtensions.CreateTitle(string.Empty, DocXtensions.HeadingLevel.H4);
                     skillsLine.Append(DocXtensions.CreateRunAsTitle(string.Join(" ; ", skillTypes[type].Select(x => x?.Description ?? string.Empty)), DocXtensions.HeadingLevel.Accent));

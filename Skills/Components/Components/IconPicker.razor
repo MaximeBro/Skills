@@ -1,17 +1,17 @@
 @inherits FullComponentBase
 
-<MudMenu Icon="@IconsF.EmojiEmotions" IconColor="Color.Primary" ListClass="py-0" PopoverClass="z-9999" AnchorOrigin="Origin.BottomRight" TransformOrigin="Origin.CenterRight" PositionAtCursor>
+<MudMenu @ref="_menu" Icon="@IconsF.Palette" IconColor="Color.Primary" ListClass="py-0" PopoverClass="z-9998" AnchorOrigin="Origin.BottomRight" TransformOrigin="Origin.CenterRight">
     <MudStack Class="px-4 pt-1 pb-3" Row="false" Spacing="0">
         <MudStack Row AlignItems="AlignItems.Center">
             <MudTextField T="string" @bind-Value="_search" Adornment="Adornment.Start" AdornmentIcon="@IconsR.Search" Variant="Variant.Text" DisableUnderLine
-                          Placeholder="Rechercher" Style="max-width: 220px; margin: 0!important;"/>
+                          Placeholder="Rechercher" Immediate AutoFocus Style="max-width: 220px; margin: 0!important;"/>
             <MudSpacer/>
             <MudText Align="Align.Center">Menu d'icônes</MudText>
         </MudStack>
         <MudDivider FlexItem/>
         <MudStack Class="pr-1 pb-3">
             <MudTabs Rounded>
-                <MudTabPanel Icon="@IconsF.Circle" ToolTip="Filled" Class="icon-tabs">
+                <MudTabPanel Icon="@IconsF.Circle" ToolTip="Filled" Class="icon-tabs z-9999">
                     <MudStack Class="mt-2 px-2" Row="false" Style="max-height: 200px; max-width: 370px; overflow-y: auto;">
                         <Virtualize Items="@_filled.Take(LimitCount).Where(QuickFilter).Chunk(6).ToList()" OverscanCount="15" ItemSize="34" Context="items">
                             <ItemContent>
@@ -20,7 +20,7 @@
                                     {
                                         <MudItem @key="item.Key" Class="d-flex align-center justify-center" xs="2">
                                             <MudTooltip Class="z-9999" Text="@item.Key" Placement="Placement.Bottom">
-                                                <MudIconButton Icon="@item.Value" Size="Size.Small"/>
+                                                <MudIconButton Icon="@item.Value" Size="Size.Small" OnClick="@(async () => await InvokeItemChangedAsync(item.Key, IconType.Filled))"/>
                                             </MudTooltip>
                                         </MudItem>
                                     }
@@ -39,7 +39,7 @@
                                     {
                                         <MudItem @key="item.Key" Class="d-flex align-center justify-center" xs="2">
                                             <MudTooltip Class="z-9999" Text="@item.Key" Placement="Placement.Bottom">
-                                                <MudIconButton Icon="@item.Value" Size="Size.Small"/>
+                                                <MudIconButton Icon="@item.Value" Size="Size.Small" OnClick="@(async () => await InvokeItemChangedAsync(item.Key, IconType.Outlined))"/>
                                             </MudTooltip>
                                         </MudItem>
                                     }
@@ -58,7 +58,7 @@
                                     {
                                         <MudItem @key="item.Key" Class="d-flex align-center justify-center" xs="2">
                                             <MudTooltip Class="z-9999" Text="@item.Key" Placement="Placement.Bottom">
-                                                <MudIconButton Icon="@item.Value" Size="Size.Small"/>
+                                                <MudIconButton Icon="@item.Value" Size="Size.Small" OnClick="@(async () => await InvokeItemChangedAsync(item.Key, IconType.Rounded))"/>
                                             </MudTooltip>
                                         </MudItem>
                                     }
@@ -77,7 +77,7 @@
                                     {
                                     <MudItem @key="item.Key" Class="d-flex align-center justify-center" xs="2">
                                         <MudTooltip Class="z-9999" Text="@item.Key" Placement="Placement.Bottom">
-                                            <MudIconButton Icon="@item.Value" Size="Size.Small"/>
+                                            <MudIconButton Icon="@item.Value" Size="Size.Small" OnClick="@(async () => await InvokeItemChangedAsync(item.Key, IconType.Sharp))"/>
                                         </MudTooltip>
                                     </MudItem>
                                     }
@@ -96,7 +96,7 @@
                                     {
                                     <MudItem @key="item.Key" Class="d-flex align-center justify-center" xs="2">
                                         <MudTooltip Class="z-9999" Text="@item.Key" Placement="Placement.Bottom">
-                                            <MudIconButton Icon="@item.Value" Size="Size.Small"/>
+                                            <MudIconButton Icon="@item.Value" Size="Size.Small" OnClick="@(async () => await InvokeItemChangedAsync(item.Key, IconType.TwoTone))"/>
                                         </MudTooltip>
                                     </MudItem>
                                     }

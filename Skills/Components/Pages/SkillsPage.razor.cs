@@ -4,12 +4,14 @@ using MudBlazor;
 using Skills.Components.Components;
 using Skills.Databases;
 using Skills.Models;
+using Skills.Services;
 
 namespace Skills.Components.Pages;
 
 public partial class SkillsPage : FullComponentBase
 {
     [Inject] public IDbContextFactory<SkillsContext> Factory { get; set; } = null!;
+    [Inject] public IconHelperService IconHelperService { get; set; } = null!;
 
     private List<BreadcrumbItem> _breadcrumbs = new();
     private Dictionary<Guid, List<TypeLevel>> _skillTypeLevels = new();
@@ -53,8 +55,8 @@ public partial class SkillsPage : FullComponentBase
     {
         _loading = true;
         var db = await Factory.CreateDbContextAsync();
-        var skillModels = await db.Skills.AsNoTracking().ToListAsync();
-        var softSkillsModels = await db.SoftSkills.AsNoTracking().ToListAsync();
+        var skillModels = await db.Skills.AsNoTracking().Include(x => x.TypeInfo).ToListAsync();
+        var softSkillsModels = await db.SoftSkills.AsNoTracking().Include(x => x.TypeInfo).ToListAsync();
 
         _models.Clear();
         _models.AddRange(new List<AbstractSkillModel>(skillModels));

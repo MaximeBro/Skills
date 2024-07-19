@@ -45,8 +45,8 @@ public class ThemeManager(IConfiguration configuration)
     public string GetColor(Color color, bool isDarkTheme = false)
     {
         var theme = isDarkTheme ? "DarkTheme" : "LightTheme";
-        var colors = configuration.GetSection(theme).GetChildren().ToList();
-        return colors[(int)color-1].GetSection(color.ToString()).Value ?? DefaultColor;
+        var colors = configuration.GetSection(theme).Get<List<Dictionary<string, string>>>() ?? [];
+        return colors.FirstOrDefault(x => x.ContainsKey(color.ToString()))?[color.ToString()] ?? DefaultColor;
     }
 
     /// <summary>
@@ -68,6 +68,8 @@ public class ThemeManager(IConfiguration configuration)
     {
         return new PaletteLight
         {
+            White = GetMudColor(Color.Default),
+            Surface = GetMudColor(Color.Surface),
             Primary = GetMudColor(Color.Primary),
             Secondary = GetMudColor(Color.Secondary),
             Tertiary = GetMudColor(Color.Tertiary),
@@ -82,6 +84,8 @@ public class ThemeManager(IConfiguration configuration)
     {
         return new PaletteDark
         {
+            White = GetMudColor(Color.Default, true),
+            Surface = GetMudColor(Color.Surface, true),
             Primary = GetMudColor(Color.Primary, true),
             Secondary = GetMudColor(Color.Secondary, true),
             Tertiary = GetMudColor(Color.Tertiary, true),

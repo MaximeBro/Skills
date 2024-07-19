@@ -25,8 +25,7 @@
 
         @* Skills *@
         <MudItem Class="px-2 px-md-16" xs="12">
-            
-            <MudDataGrid T="UserSkillModel" Items="@_userSkillsModels" Bordered Hover Outlined Filterable Striped SortMode="SortMode.Multiple" Dense FixedHeader ReadOnly="false"
+            <MudDataGrid T="UserSkillModel" Items="@_userSkillsModels" Bordered Hover Outlined Filterable SortMode="SortMode.Multiple" Dense FixedHeader ReadOnly="false"
                          Culture="@Hardcoded.French" Height="65vh" Virtualize OverscanCount="25" QuickFilter="@QuickFilter" EditMode="DataGridEditMode.Cell">
                 <ToolBarContent>
                     <MudText Class="open-sans-600">Compétences (attribuées)</MudText>
@@ -46,12 +45,18 @@
                             </MudTooltip>
                         </Authorized>
                     </AuthorizeView>
-                    
                     <MudSpacer/>
                     <MudTextField T="string" @bind-Value="_search" Placeholder="Rechercher" Clearable Adornment="Adornment.Start" AdornmentIcon="@IconsF.Search" Immediate />
                 </ToolBarContent>
                 <Columns>
                     <HierarchyColumn T="UserSkillModel" />
+                    <TemplateColumn Filterable="false" Sortable="false" IsEditable="false" CellStyle="max-width: 50px!important;" CellClass="px-0">
+                        <CellTemplate Context="row">
+                            <MudStack Justify="Justify.Center" AlignItems="AlignItems.Center">
+                                <MudIcon Icon="@IconHelperService.Get(row.Item.Skill!.TypeInfo.Icon, row.Item.Skill.TypeInfo.IconType)" Color="@row.Item.Skill.TypeInfo.IconColor" Size="Size.Small"/>
+                            </MudStack>
+                        </CellTemplate>
+                    </TemplateColumn>
                     <PropertyColumn Title="Catégorie" Property="x => x.Skill!.Category" IsEditable="false" />
                     <PropertyColumn Title="Sous catégorie" Property="x => x.Skill!.SubCategory" IsEditable="false" />
                     <PropertyColumn Title="Description" Property="x => x.Skill!.Description" IsEditable="false" />
@@ -103,7 +108,7 @@
                             @{
                                 foreach (var level in _rowSkillLevels[context.Item.SkillId].OrderBy(x => x.Level))
                                 {
-                                    if (_selectedLevels[context.Item.SkillId] != null && level.Level == _selectedLevels[context.Item.SkillId]!      .Level)
+                                    if (_selectedLevels[context.Item.SkillId] != null && level.Level == _selectedLevels[context.Item.SkillId]!.Level)
                                     {
                                         <MudText Class="open-sans-600 bold" Color="Color.Tertiary">
                                             <MudChip Class="bold" Color="Color.Tertiary" Size="Size.Small">@level.Level</MudChip> @level.Value

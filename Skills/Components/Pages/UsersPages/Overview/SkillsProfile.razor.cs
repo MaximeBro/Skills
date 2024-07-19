@@ -24,6 +24,7 @@ public partial class SkillsProfile : FullComponentBase
     [Inject] public ISnackbar Snackbar { get; set; } = null!;
     [Inject] public IJSRuntime JsRuntime { get; set; } = null!;
     [Inject] public SkillService SkillService { get; set; } = null!;
+    [Inject] public IconHelperService IconHelperService { get; set; } = null!;
 
     private List<BreadcrumbItem> _breadcrumbs = new();
     private List<UserSkillModel> _userSkillsModels = new();
@@ -241,7 +242,8 @@ public partial class SkillsProfile : FullComponentBase
                                           db.SoftTypesLevels.AsNoTracking().FirstOrDefault(x => x.SkillId == skill.SkillId && x.Level == skill.Level)?.ToAbstract();
             _selectedLevels.Add(skill.SkillId, level); // The level has to be not null !
             
-            var skillLevels = skill.IsSoftSkill ? db.SoftTypesLevels.Where(x => x.SkillId == skill.SkillId).Select(x => x.ToAbstract()) : 
+            var skillLevels = skill.Skill!.Type!.Equals(Hardcoded.SoftSkill, StringComparison.CurrentCultureIgnoreCase) ? // If it is a soft skill ... else ...
+                                                            db.SoftTypesLevels.Where(x => x.SkillId == skill.SkillId).Select(x => x.ToAbstract()) : 
                                                             db.TypesLevels.Where(x => x.TypeId == skill.Skill!.TypeId).Select(x => x.ToAbstract());
             _rowSkillLevels.Add(skill.SkillId, skillLevels.ToList());
         }

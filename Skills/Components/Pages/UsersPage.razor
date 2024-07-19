@@ -7,16 +7,15 @@
             <HideableBreadcrumb Items="@_breadcrumbs" Class="open-sans" />
             <MudText Class="open-sans-600" Typo="Typo.h2" Align="Align.Center">Utilisateurs</MudText>
             <MudToolBar Class="mb-6">
-                <MudTooltip Placement="Placement.Bottom" Text="@_toggleTooltip" Arrow>
+                <MudTooltip Placement="Placement.Top" Text="@_toggleTooltip" Arrow>
                     <MudIconButton Icon="@_toggleIcon" OnClick="@(() => _tableView = !_tableView)"/>
                 </MudTooltip>
-                <MudTooltip Placement="Placement.Bottom" Text="Filtres" Arrow>
-                    <MudMenu Icon="@IconsF.FilterAlt" ListClass="pa-0" PopoverClass="pa-0" AnchorOrigin="Origin.BottomLeft" TransformOrigin="Origin.TopLeft">
-                        <MudStack Row="false" Spacing="0">
-                            <MudCheckBox T="bool?" Class="pr-3" Value="_showDisabledAccounts" ValueChanged="@ShowDisabledAccounts" Label="Afficher les comptes désactivés"/>
-                        </MudStack>
-                    </MudMenu>
-                </MudTooltip>
+                <MudMenu Icon="@IconsF.FilterAlt" ListClass="pa-0" PopoverClass="pa-0" AnchorOrigin="Origin.CenterRight" TransformOrigin="Origin.CenterLeft" ActivationEvent="MouseEvent.MouseOver">
+                    <MudStack Row="false" Spacing="0">
+                        <MudText Class="pt-2 px-3 open-sans-600" Align="Align.Center">Filtres</MudText>
+                        <MudCheckBox T="bool?" Class="pr-3" Value="_showDisabledAccounts" ValueChanged="@ShowDisabledAccounts" Label="Comptes désactivés"/>
+                    </MudStack>
+                </MudMenu>
                 @if (_tableView)
                 {
                     <MudHidden Invert Breakpoint="Breakpoint.SmAndUp">
@@ -69,7 +68,15 @@
                             <PropertyColumn Title="Nom" Property="x => x.Name"/>
                             <PropertyColumn Title="Email" Property="x => x.Email"/>
                             <PropertyColumn Title="Identifiant" Property="x => x.Username"/>
-                            <PropertyColumn Title="Désactivé" Property="x => x.IsDisabled" CellStyleFunc="@DisabledColor"/>
+                            <TemplateColumn Title="Désactivé" CellStyleFunc="@DisabledColor" SortBy="x => x.IsDisabled">
+                                <CellTemplate Context="row">
+                                    <MudStack Row Justify="Justify.Center" AlignItems="AlignItems.Center">
+                                        <MudText Class="open-sans" Style="font-size: 14px;" Align="Align.Center">
+                                            @(row.Item.IsDisabled ? "Désactivé" : "Actif")
+                                        </MudText>
+                                    </MudStack>
+                                </CellTemplate>
+                            </TemplateColumn>
                             <TemplateColumn Title="Actions" Sortable="false" Filterable="false">
                                 <CellTemplate>
                                     <MudStack Row Justify="Justify.SpaceEvenly">

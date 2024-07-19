@@ -17,6 +17,7 @@ public partial class LoginPage : FullComponentBase
     
     private LoginModel _model = new();
     private bool _errorMessage;
+    private bool _loading;
 
     private bool _shown;
     public string PasswordIcon => _shown ? Icons.Material.Filled.Visibility : Icons.Material.Filled.VisibilityOff;
@@ -33,6 +34,8 @@ public partial class LoginPage : FullComponentBase
     
     private async Task TrySignInAsync()
     {
+        _loading = true;
+        StateHasChanged();
         if (string.IsNullOrWhiteSpace(_model.Username) || string.IsNullOrWhiteSpace(_model.Password)) return;
         var guid = await AuthenticationService.TryLoginAsync(_model.Username, _model.Password);
         if (guid == Guid.Empty)
@@ -53,6 +56,9 @@ public partial class LoginPage : FullComponentBase
             timer.Elapsed += (obj, e) => { _errorMessage = false; _ = InvokeAsync(StateHasChanged); timer.Dispose(); };
             timer.Start();
         }
+        
+        _loading = false;
+        StateHasChanged();
     }
     
     private sealed class LoginModel

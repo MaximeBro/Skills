@@ -6,6 +6,8 @@ namespace Skills.Extensions;
 public static class Hardcoded
 {
     public static CultureInfo French => new CultureInfo("fr-FR");
+
+    public const string SoftSkill = "SOFT-SKILL";
     
     public static DialogOptions DialogOptions => new DialogOptions
     {

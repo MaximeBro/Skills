@@ -4,8 +4,8 @@
     <MudContainer MaxWidth="MaxWidth.ExtraLarge">
         <MudGrid Class="mt-8" Justify="Justify.Center">
             <MudItem xs="12">
-                <MudDataGrid @ref="_grid" T="AbstractSkillModel" Items="@_models" Bordered Hover Outlined Filterable Striped SortMode="SortMode.Multiple" QuickFilter="@QuickFilter" Loading="@_loading"
-                             Dense FixedHeader Culture="@(new CultureInfo("fr-FR"))" Height="70vh" Virtualize OverscanCount="5" ItemSize="39" RowClick="@OnRowClickedAsync">
+                <MudDataGrid @ref="_grid" T="AbstractSkillModel" Items="@_models" Bordered Hover Outlined Filterable SortMode="SortMode.Multiple" QuickFilter="@QuickFilter" Loading="@_loading"
+                             Dense FixedHeader FixedFooter Culture="@(new CultureInfo("fr-FR"))" Height="70vh" Virtualize OverscanCount="5" ItemSize="39" RowClick="@OnRowClickedAsync">
                     <ToolBarContent>
                         <MudText Class="open-sans-600" Style="font-weight: bold!important">Actions</MudText>
                         <MudTooltip Class="ml-2" Placement="Placement.Top" Text="Purge des compétences" Arrow>
@@ -23,15 +23,18 @@
                         <MudTooltip Class="ml-2" Placement="Placement.Top" Text="Créer un soft-skill" Arrow>
                             <MudIconButton Class="ml-4" Style="border-radius: 6px!important; padding: 4px!important;" Icon="@IconsF.Handshake" Color="Color.Tertiary" OnClick="@(async() => await CreateSoftSkillAsync())"/>
                         </MudTooltip>
-                        <MudTooltip Placement="Placement.Right" Text="Pour éditer, faites un double clic sur une ligne !" Arrow>
-                            <MudIcon Class="ml-5 mt-1" Icon="@IconsF.Info" Color="Color.Info"/>
-                        </MudTooltip>
                         <MudSpacer/>
                         <MudTextField T="string" @bind-Value="_search" Immediate Adornment="Adornment.Start" Clearable AdornmentIcon="@IconsF.Search" Placeholder="Rechercher" Class="flex-grow-0 mr-8 mt-0" Style="width: 400px;"/>
                     </ToolBarContent>
                     <Columns>
                         <HierarchyColumn T="AbstractSkillModel"/>
-                        <PropertyColumn Title="Type" Property="x => x.Type" Sortable="true"/>
+                        <PropertyColumn Title="Type" Property="x => x.Type" Sortable="true">
+                            <FooterTemplate>
+                                <MudTooltip Placement="Placement.Right" Text="Pour éditer, faites un double clic sur une ligne !" Arrow>
+                                    <MudIcon Class="mt-1" Icon="@IconsF.Info" Color="Color.Info"/>
+                                </MudTooltip>
+                            </FooterTemplate>
+                        </PropertyColumn>
                         <PropertyColumn Title="Catégorie" Property="x => x.Category" Sortable="true"/>
                         <TemplateColumn Title="Sous catégorie" Sortable="true" SortBy="x => x.SubCategory">
                             <CellTemplate>

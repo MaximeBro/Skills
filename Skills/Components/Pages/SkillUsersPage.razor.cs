@@ -36,7 +36,7 @@ public partial class SkillUsersPage : FullComponentBase
     {
         var db = await Factory.CreateDbContextAsync();
         _users = db.UsersSkills.AsNoTracking().Where(x => x.SkillId == Id).Include(x => x.User).ToList();
-        _levels = _skill!.Type == "Soft-Skill" ? db.SoftTypesLevels.AsNoTracking().Where(x => x.SkillId == Id).Select(x => x.ToAbstract()).ToList() : 
+        _levels = _skill!.Type == Hardcoded.SoftSkill ? db.SoftTypesLevels.AsNoTracking().Where(x => x.SkillId == Id).Select(x => x.ToAbstract()).ToList() : 
                                                  db.TypesLevels.AsNoTracking().Where(x => x.TypeId == _skill.TypeId).Select(x => x.ToAbstract()).ToList();
         await db.DisposeAsync();
         StateHasChanged();

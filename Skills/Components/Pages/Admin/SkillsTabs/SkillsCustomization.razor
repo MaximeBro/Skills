@@ -1,8 +1,35 @@
 @inherits FullComponentBase
 
 <MudTabPanel Class="open-sans-600" Text="@Title">
-    <MudContainer MaxWidth="MaxWidth.ExtraLarge">
-        <IconPicker/>
+    <MudContainer MaxWidth="MaxWidth.Large">
+        <MudStack Class="mt-8" Row="false" Style="max-height: 70vh; overflow-y: auto;" Spacing="4">
+            @foreach (var type in _types)
+            {
+                <MudPaper Class="py-2 px-4" Elevation="4" Outlined>
+                    <MudStack Row AlignItems="AlignItems.Center">
+                        <IconPicker OnClick="@(async (kvp) => await UpdateIconAsync(kvp, type))"/>
+                        <MudDivider Vertical FlexItem/>
+                        <MudText Class="open-sans-600 ml-3">@type.Value</MudText>
+                        <MudSpacer/>
+                        <MudText Class="open-sans-600 mr-2">Icône sélectionnée</MudText>
+                        <MudTooltip Text="@(string.IsNullOrWhiteSpace(type.Icon) ? "ContactSupport" : type.Icon)" Placement="Placement.Bottom" Arrow>
+                            <MudIcon Color="@type.IconColor" Icon="@IconHelperService.Get(type.Icon, type.IconType)"/>
+                        </MudTooltip>
+                        <MudSelect T="Color" Value="@type.IconColor" ValueChanged="@(async(color) => await IconColorChangedAsync(color, type))" Label="Couleur" Dense DisableUnderLine ListClass="py-0" OuterClass="ml-5 flex-grow-0" Style="width: 150px;">
+                            @foreach (var color in Enum.GetValues<Color>())
+                            {
+                                @if (color != Color.Inherit && color != Color.Transparent)
+                                {
+                                    <MudSelectItem Value="@color" Class="open-sans-600" Style="@($"background-color: {ThemeManager.GetColor(color, IsDarkMode)}!important; color: black!important;")">
+                                        @color.Humanize()
+                                    </MudSelectItem>
+                                }
+                            }
+                        </MudSelect>
+                    </MudStack>
+                </MudPaper>
+            }
+        </MudStack>
     </MudContainer>
     @if (_loading)
     {

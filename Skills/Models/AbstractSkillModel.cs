@@ -1,5 +1,5 @@
-using System.ComponentModel.DataAnnotations.Schema;
-using Skills.Models.CV;
+using Skills.Extensions;
+using Skills.Models.Enums;
 
 namespace Skills.Models;
 
@@ -17,8 +17,8 @@ public abstract class AbstractSkillModel
     public Guid? GroupId { get; set; }
     public GroupModel? Group { get; set; }
     
-    public new string ToString() => !string.IsNullOrWhiteSpace(Type) ? (Type == "SOFT-SKILL" ? string.Join(" - ", Type, Description) : string.Join(" - ", Type, Category, SubCategory, Description)) : string.Empty;
-    public string ToStringNoType() => !string.IsNullOrWhiteSpace(Type) ? (Type == "SOFT-SKILL" ? string.Join(" - ", Type, Description) : string.Join(" - ", Category, SubCategory, Description)) : string.Empty;
-    public string ToStringNoTypeDesc() => !string.IsNullOrWhiteSpace(Type) ? (Type == "SOFT-SKILL" ? $"{Type}" : string.Join(" - ", Category, SubCategory)) : string.Empty;
-    public string ToStringNoDesc() => !string.IsNullOrWhiteSpace(Type) ? (Type == "SOFT-SKILL" ? $"{Type}" : string.Join(" - ", Type, Category, SubCategory)) : string.Empty;
+    public new string ToString() => !string.IsNullOrWhiteSpace(Type) ? (Type == Hardcoded.SoftSkill ? string.Join(" - ", Type, Description) : string.Join(" - ", Type, Category, SubCategory, Description)) : string.Empty;
+    public string ToStringNoType() => !string.IsNullOrWhiteSpace(Type) ? (Type == Hardcoded.SoftSkill ? string.Join(" - ", Type, Description) : string.Join(" - ", Category, SubCategory, Description)) : string.Empty;
+    public string ToStringNoTypeDesc() => !string.IsNullOrWhiteSpace(Type) ? (Type == Hardcoded.SoftSkill ? $"{Type}" : string.Join(" - ", Category, SubCategory)) : string.Empty;
+    public string ToStringNoDesc() => !string.IsNullOrWhiteSpace(Type) ? (Type == Hardcoded.SoftSkill ? $"{Type}" : string.Join(" - ", Type, Category, SubCategory)) : string.Empty;
 }

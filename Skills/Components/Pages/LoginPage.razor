@@ -19,10 +19,22 @@
                     </MudStack>
 
                     <MudStack Class="mt-4 py-4" Row Justify="Justify.Center">
-                        <MudButton Class="text-white open-sans-600" Color="Color.Transparent" Size="Size.Large" DisableElevation Variant="Variant.Filled"
-                                   ButtonType="ButtonType.Submit" Style="text-transform: none;">
-                            Se connecter
-                        </MudButton>
+                        @if (_loading)
+                        {
+                            <MudButton Class="text-white open-sans-600 px-4" Color="Color.Transparent" Size="Size.Large" DisableElevation Variant="Variant.Filled" Style="text-transform: none;">
+                                <MudStack Row Spacing="0">
+                                    <MudProgressCircular Indeterminate Size="Size.Small" Color="Color.Default"/>
+                                    <MudText Class="ml-2 text-white open-sans-600">Connexion...</MudText>
+                                </MudStack>
+                            </MudButton>
+                        }
+                        else
+                        {
+                            <MudButton Class="text-white open-sans-600" Color="Color.Transparent" Size="Size.Large" DisableElevation Variant="Variant.Filled"
+                                       ButtonType="ButtonType.Submit" Style="text-transform: none;">
+                                Se connecter
+                            </MudButton>
+                        }
                     </MudStack>
                     @if (_errorMessage)
                     {

@@ -47,7 +47,7 @@
     protected override async Task OnInitializedAsync()
     {
         var db = await Factory.CreateDbContextAsync();
-        _skillId = db.SkillsTypes.AsNoTracking().First(x => x.Type == SkillDataType.Type && x.Value == "SOFT-SKILL").Id;
+        _skillId = db.SkillsTypes.AsNoTracking().First(x => x.Type == SkillDataType.Type && x.Value == Hardcoded.SoftSkill).Id;
         await db.DisposeAsync();
 
         if (Model != null)
@@ -73,6 +73,7 @@
         
         var softSkill = new SoftSkillModel
         {
+            Type = Hardcoded.SoftSkill,
             TypeId = _skillId,
             Description = _desc
         };

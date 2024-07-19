@@ -6,7 +6,7 @@
     <MudText Class="open-sans-600" Typo="Typo.h2" Align="Align.Center">Compétences</MudText>
     <MudGrid Justify="Justify.Center">
         <MudItem Class="mt-4" xs="12">
-            <MudDataGrid @ref="_grid" T="AbstractSkillModel" Items="_models" QuickFilter="@QuickFilter" Loading="@_loading" Bordered Hover Outlined Filterable Striped SortMode="SortMode.Multiple" 
+            <MudDataGrid @ref="_grid" T="AbstractSkillModel" Items="_models" QuickFilter="@QuickFilter" Loading="@_loading" Bordered Hover Outlined Filterable SortMode="SortMode.Multiple" 
                          Dense FixedHeader Culture="@(new CultureInfo("fr-FR"))" Height="70vh" Virtualize OverscanCount="5" ItemSize="39" RowClick="@OnRowClicked"> 
                 <ToolBarContent>
                     <MudSpacer/>
@@ -15,6 +15,13 @@
                 </ToolBarContent>
                 <Columns>
                     <HierarchyColumn T="AbstractSkillModel"/>
+                    <TemplateColumn Filterable="false" Sortable="false" CellStyle="max-width: 50px!important;" CellClass="px-0">
+                        <CellTemplate Context="row">
+                            <MudStack Justify="Justify.Center" AlignItems="AlignItems.Center">
+                                <MudIcon Icon="@IconHelperService.Get(row.Item.TypeInfo.Icon, row.Item.TypeInfo.IconType)" Color="@row.Item.TypeInfo.IconColor" Size="Size.Small"/>
+                            </MudStack>
+                        </CellTemplate>
+                    </TemplateColumn>
                     <PropertyColumn Title="Catégorie" Property="x => x.Category"/>
                     <PropertyColumn Title="Sous catégorie" Property="x => x.SubCategory"/>
                     <PropertyColumn Title="Description" Property="x => x.Description"/>

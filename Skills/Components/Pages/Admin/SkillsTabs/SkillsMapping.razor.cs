@@ -76,7 +76,7 @@ public partial class SkillsMapping : FullComponentBase
         if (result is { Data: SoftSkillEditModel model })
         {
             var db = await Factory.CreateDbContextAsync();
-            var type = db.SkillsTypes.AsNoTracking().First(x => x.Type == SkillDataType.Type && x.Value == "SOFT-SKILL");
+            var type = db.SkillsTypes.AsNoTracking().First(x => x.Type == SkillDataType.Type && x.Value == Hardcoded.SoftSkill);
             var softSkill = new SoftSkillModel { Type = type.Value, TypeId = type.Id, Description = model.SoftSkill.Description };
             db.SoftSkills.Add(softSkill);
             foreach (var level in model.Levels) level.SkillId = softSkill.Id;
@@ -276,7 +276,7 @@ public partial class SkillsMapping : FullComponentBase
     {
         if (args.MouseEventArgs.Detail == 2)
         {
-            if (args.Item.Type == "SOFT-SKILL")
+            if (args.Item.Type == Hardcoded.SoftSkill)
             {
                 await EditSoftSkillAsync(args.Item);
             }
@@ -289,7 +289,7 @@ public partial class SkillsMapping : FullComponentBase
 
     private async Task EditModelAsync(AbstractSkillModel model)
     {
-        if (model.Type == "SOFT-SKILL")
+        if (model.Type == Hardcoded.SoftSkill)
         {
             await EditSoftSkillAsync(model);
         }

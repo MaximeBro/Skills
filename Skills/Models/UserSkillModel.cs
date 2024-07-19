@@ -6,6 +6,5 @@ public class UserSkillModel
     public UserModel? User { get; set; }
     public Guid SkillId { get; set; }
     public AbstractSkillModel? Skill { get; set; }
-    public bool IsSoftSkill { get; set; }
     public int Level { get; set; }
 }

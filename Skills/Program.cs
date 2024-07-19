@@ -40,6 +40,7 @@ builder.Services.AddMudServices();
 
 /* Custom Services */
 builder.Services.AddTransient<ADAuthenticationService>();
+builder.Services.AddSingleton<IconHelperService>();
 builder.Services.AddSingleton<WordExportService>();
 builder.Services.AddSingleton<UserTokenHoldingService>();       
 builder.Services.AddSingleton<ActiveDirectoryService>();

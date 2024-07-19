@@ -1,3 +1,4 @@
+using MudBlazor;
 using Skills.Models.Enums;
 
 namespace Skills.Models;
@@ -9,4 +10,6 @@ public class SKillInfo
     public SkillDataType Type { get; set; }
     
     public string? Icon { get; set; }
+    public IconType IconType { get; set; } = IconType.Unknown;
+    public Color IconColor { get; set; } = Color.Primary;
 }

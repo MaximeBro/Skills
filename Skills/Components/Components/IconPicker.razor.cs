@@ -1,12 +1,17 @@
-using System.Reflection;
 using Microsoft.AspNetCore.Components;
 using MudBlazor;
+using Skills.Models.Enums;
+using Skills.Services;
 
 namespace Skills.Components.Components;
 
 public partial class IconPicker : FullComponentBase
 {
+    [Inject] public IconHelperService IconHelperService { get; set; } = null!;
+    
     [Parameter] public int LimitCount { get; set; }
+    
+    [Parameter] public EventCallback<KeyValuePair<string, IconType>> OnClick { get; set; }
     
     private Dictionary<string, string> _filled = [];
     private Dictionary<string, string> _outlined = [];
@@ -15,14 +20,11 @@ public partial class IconPicker : FullComponentBase
     private Dictionary<string, string> _twoTone = [];
 
     private string _search = string.Empty;
+    private MudMenu _menu = null!;
     
     private Func<KeyValuePair<string, string>, bool> QuickFilter => x =>
     {
-        if (_filled.ContainsKey(_search)) return true;
-        if (_outlined.ContainsKey(_search)) return true;
-        if (_rounded.ContainsKey(_search)) return true;
-        if (_sharp.ContainsKey(_search)) return true;
-        if (_twoTone.ContainsKey(_search)) return true;
+        if (x.Key.Contains(_search, StringComparison.OrdinalIgnoreCase)) return true;
         if (string.IsNullOrWhiteSpace(_search)) return true;
         
         return false;
@@ -30,21 +32,22 @@ public partial class IconPicker : FullComponentBase
 
     protected override void OnInitialized()
     {
-        _filled = typeof(Icons.Material.Filled).GetFields(BindingFlags.Public | BindingFlags.Static).ToDictionary(x => x.Name, x => x.GetValue(null)?.ToString() ?? string.Empty);
-        _outlined = typeof(Icons.Material.Outlined).GetFields(BindingFlags.Public | BindingFlags.Static).ToDictionary(x => x.Name, x => x.GetValue(null)?.ToString() ?? string.Empty);
-        _rounded = typeof(Icons.Material.Rounded).GetFields(BindingFlags.Public | BindingFlags.Static).ToDictionary(x => x.Name, x => x.GetValue(null)?.ToString() ?? string.Empty);
-        _sharp = typeof(Icons.Material.Sharp).GetFields(BindingFlags.Public | BindingFlags.Static).ToDictionary(x => x.Name, x => x.GetValue(null)?.ToString() ?? string.Empty);
-        _twoTone = typeof(Icons.Material.TwoTone).GetFields(BindingFlags.Public | BindingFlags.Static).ToDictionary(x => x.Name, x => x.GetValue(null)?.ToString() ?? string.Empty);
-
+        _filled = IconHelperService.Filled;
+        _outlined = IconHelperService.Outlined;
+        _rounded = IconHelperService.Rounded;
+        _sharp = IconHelperService.Sharp;
+        _twoTone = IconHelperService.TwoTone;
+        
         if (LimitCount == 0)
         {
             LimitCount = Math.Max(Math.Max(Math.Max(_filled.Count, _outlined.Count), _rounded.Count), Math.Max(_sharp.Count, _twoTone.Count));
         }
     }
 
-    private sealed class VirtualizableCollection<T>
+    private async Task InvokeItemChangedAsync(string item, IconType type)
     {
-        public IEnumerable<T> Items { get; set; } = [];
-        public int Count { get; set; }
+        await OnClick.InvokeAsync(new KeyValuePair<string, IconType>(item, type));
+        _menu.CloseMenu();
+        await InvokeAsync(StateHasChanged);
     }
 }
