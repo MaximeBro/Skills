@@ -48,6 +48,7 @@ public class ADAuthenticationService(IConfiguration configuration, IDbContextFac
                 var claims = new[]
                 {
                     new Claim("name", user.Name),
+                    new Claim("username", user.Username),
                     new Claim(ClaimTypes.Email, user.Email),
                     new Claim(ClaimTypes.Role, user.Role.ToString())
                 };

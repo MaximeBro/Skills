@@ -13,7 +13,7 @@ using Skills.Models.Enums;
 using Skills.Models.Overview;
 using Skills.Services;
 
-namespace Skills.Components.Pages.UsersPages.Overview;
+namespace Skills.Components.Pages.Profile;
 
 public partial class ProfileCertifications : FullComponentBase
 {
@@ -37,7 +37,7 @@ public partial class ProfileCertifications : FullComponentBase
         _breadcrumbs.Add(new BreadcrumbItem("Accueil", "/"));
         _breadcrumbs.Add(new BreadcrumbItem("Utilisateurs", "/users"));
         _breadcrumbs.Add(new BreadcrumbItem(User.Name, $"/overview/{User.Username}"));
-        _breadcrumbs.Add(new BreadcrumbItem("Diplômes", null, true));
+        _breadcrumbs.Add(new BreadcrumbItem("Certifications", null, true));
 
         await RefreshDataAsync();
         StateHasChanged();

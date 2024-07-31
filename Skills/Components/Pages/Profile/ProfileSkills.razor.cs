@@ -12,9 +12,9 @@ using Skills.Models;
 using Skills.Models.Enums;
 using Skills.Services;
 
-namespace Skills.Components.Pages.UsersPages.Overview;
+namespace Skills.Components.Pages.Profile;
 
-public partial class SkillsProfile : FullComponentBase
+public partial class ProfileSkills : FullComponentBase
 {
     [Parameter] public UserModel User { get; set; } = null!;
     [Parameter] public EventCallback<MouseEventArgs> OnClick { get; set; }

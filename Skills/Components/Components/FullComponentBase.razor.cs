@@ -28,6 +28,7 @@ public partial class FullComponentBase : ComponentBase, IAsyncDisposable
     protected async Task InvokeStateHasChangedAsync() => await InvokeAsync(StateHasChanged);
 
     protected async Task SendUpdateAsync() => await UpdateService.SendUpdateAsync(Component, CircuitId);
+    protected async Task SendNotificationUpdateAsync(string target) => await UpdateService.SendNotificationUpdateAsync(target);
 
     private async Task RefreshComponentDataAsync(string component, Guid circuitId)
     {

@@ -1,7 +1,10 @@
+using System.Security.Claims;
 using System.Security.Principal;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
+using Microsoft.EntityFrameworkCore;
 using Skills.Components.Components;
+using Skills.Databases;
 using Skills.Services;
 
 namespace Skills.Components.Layout;
@@ -10,10 +13,15 @@ public partial class NavBar : FullComponentBase
 {
     [CascadingParameter] public Task<AuthenticationState> AuthenticationState { get; set; } = null!;
     [Parameter] public bool IsDarkTheme { get; set; }
+    
     [Inject] public ADAuthenticationService AuthenticationService { get; set; } = null!;
     
     private bool _docked = false;
     private IIdentity? _identity;
+    private int _notificationsCount = 0;
+
+    private bool NotificationBadgeVisible => _identity is { IsAuthenticated: true } && _notificationsCount > 0;
+    private string NotificationBadgeClass => NotificationBadgeVisible ? string.Empty : "invisible-badge";
     
     protected override async Task OnInitializedAsync()
     {
@@ -43,6 +51,12 @@ public partial class NavBar : FullComponentBase
     private void Toggle()
     {
         _docked = !_docked;
+        StateHasChanged();
+    }
+
+    public void SetNotificationsCount(int count)
+    {
+        _notificationsCount = count;
         StateHasChanged();
     }
 }

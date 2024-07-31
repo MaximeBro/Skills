@@ -18,7 +18,10 @@
             </MudHidden>
             <MudItem xs="6" md="3">
                 <MudStack Class="pr-0 pr-md-3" Row AlignItems="AlignItems.Center" Justify="Justify.FlexEnd" Spacing="1">
-                    <MudIconButton Class="text-white mr-2 icon-hoverable" Icon="@IconsR.Notifications"/>
+                    <MudBadge Class="@($"{NotificationBadgeClass}")" BadgeClass="ml-n3 mb-n3" Overlap Content="@_notificationsCount" Max="99" Origin="Origin.TopRight" 
+                              Color="@(NotificationBadgeVisible ? Color.Secondary : Color.Transparent)">
+                        <NotificationMenu Parent="@this"/>
+                    </MudBadge>
                     <MudBadge BadgeClass="ml-n1 mb-n1" Overlap Dot Origin="Origin.TopRight" Color="@(_identity is { IsAuthenticated: true } ? Color.Info : Color.Transparent)">
                         <ProfileMenu/>
                     </MudBadge>
@@ -28,8 +31,7 @@
         </MudGrid>
     </MudAppBar>
 
-    <MudDrawer @bind-Open="_docked" Variant="DrawerVariant.Mini" ClipMode="DrawerClipMode.Docked" OpenMiniOnHover Elevation="1"
-               Style="@($"background: {(IsDarkTheme ? ThemeManager.Get("drawer-background-dark") : ThemeManager.Get("drawer-background"))}!important;")">
+    <MudDrawer @bind-Open="_docked" Variant="DrawerVariant.Mini" ClipMode="DrawerClipMode.Docked" OpenMiniOnHover Elevation="1" Style="@($"background: {(IsDarkTheme ? ThemeManager.Get("drawer-background-dark") : ThemeManager.Get("drawer-background"))}!important;")">
         <MudNavMenu Color="Color.Primary">
             <MudNavLink Class="open-sans mt-1 link-bold" Href="/" Match="NavLinkMatch.All" Icon="@IconsF.Home" IconColor="@(IsDarkTheme ? Color.Default : Color.Dark)">Accueil</MudNavLink>
             <MudNavLink Class="open-sans-600 my-2 link-bold" Href="/skills" Match="NavLinkMatch.All" Icon="@IconsF.Stars" IconColor="@(IsDarkTheme ? Color.Default : Color.Dark)">Compétences</MudNavLink>
@@ -50,12 +52,12 @@
         </MudNavMenu>
         @if (_docked)
         {
-        <MudSpacer/>
-        <MudLink Underline="Underline.None" Href="/">
-            <MudStack Class="mb-4" AlignItems="AlignItems.Center" Justify="Justify.Center" Spacing="0" Row>
-                <MudImage Src="@($"/pictures/{ThemeManager.Get("drawer-icon")}")" Alt="Icône" Height="50"/>
-            </MudStack>
-        </MudLink>
+            <MudSpacer/>
+            <MudLink Underline="Underline.None" Href="/">
+                <MudStack Class="mb-4" AlignItems="AlignItems.Center" Justify="Justify.Center" Spacing="0" Row>
+                    <MudImage Src="@($"/pictures/{ThemeManager.Get("drawer-icon")}")" Alt="Icône" Height="50"/>
+                </MudStack>
+            </MudLink>
         }
     </MudDrawer>
 </CascadingValue>

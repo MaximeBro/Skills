@@ -7,11 +7,11 @@ using Skills.Databases;
 using Skills.Extensions;
 using Skills.Models;
 
-namespace Skills.Components.Pages.UsersPages.Overview;
+namespace Skills.Components.Pages.Profile;
 
 public partial class ProfileInfos : FullComponentBase
 {
-    [CascadingParameter(Name = nameof(UserOverview))] public UserOverview Overview { get; set; } = null!;
+    [CascadingParameter(Name = nameof(ProfileOverview))] public ProfileOverview Overview { get; set; } = null!;
     [Parameter] public UserModel User { get; set; } = null!;
     [Parameter] public EventCallback<MouseEventArgs> OnClick { get; set; }
 

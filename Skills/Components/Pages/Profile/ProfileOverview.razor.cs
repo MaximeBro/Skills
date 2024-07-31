@@ -4,9 +4,9 @@ using Skills.Components.Components;
 using Skills.Databases;
 using Skills.Models;
 
-namespace Skills.Components.Pages.UsersPages;
+namespace Skills.Components.Pages.Profile;
 
-public partial class UserOverview : FullComponentBase
+public partial class ProfileOverview : FullComponentBase
 {
     [Inject] public IDbContextFactory<SkillsContext> Factory { get; set; } = null!;
 

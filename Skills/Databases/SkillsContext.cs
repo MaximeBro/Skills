@@ -35,6 +35,7 @@ public class SkillsContext : DbContext
     public DbSet<UserSkillModel> UsersSkills { get; set; }
     public DbSet<TypeLevel> TypesLevels { get; set; }
     public DbSet<SoftTypeLevel> SoftTypesLevels { get; set; }
+    public DbSet<UserNotification> Notifications { get; set; }
 
     public SkillsContext(DbContextOptions<SkillsContext> options, IConfiguration configuration) : base(options)
     {
@@ -62,6 +63,22 @@ public class SkillsContext : DbContext
             .HasOne<SafetyCertification>(e => e.Certification).WithMany()
             .HasForeignKey(e => e.CertId)
             .IsRequired();
+
+        modelBuilder.Entity<UserNotification>()
+            .HasOne<UserModel>(e => e.Sender).WithMany()
+            .HasForeignKey(e => e.SenderId)
+            .IsRequired(false);
+
+        modelBuilder.Entity<UserNotification>()
+            .HasOne<UserModel>(e => e.Recipient).WithMany()
+            .HasForeignKey(e => e.RecipientId)
+            .IsRequired(false);
+
+        modelBuilder.Entity<UserNotification>()
+            .Navigation(e => e.Recipient).AutoInclude();
+        
+        modelBuilder.Entity<UserNotification>()
+            .Navigation(e => e.Sender).AutoInclude();
         
         // Skills models constraints
         modelBuilder.Entity<SkillModel>()

@@ -25,6 +25,13 @@
       <_ContentIncludedByDefault Remove="pub\pub\Languages\fr-FR.json" />
       <_ContentIncludedByDefault Remove="pub\pub\Skills.deps.json" />
       <_ContentIncludedByDefault Remove="pub\pub\Skills.runtimeconfig.json" />
+      <_ContentIncludedByDefault Remove="Components\Pages\UsersPages\Overview\ProfileCertifications.razor" />
+      <_ContentIncludedByDefault Remove="Components\Pages\UsersPages\Overview\ProfileCv.razor" />
+      <_ContentIncludedByDefault Remove="Components\Pages\UsersPages\Overview\ProfileEducations.razor" />
+      <_ContentIncludedByDefault Remove="Components\Pages\UsersPages\Overview\ProfileExperiences.razor" />
+      <_ContentIncludedByDefault Remove="Components\Pages\UsersPages\Overview\ProfileInfos.razor" />
+      <_ContentIncludedByDefault Remove="Components\Pages\UsersPages\Overview\ProfileSafetyCertifications.razor" />
+      <_ContentIncludedByDefault Remove="Components\Pages\UsersPages\Overview\ProfileSkills.razor" />
     </ItemGroup>
 
     <ItemGroup>
@@ -57,8 +64,11 @@
     </ItemGroup>
 
     <ItemGroup>
-      <AdditionalFiles Include="Components\Pages\UsersPages\Overview\CvProfile.razor" />
-      <AdditionalFiles Include="Components\Pages\UsersPages\Overview\SkillsProfile.razor" />
+      <AdditionalFiles Include="Components\Pages\Profile\ProfileCertifications.razor" />
+      <AdditionalFiles Include="Components\Pages\Profile\ProfileEducations.razor" />
+      <AdditionalFiles Include="Components\Pages\Profile\ProfileExperiences.razor" />
+      <AdditionalFiles Include="Components\Pages\Profile\ProfileInfos.razor" />
+      <AdditionalFiles Include="Components\Pages\Profile\ProfileSafetyCertifications.razor" />
     </ItemGroup>
 
 </Project>

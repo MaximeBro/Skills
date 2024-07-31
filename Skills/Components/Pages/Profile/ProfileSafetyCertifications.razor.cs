@@ -10,7 +10,7 @@ using Skills.Models;
 using Skills.Models.CV;
 using Skills.Models.Overview;
 
-namespace Skills.Components.Pages.UsersPages.Overview;
+namespace Skills.Components.Pages.Profile;
 
 public partial class ProfileSafetyCertifications : FullComponentBase
 {

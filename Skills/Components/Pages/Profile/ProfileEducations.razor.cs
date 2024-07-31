@@ -13,9 +13,9 @@ using Skills.Models.Enums;
 using Skills.Models.Overview;
 using Skills.Services;
 
-namespace Skills.Components.Pages.UsersPages.Overview;
+namespace Skills.Components.Pages.Profile;
 
-public partial class ProfileExperiences : FullComponentBase
+public partial class ProfileEducations : FullComponentBase
 {
     [CascadingParameter] public Task<AuthenticationState> AuthenticationState { get; set; } = null!;
     [Parameter] public UserModel User { get; set; } = null!;
@@ -27,37 +27,37 @@ public partial class ProfileExperiences : FullComponentBase
     
     private List<BreadcrumbItem> _breadcrumbs = [];
 
-    private List<UserExperienceInfo> _experiences = [];
+    private List<UserEducationInfo> _educations = [];
     
     private bool _sortMostRecent = false;
     private string SortActionText => _sortMostRecent ? "Du plus récent au plus ancien" : "Du plus ancien au plus récent";
     private string SortActionIcon => _sortMostRecent ? "fas fa-arrow-up-9-1" : "fas fa-arrow-down-1-9";
-    
+
     protected override async Task OnInitializedAsync()
     {
         _breadcrumbs.Add(new BreadcrumbItem("Accueil", "/"));
         _breadcrumbs.Add(new BreadcrumbItem("Utilisateurs", "/users"));
         _breadcrumbs.Add(new BreadcrumbItem(User.Name, $"/overview/{User.Username}"));
-        _breadcrumbs.Add(new BreadcrumbItem("Expériences", null, true));
+        _breadcrumbs.Add(new BreadcrumbItem("Diplômes", null, true));
 
         await RefreshDataAsync();
         StateHasChanged();
     }
-    
-    private async Task CreateExperienceAsync()
+
+    private async Task CreateEducationAsync()
     {
         var authorized = await CheckPermissionsAsync();
         if (authorized)
         {
             var options = Hardcoded.DialogOptions;
             options.MaxWidth = MaxWidth.Medium;
-            var instance = await DialogService.ShowAsync<ExperienceDialog>(string.Empty, options);
+            var instance = await DialogService.ShowAsync<EducationDialog>(string.Empty, options);
             var result = await instance.Result;
-            if (result is { Data: UserExperienceInfo experience })
+            if (result is { Data: UserEducationInfo education })
             {
-                experience.UserId = User.Id;
+                education.UserId = User.Id;
                 var db = await Factory.CreateDbContextAsync();
-                db.UserExperiences.Add(experience);
+                db.UserEducations.Add(education);
                 await db.SaveChangesAsync();
                 await db.DisposeAsync();
                 
@@ -69,25 +69,26 @@ public partial class ProfileExperiences : FullComponentBase
         }
     }
     
-    private async Task EditExperienceAsync(UserExperienceInfo experience)
+    private async Task EditEducationAsync(UserEducationInfo education)
     {
         var authorized = await CheckPermissionsAsync();
         if (authorized)
         {
-            var parameters = new DialogParameters<ExperienceDialog> { { x=> x.Experience, experience} };
+            var parameters = new DialogParameters<EducationDialog> { { x=> x.Education, education} };
             var options = Hardcoded.DialogOptions;
             options.MaxWidth = MaxWidth.Medium;
-            var instance = await DialogService.ShowAsync<ExperienceDialog>(string.Empty, parameters, options);
+            var instance = await DialogService.ShowAsync<EducationDialog>(string.Empty, parameters, options);
             var result = await instance.Result;
-            if (result is { Data: UserExperienceInfo newExperience })
+            if (result is { Data: UserEducationInfo newEducation })
             {
                 var db = await Factory.CreateDbContextAsync();
-                experience.Title = newExperience.Title;
-                experience.Category = newExperience.Category;
-                experience.StartsAt = newExperience.StartsAt;
-                experience.EndsAt = newExperience.EndsAt;
-                experience.Description = newExperience.Description;
-                db.UserExperiences.Update(experience);
+                education.YearStart = newEducation.YearStart;
+                education.YearEnd = newEducation.YearEnd;
+                education.Title = newEducation.Title;
+                education.Supplier = newEducation.Supplier;
+                education.Town = newEducation.Town;
+                education.Description = newEducation.Description;
+                db.UserEducations.Update(education);
                 await db.SaveChangesAsync();
                 await db.DisposeAsync();
                 
@@ -98,19 +99,19 @@ public partial class ProfileExperiences : FullComponentBase
             }
         }
     }
-    
-    private async Task DeleteExperienceAsync(UserExperienceInfo experience)
+
+    private async Task DeleteEducationAsync(UserEducationInfo education)
     {
         var authorized = await CheckPermissionsAsync();
         if (authorized)
         {
-            var parameters = new DialogParameters<ConfirmDialog> { { x => x.Text, $"Voulez-vous vraiment supprimer cette expérience ? Cette action est irréversible !" } };
+            var parameters = new DialogParameters<ConfirmDialog> { { x => x.Text, $"Voulez-vous vraiment supprimer ce diplôme ? Cette action est irréversible !" } };
             var instance = await DialogService.ShowAsync<ConfirmDialog>(string.Empty, parameters, Hardcoded.DialogOptions);
             var result = await instance.Result;
             if (result.Data != null && (bool)result.Data)
             {
                 var db = await Factory.CreateDbContextAsync();
-                db.UserExperiences.Remove(experience);
+                db.UserEducations.Remove(education);
                 await db.SaveChangesAsync();
                 await db.DisposeAsync();
                 
@@ -129,6 +130,7 @@ public partial class ProfileExperiences : FullComponentBase
         {
             return true;
         }
+
         Snackbar.Add("Vous n'avez pas les permissions nécessaires pour effectuer des modifications sur le profil de cet utilisateur !", Severity.Error);
         return false;
     }
@@ -136,15 +138,15 @@ public partial class ProfileExperiences : FullComponentBase
     private void OnSortChanged()
     {
         _sortMostRecent = !_sortMostRecent;
-        if (_sortMostRecent) _experiences = _experiences.OrderByDescending(x => x.EndsAt).ToList();
-        else _experiences = _experiences.OrderBy(x => x.EndsAt).ToList();
+        if (_sortMostRecent) _educations = _educations.OrderByDescending(x => x.YearEnd).ToList();
+        else _educations = _educations.OrderBy(x => x.YearEnd).ToList();
         StateHasChanged();
     }
     
     public override async Task RefreshDataAsync()
     {
         var db = await Factory.CreateDbContextAsync();
-        _experiences = await db.UserExperiences.AsNoTracking().Where(x => x.UserId == User.Id).ToListAsync();
+        _educations = await db.UserEducations.AsNoTracking().Where(x => x.UserId == User.Id).ToListAsync();
         OnSortChanged();
         await db.DisposeAsync();
     }

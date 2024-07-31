@@ -13,7 +13,6 @@ builder.WebHost.UseUrls("https://localhost:5000", "http://localhost:5001");
 
 var dataPath = new DirectoryInfo(Path.Combine(builder.Environment.ContentRootPath, "../data")).FullName;
 
-// var dataPath = new DirectoryInfo(Path.Combine(builder.Environment.WebRootPath, "../data")).FullName;
 Console.WriteLine($"DATA PATH ROUTING -> {dataPath}");
 Console.WriteLine($"ENVIRONMENT USERNAME -> {Environment.UserName}");
 Console.WriteLine($"ENVIRONMENT DOMAIN -> {Environment.UserDomainName}");

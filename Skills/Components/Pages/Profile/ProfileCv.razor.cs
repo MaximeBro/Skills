@@ -1,4 +1,6 @@
+using System.Security.Claims;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.JSInterop;
@@ -12,10 +14,11 @@ using Skills.Models.CV;
 using Skills.Models.Enums;
 using Skills.Services;
 
-namespace Skills.Components.Pages.UsersPages.Overview;
+namespace Skills.Components.Pages.Profile;
 
-public partial class CvProfile : FullComponentBase
+public partial class ProfileCv : FullComponentBase
 {
+    [CascadingParameter] public Task<AuthenticationState> AuthenticationState { get; set; } = null!;
     [Parameter] public UserModel User { get; set; } = null!;
     [Parameter] public EventCallback<MouseEventArgs> OnClick { get; set; }
     [Inject] public IDbContextFactory<SkillsContext> Factory { get; set; } = null!;
@@ -29,6 +32,7 @@ public partial class CvProfile : FullComponentBase
 
     private List<CvInfo> _cvs = new();
 
+    private UserModel _currentUser = null!;
     private bool _sortMostRecent = false;
     private string SortActionText => _sortMostRecent ? "Du plus récent au plus ancien" : "Du plus ancien au plus récent";
     private string SortActionIcon => _sortMostRecent ? "fas fa-arrow-down-1-9" : "fas fa-arrow-up-9-1";
@@ -44,11 +48,16 @@ public partial class CvProfile : FullComponentBase
         
         await RefreshDataAsync();
         StateHasChanged();
+
+        var state = await AuthenticationState;
+        var username = state.User.FindFirstValue("username");
+        await using var db = await Factory.CreateDbContextAsync();
+        _currentUser = db.Users.FirstOrDefault(x => x.Username == username)!;
     }
 
     private async Task CreateCvAsync()
     {
-        var db = await Factory.CreateDbContextAsync();
+        await using var db = await Factory.CreateDbContextAsync();
         var cv = new CvInfo
         {
             UserId = User.Id,
@@ -59,17 +68,24 @@ public partial class CvProfile : FullComponentBase
         if (User.BirthDate.HasValue) cv.BirthDate = User.BirthDate.Value;
         
         db.CVs.Add(cv);
+        db.Notifications.Add(new UserNotification
+        {
+            RecipientId = User.Id,
+            SenderId = _currentUser.Id,
+            Severity = NotificationSeverity.Hint,
+            Content = $"{_currentUser.Name} a créé un CV sur votre profil.\nAllez le consulter !"
+        });
         await db.SaveChangesAsync();
-        await db.DisposeAsync();
-
+        
         await SendUpdateAsync();
+        await SendNotificationUpdateAsync(User.Username);
         
         NavManager.NavigateTo($"/overview/{User.Username}/cv-editor/{cv.Id}");
     }
 
     private async Task DuplicateCvAsync(CvInfo cv)
     {
-        var db = await Factory.CreateDbContextAsync();
+        await using var db = await Factory.CreateDbContextAsync();
         var copy = new CvInfo
         {
             UserId = cv.UserId,
@@ -91,7 +107,6 @@ public partial class CvProfile : FullComponentBase
         db.CvExperiences.AddRange(experiences);
         db.CvSkills.AddRange(skills);
         await db.SaveChangesAsync();
-        await db.DisposeAsync();
         
         await RefreshDataAsync();
         StateHasChanged();
@@ -106,14 +121,14 @@ public partial class CvProfile : FullComponentBase
         var result = await instance.Result;
         if (result.Data != null && (bool)result.Data)
         {
-            var db = await Factory.CreateDbContextAsync();
+            await using var db = await Factory.CreateDbContextAsync();
             var oldCv = await db.CVs.AsNoTracking().FirstOrDefaultAsync(x => x.Id == cv.Id);
             if (oldCv != null)
             {
                 db.CVs.Remove(oldCv);
                 await db.SaveChangesAsync();
             }
-            await db.DisposeAsync();
+           
             await RefreshDataAsync();
             StateHasChanged();
             
@@ -156,7 +171,7 @@ public partial class CvProfile : FullComponentBase
 
     public override async Task RefreshDataAsync()
     {
-        var db = await Factory.CreateDbContextAsync();
+        await using var db = await Factory.CreateDbContextAsync();
         _cvs = db.CVs.AsNoTracking()
                      .Include(x => x.Skills).ThenInclude(x => x.Skill)
                      .Include(x => x.Educations).Include(x => x.Experiences)
@@ -165,6 +180,5 @@ public partial class CvProfile : FullComponentBase
                      .ToList();
         
         OnSortChanged();
-        await db.DisposeAsync();
     }
 }

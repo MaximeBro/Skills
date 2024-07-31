@@ -1,0 +1,55 @@
+@inherits FullComponentBase
+
+<AuthorizeView>
+    <Authorized>
+        <MudMenu Class="icon-hoverable mr-2 white-all" PopoverClass="dark-bg" ListClass="rounded-lg pa-0" Icon="@IconsR.Notifications" 
+                 AnchorOrigin="Origin.BottomRight" TransformOrigin="Origin.TopRight" ActivationEvent="MouseEvent.MouseOver">
+            <MudStack Row="false" Spacing="0">
+                <MudStack Row AlignItems="AlignItems.Center" Class="py-2 pl-4 pr-2" Spacing="1">
+                    <MudText Class="text-white open-sans-600" Typo="Typo.h6">Notifications</MudText>
+                    <div style="min-width: 200px;"></div>
+                    <MudButton Color="Color.Info" Variant="Variant.Outlined" Class="rounded-md py-1 px-2 open-sans-600" Style="text-transform: none; font-size: 14px;"
+                               IconSize="Size.Small" StartIcon="@IconsR.DoneAll" DisableElevation DisableRipple OnClick="@(async() => await MarkAsDoneAsync(_notifications.ToArray()))">
+                        Marquer comme lu
+                    </MudButton>
+                </MudStack>
+                <MudDivider FlexItem Class="my-2" Style="border-color: grey!important;"/>
+                <MudStack Class="py-2 px-3 mb-1" Row="false" Spacing="0">
+                    @if (!_notifications.Any())
+                    {
+                        <MudText Class="open-sans-600 mt-6 mb-8" Align="Align.Center">Vous n'avez pas reçu de notifications.</MudText>
+                    }
+                    else
+                    {
+                        @foreach (var notif in _notifications)
+                        {
+                            <MudMenuItem Class="px-2 rounded" OnClick="@(async() => await MarkAsDoneAsync(notif))">
+                                <MudStack Row Spacing="0" AlignItems="AlignItems.Center">
+                                    <MudIcon Color="@GetNotificationIconColor(notif)" Icon="@GetNotificationIcon(notif)"/>
+                                    <MudStack Class="pl-5 py-1 flex-grow-1" Row="false" Justify="Justify.FlexStart" Spacing="0">
+                                        @foreach (var line in notif.Content.Split("\n"))
+                                        {
+                                            <MudText Class="open-sans-600" Typo="Typo.body2">@line</MudText>
+                                        }
+                                        <MudStack Class="mt-1" Row AlignItems="AlignItems.Center" Justify="Justify.FlexStart" Spacing="0">
+                                            <MudIcon Size="Size.Small" Icon="@IconsR.AccessTime"/>
+                                            <MudText Class="open-sans-600" Typo="Typo.subtitle1">@GetNotificationDisplayTime(notif)</MudText>
+                                        </MudStack>
+                                    </MudStack>
+                                </MudStack>
+                            </MudMenuItem>
+
+                            if (_notifications.Last() != notif)
+                            {
+                                <MudDivider/>
+                            }
+                        }
+                    }
+                </MudStack>
+            </MudStack>
+        </MudMenu>
+    </Authorized>
+    <NotAuthorized>
+        <MudIconButton Class="text-white mr-2 icon-hoverable" Icon="@IconsR.Notifications"/>
+    </NotAuthorized>
+</AuthorizeView>

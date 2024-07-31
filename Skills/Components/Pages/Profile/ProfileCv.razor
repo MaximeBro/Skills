@@ -74,9 +74,9 @@
                                         <MudStack Row AlignItems="AlignItems.Center">
                                             @if (cv.UpdatedAt.IsOlderThan(180))
                                             {
-                                            <MudTooltip Text="Ce CV n'a pas été mis à jour depuis plus de 6 mois !" Placement="Placement.Left" Arrow>
-                                                <MudIcon Icon="@IconsF.Warning" Color="Color.Warning" Size="Size.Small" />
-                                            </MudTooltip>
+                                                <MudTooltip Text="Ce CV n'a pas été mis à jour depuis plus de 6 mois !" Placement="Placement.Left" Arrow>
+                                                    <MudIcon Icon="@IconsF.Warning" Color="Color.Warning" Size="Size.Small" />
+                                                </MudTooltip>
                                             }
                                             <MudText Class="open-sans-600" Typo="Typo.caption" Align="Align.Right">mis à jour le @cv.UpdatedAt.ToString("dd-MM-yyyy")</MudText>
                                         </MudStack>
