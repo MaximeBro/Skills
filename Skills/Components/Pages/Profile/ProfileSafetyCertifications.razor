@@ -22,7 +22,7 @@
         </MudItem>
         
         <MudItem Class="px-2 px-md-16" xs="12">
-            <MudStack Class="px-6 py-2" Row="false" Spacing="3">
+            <MudStack Class="py-2" Row="false" Spacing="3">
                 @foreach (var group in _groupedCertifications.Keys)
                 {
                     <MudPaper Elevation="4">
@@ -31,10 +31,19 @@
                             <MudDivider Class="ml-2 my-3" FlexItem Vertical Style="border-width: 2px;" />
                             @foreach (var certification in _groupedCertifications[group])
                             {
-                                @if (certification.Enabled)
+                                if (certification.Enabled)
                                 {
                                     <MudCheckBox T="bool" Value="@_userSafetyCertifications.Select(x => x.CertId).Contains(certification.Id)" 
                                                  ValueChanged="@(async(value) => await OnCheckChangedAsync(value, certification.Id))" Label="@certification.Name" />
+
+                                    var userCertification = _userSafetyCertifications.FirstOrDefault(x => x.CertId == certification.Id);
+                                    if (userCertification != null)
+                                    {
+                                        <MudTooltip Class="d-flex align-center" Text="@($"Expire dans {(userCertification.ExpireDate - DateTime.Now).DisplayRemainingTime()}")" 
+                                                    Placement="Placement.Right" Arrow>
+                                            <MudIcon Size="Size.Small" Icon="@IconsR.Info" Color="Color.Info"/>
+                                        </MudTooltip>   
+                                    }
                                 }
                             }
                         </MudStack>

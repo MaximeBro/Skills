@@ -3,7 +3,7 @@ using MudBlazor;
 
 namespace Skills.Extensions;
 
-public static class Hardcoded
+internal static class Hardcoded
 {
     public static CultureInfo French => new CultureInfo("fr-FR");
 

@@ -10,4 +10,5 @@ public class UserSafetyCertificationInfo
     public List<CvInfo> CVs { get; set; } = [];
     public Guid CertId { get; set; }
     public SafetyCertification? Certification { get; set; }
+    public DateTime ExpireDate { get; set; }
 }

@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Components.Web;
 using Microsoft.EntityFrameworkCore;
 using MudBlazor;
 using Skills.Components.Components;
+using Skills.Components.Dialogs;
 using Skills.Databases;
 using Skills.Extensions;
 using Skills.Models;
@@ -19,6 +20,7 @@ public partial class ProfileSafetyCertifications : FullComponentBase
     [Parameter] public EventCallback<MouseEventArgs> OnClick { get; set; }
     
     [Inject] public IDbContextFactory<SkillsContext> Factory { get; set; } = null!;
+    [Inject] public IDialogService DialogService { get; set; } = null!;
     [Inject] public ISnackbar Snackbar { get; set; } = null!;
     
     private List<BreadcrumbItem> _breadcrumbs = [];
@@ -40,25 +42,35 @@ public partial class ProfileSafetyCertifications : FullComponentBase
 
     private async Task OnCheckChangedAsync(bool value, Guid certificationId)
     {
-        var db = await Factory.CreateDbContextAsync();
+        bool validated = false;
+        await using var db = await Factory.CreateDbContextAsync();
         var old = db.UserSafetyCertifications.FirstOrDefault(x => x.UserId == User.Id && x.CertId == certificationId);
+        var cert = db.SafetyCertifications.FirstOrDefault(x => x.Id == certificationId);
         if (old != null)
         {
             db.UserSafetyCertifications.Remove(old);
+            validated = true;
         }
         else
         {
-            db.UserSafetyCertifications.Add(new UserSafetyCertificationInfo
+            var parameters = new DialogParameters<SafetyCertificationExpireDateDialog> { { x => x.Certification, cert } };
+            var instance = await DialogService.ShowAsync<SafetyCertificationExpireDateDialog>(string.Empty, parameters, Hardcoded.DialogOptions);
+            var result = await instance.Result;
+            if (result is { Data: DateTime expireDate })
             {
-                UserId = User.Id,
-                CertId = certificationId
-            });
+                db.UserSafetyCertifications.Add(new UserSafetyCertificationInfo
+                {
+                    UserId = User.Id,
+                    CertId = certificationId,
+                    ExpireDate = expireDate
+                });
+                validated = true;
+            }
         }
 
         await db.SaveChangesAsync();
-        await db.DisposeAsync();
         await RefreshDataAsync();
-        Snackbar.Add("Données sauvegardées !", Severity.Success, Hardcoded.SnackbarOptions);
+        if (validated) Snackbar.Add("Données sauvegardées !", Severity.Success, Hardcoded.SnackbarOptions);
         StateHasChanged();
     }
     

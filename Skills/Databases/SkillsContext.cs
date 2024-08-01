@@ -11,11 +11,10 @@ public class SkillsContext : DbContext
     
     // CVs
     public DbSet<CvInfo> CVs { get; set; }
+    public DbSet<CvSkillInfo> CvSkills { get; set; }
     public DbSet<CvEducationInfo> CvEducations { get; set; }
     public DbSet<CvExperienceInfo> CvExperiences { get; set; }
     public DbSet<CvCertificationInfo> CvCertifications { get; set; }
-    public DbSet<CvSkillInfo> CvSkills { get; set; }
-    
     public DbSet<SafetyCertification> SafetyCertifications { get; set; } // Admin certifications
     
     // Overview
