@@ -78,6 +78,8 @@ app.UseFileUpload();
 app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode();
 
+app.UseStatusCodePagesWithRedirects("/notfound");
+
 var themeManager = app.Services.GetRequiredService<ThemeManager>();
 var localizationManager = app.Services.GetRequiredService<LocalizationManager>();
 await themeManager.InitAsync();

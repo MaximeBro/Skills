@@ -58,13 +58,12 @@ public class RealTimeUpdateService(IDbContextFactory<SkillsContext> factory) : I
                                                                                .Include(x => x.User)
                                                                                .ToListAsync();
         var toDell = certs.Where(cert => cert.ExpireDate <= DateTime.Now).ToList();
-        
         db.UserSafetyCertifications.RemoveRange(toDell);
 
-        var notifs = toDell.Select(cert => 
-            new UserNotification { 
-                RecipientId = cert.UserId, 
-                Content = $"Votre habilitation {cert.Certification!.Name} de type {cert.Certification!.Category} a expiré !\nVeuillez la renouveler sur votre espace personnel.", 
+        var notifs = toDell.Select(cert =>
+            new UserNotification {
+                RecipientId = cert.UserId,
+                Content = $"Votre habilitation {cert.Certification!.Name} de type {cert.Certification!.Category} a expiré !\nVeuillez la renouveler sur votre espace personnel.",
                 SenderId = Guid.Empty,
                 Severity = NotificationSeverity.Warning
             }

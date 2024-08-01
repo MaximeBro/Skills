@@ -1,0 +1,16 @@
+@page "/{*Path}"
+
+<MudContainer Class="py-10" Style="min-height: calc(100vh - 64px)!important;">
+    <MudText Class="open-sans-600" Align="Align.Center" Typo="Typo.h2">Erreur 404</MudText>
+    <MudText Class="open-sans-600 mb-10" Align="Align.Center" Typo="Typo.h3">Page non trouvée !</MudText>
+    
+    <MudStack Row Justify="Justify.Center">
+        <MudLink Underline="Underline.Always" Href="/">
+            <MudText Class="open-sans-600" Align="Align.Center">Revenir en lieu sûr</MudText>
+        </MudLink>
+    </MudStack>
+</MudContainer>
+
+@code {
+    [Parameter] public string Path { get; set; } = string.Empty;
+}

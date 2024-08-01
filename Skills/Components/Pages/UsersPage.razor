@@ -61,7 +61,7 @@
             else
             {
                 <div class="pb-6">
-                    <MudDataGrid T="UserModel" Items="_filteredUsers" Bordered Hover Outlined Filterable Striped SortMode="SortMode.Multiple" Dense FixedHeader
+                    <MudDataGrid T="UserModel" Items="_filteredUsers" Bordered Hover Outlined Filterable SortMode="SortMode.Multiple" Dense FixedHeader
                                  Culture="@(new CultureInfo("fr-FR"))" Height="70vh" Virtualize OverscanCount="25" QuickFilter="@QuickFilter"
                                  RowClick="@OnRowClicked">
                         <Columns>
