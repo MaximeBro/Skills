@@ -7,13 +7,13 @@
             @foreach (var group in _groupedCertifications.Keys)
             {
                 <MudStack Row AlignItems="AlignItems.Center">
-                    <MudText Class="open-sans-600 bold" Align="Align.Center">@group</MudText>
-                    <MudGrid>
+                    <MudText Class="open-sans-600 bold" Align="Align.Left" Style="min-width: 120px;">@group</MudText>
+                    <MudGrid Spacing="0" Justify="Justify.FlexStart">
                         @foreach (var certification in _groupedCertifications[group])
                         {
                             @if (certification.Enabled)
                             {
-                                <MudItem xs="6" md="3" lg="2">
+                                <MudItem xs="6" md="3" lg="2" xl="1">
                                     <MudCheckBox T="bool" Value="@(_userSafetyCertifications.Select(x => x.CertId).Contains(certification.Id))" Disabled ReadOnly
                                                  Label="@certification.Name" />
                                 </MudItem>
@@ -21,6 +21,10 @@
                         }
                     </MudGrid>
                 </MudStack>
+                @if (_groupedCertifications.Keys.LastOrDefault() != group)
+                {
+                    <MudDivider Class="my-4" DividerType="DividerType.Middle"/>
+                }
             }
         </MudStack>
     </MudStack>

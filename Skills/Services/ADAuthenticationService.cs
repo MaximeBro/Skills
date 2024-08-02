@@ -1,13 +1,9 @@
 using System.Diagnostics.CodeAnalysis;
-using System.DirectoryServices;
 using System.DirectoryServices.AccountManagement;
-using System.DirectoryServices.Protocols;
-using System.Net;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Query.Internal;
 using Skills.Databases;
 using Skills.Models.Enums;
 

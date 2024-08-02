@@ -27,25 +27,30 @@
                 {
                     <MudPaper Elevation="4">
                         <MudStack Class="px-4 py-1" Row AlignItems="AlignItems.Center">
-                            <MudText Class="open-sans-600 bold" Align="Align.Center">@group</MudText>
-                            <MudDivider Class="ml-2 my-3" FlexItem Vertical Style="border-width: 2px;" />
-                            @foreach (var certification in _groupedCertifications[group])
-                            {
-                                if (certification.Enabled)
+                            <MudText Class="open-sans-600 bold" Align="Align.Left" Style="min-width: 120px;">@group</MudText>
+                            <MudGrid Spacing="0" Justify="Justify.FlexStart">
+                                @foreach (var certification in _groupedCertifications[group])
                                 {
-                                    <MudCheckBox T="bool" Value="@_userSafetyCertifications.Select(x => x.CertId).Contains(certification.Id)" 
-                                                 ValueChanged="@(async(value) => await OnCheckChangedAsync(value, certification.Id))" Label="@certification.Name" />
-
-                                    var userCertification = _userSafetyCertifications.FirstOrDefault(x => x.CertId == certification.Id);
-                                    if (userCertification != null)
+                                    if (certification.Enabled)
                                     {
-                                        <MudTooltip Class="d-flex align-center" Text="@($"Expire dans {(userCertification.ExpireDate - DateTime.Now).DisplayRemainingTime()}")" 
-                                                    Placement="Placement.Right" Arrow>
-                                            <MudIcon Size="Size.Small" Icon="@IconsR.Info" Color="Color.Info"/>
-                                        </MudTooltip>   
+                                        <MudItem xs="6" md="3" lg="2" xl="1">
+                                            <MudStack Row AlignItems="AlignItems.Center">
+                                                <MudCheckBox T="bool" Value="@_userSafetyCertifications.Select(x => x.CertId).Contains(certification.Id)"
+                                                             ValueChanged="@(async (value) => await OnCheckChangedAsync(value, certification.Id))" Label="@certification.Name"
+                                                             StopClickPropagation DisableRipple/>
+
+                                                @{
+                                                    var userCertification = _userSafetyCertifications.FirstOrDefault(x => x.CertId == certification.Id);
+                                                    if (userCertification != null)
+                                                    {
+                                                        <MudIcon Size="Size.Small" Icon="@IconsR.Info" Color="Color.Info" Title="@($"Expire dans {(userCertification.ExpireDate - DateTime.Now).DisplayRemainingTime()}")"/>
+                                                    }
+                                                }
+                                            </MudStack>
+                                        </MudItem>
                                     }
                                 }
-                            }
+                            </MudGrid>
                         </MudStack>
                     </MudPaper>
                 }

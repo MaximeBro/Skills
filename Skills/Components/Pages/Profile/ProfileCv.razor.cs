@@ -164,8 +164,8 @@ public partial class ProfileCv : FullComponentBase
     private void OnSortChanged()
     {
         _sortMostRecent = !_sortMostRecent;
-        if (_sortMostRecent) _cvs = _cvs.OrderBy(x => x.CreatedAt).ToList();
-        else _cvs = _cvs.OrderByDescending(x => x.CreatedAt).ToList();
+        if (_sortMostRecent) _cvs = _cvs.OrderByDescending(x => x.CreatedAt).ToList();
+        else _cvs = _cvs.OrderBy(x => x.CreatedAt).ToList();
         StateHasChanged();
     }
 

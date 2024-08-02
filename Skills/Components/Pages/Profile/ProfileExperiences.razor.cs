@@ -30,8 +30,8 @@ public partial class ProfileExperiences : FullComponentBase
     private List<UserExperienceInfo> _experiences = [];
     
     private bool _sortMostRecent = false;
-    private string SortActionText => _sortMostRecent ? "Du plus récent au plus ancien" : "Du plus ancien au plus récent";
-    private string SortActionIcon => _sortMostRecent ? "fas fa-arrow-up-9-1" : "fas fa-arrow-down-1-9";
+    private string SortActionText => _sortMostRecent ? "Du plus récent au plus ancien (date de fin)" : "Du plus ancien au plus récent (date de fin)";
+    private string SortActionIcon => _sortMostRecent ? "fas fa-arrow-down-1-9" : "fas fa-arrow-up-9-1";
     
     protected override async Task OnInitializedAsync()
     {
