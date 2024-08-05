@@ -63,6 +63,8 @@ if (!app.Environment.IsDevelopment())
     app.UseHsts();
 }
 
+app.UseStatusCodePagesWithRedirects("/{0}");
+
 app.UseHttpsRedirection();
 
 app.UseStaticFiles();
@@ -78,22 +80,20 @@ app.UseFileUpload();
 app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode();
 
-app.UseStatusCodePagesWithRedirects("/notfound");
-
 var themeManager = app.Services.GetRequiredService<ThemeManager>();
 var localizationManager = app.Services.GetRequiredService<LocalizationManager>();
-var realtimeUpdateService = app.Services.GetRequiredService<RealtimeUpdateService>();
 await themeManager.InitAsync();
 await localizationManager.InitAsync();
-await realtimeUpdateService.InitAsync();
 
 await RunMigrationAsync<SkillsContext>(app);
 
 // These services need migrations to be performed before their InitAsync method is called because it may produce requests on the SkillsContext !
 var adService = app.Services.GetRequiredService<ActiveDirectoryService>();
 var skillService = app.Services.GetRequiredService<SkillService>();
+var realtimeUpdateService = app.Services.GetRequiredService<RealtimeUpdateService>();
 await adService.InitAsync();
 await skillService.InitAsync();
+await realtimeUpdateService.InitAsync();
 
 await app.RunAsync();
 return;

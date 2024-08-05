@@ -72,18 +72,16 @@ public class SkillsContext : DbContext
         modelBuilder.Entity<UserNotification>()
             .HasOne<UserModel>(e => e.Sender).WithMany()
             .HasForeignKey(e => e.SenderId)
-            .IsRequired(false);
+            .IsRequired(false)
+            .OnDelete(DeleteBehavior.Cascade);
 
         modelBuilder.Entity<UserNotification>()
             .HasOne<UserModel>(e => e.Recipient).WithMany()
             .HasForeignKey(e => e.RecipientId)
-            .IsRequired(false);
+            .OnDelete(DeleteBehavior.Cascade);
 
         modelBuilder.Entity<UserNotification>()
             .Navigation(e => e.Recipient).AutoInclude();
-        
-        modelBuilder.Entity<UserNotification>()
-            .Navigation(e => e.Sender).AutoInclude();
         
         // Skills models constraints
         modelBuilder.Entity<SkillModel>()

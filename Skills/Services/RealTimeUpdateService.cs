@@ -5,6 +5,7 @@ using Skills.Databases;
 using Skills.Extensions;
 using Skills.Models;
 using Skills.Models.Enums;
+using Skills.Models.Overview;
 using Timer = System.Timers.Timer;
 
 namespace Skills.Services;
@@ -64,13 +65,11 @@ public class RealtimeUpdateService(ILogger<RealtimeUpdateService> logger, IDbCon
                                                                                .Include(x => x.User)
                                                                                .ToListAsync();
         var toDell = certs.Where(x => x.ExpireDate.HasValue && x.ExpireDate <= DateTime.Now).ToList();
-        db.UserSafetyCertifications.RemoveRange(toDell);
 
         var notifs = toDell.Select(x =>
             new UserNotification {
                 RecipientId = x.UserId,
                 Content = $"Votre habilitation {x.Certification!.Name} de type {x.Certification!.Category} a expiré !\nVeuillez la renouveler sur votre espace personnel.",
-                SenderId = Guid.Empty,
                 Severity = NotificationSeverity.Warning
             }
         ).ToList();
@@ -83,6 +82,8 @@ public class RealtimeUpdateService(ILogger<RealtimeUpdateService> logger, IDbCon
         {
             await SendNotificationUpdateAsync(cert.User!.Username);
         }
+        
+        db.UserSafetyCertifications.RemoveRange(toDell.Select(x => new UserSafetyCertificationInfo { Id = x.Id, UserId = x.UserId, CertId = x.CertId }));
         
         st.Stop();
         logger.LogInformation("{name} finished in {time} !", nameof(CheckExpiredCertificationsAsync), st.Elapsed.Humanize(culture: Hardcoded.English, precision: 2));

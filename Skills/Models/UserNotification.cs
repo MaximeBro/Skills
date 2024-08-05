@@ -7,7 +7,7 @@ public class UserNotification
     public Guid Id { get; set; } = Guid.NewGuid();
     public DateTime CreatedAt { get; set; } = DateTime.Now;
     
-    public Guid SenderId { get; set; }
+    public Guid? SenderId { get; set; }
     public UserModel? Sender { get; set; }
     
     public Guid RecipientId { get; set; }

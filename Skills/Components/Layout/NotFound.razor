@@ -1,4 +1,5 @@
-@page "/{*Path}"
+@page "/{Code:int}"
+@inject NavigationManager NavManager
 
 <MudContainer Class="py-10" Style="min-height: calc(100vh - 64px)!important;">
     <MudText Class="open-sans-600" Align="Align.Center" Typo="Typo.h2">Erreur 404</MudText>
@@ -12,5 +13,15 @@
 </MudContainer>
 
 @code {
-    [Parameter] public string Path { get; set; } = string.Empty;
+    [Parameter] public int Code { get; set; }
+
+    protected override void OnInitialized()
+    {
+        #if (!DEBUG)
+        if (Code != 404)
+        {
+            NavManager.NavigateTo("/", true);
+        }
+        #endif
+    }
 }
