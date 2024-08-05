@@ -7,7 +7,7 @@ namespace Skills.Components.Components;
 public partial class FullComponentBase : ComponentBase, IAsyncDisposable
 {
     [CascadingParameter(Name = "MainLayout")] public MainLayout Layout { get; set; } = null!;
-    [Inject] public RealTimeUpdateService UpdateService { get; set; } = null!;
+    [Inject] public RealtimeUpdateService UpdateService { get; set; } = null!;
     [Inject] public NavigationManager NavManager { get; set; } = null!;
     [Inject] public ThemeManager ThemeManager { get; set; } = null!;
     [Inject] public LocalizationManager Lang { get; set; } = null!;

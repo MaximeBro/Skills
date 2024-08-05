@@ -56,13 +56,13 @@ public partial class ProfileSafetyCertifications : FullComponentBase
             var parameters = new DialogParameters<SafetyCertificationExpireDateDialog> { { x => x.Certification, cert } };
             var instance = await DialogService.ShowAsync<SafetyCertificationExpireDateDialog>(string.Empty, parameters, Hardcoded.DialogOptions);
             var result = await instance.Result;
-            if (result is { Data: DateTime expireDate })
+            if (result is { Data: DateTime or null })
             {
                 db.UserSafetyCertifications.Add(new UserSafetyCertificationInfo
                 {
                     UserId = User.Id,
                     CertId = certificationId,
-                    ExpireDate = expireDate
+                    ExpireDate = (DateTime?)result.Data
                 });
                 validated = true;
             }
@@ -76,10 +76,9 @@ public partial class ProfileSafetyCertifications : FullComponentBase
     
     public override async Task RefreshDataAsync()
     {
-        var db = await Factory.CreateDbContextAsync();
+        await using var db = await Factory.CreateDbContextAsync();
         _safetyCertifications = await db.SafetyCertifications.AsNoTracking().ToListAsync();
         _userSafetyCertifications = await db.UserSafetyCertifications.AsNoTracking().Where(x => x.UserId == User.Id).ToListAsync();
         _groupedCertifications = _safetyCertifications.GroupBy(x => x.Category).ToDictionary(x => x.Key, y => y.ToList());
-        await db.DisposeAsync();
     }
 }

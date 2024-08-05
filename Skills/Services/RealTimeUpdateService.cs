@@ -1,5 +1,8 @@
+using System.Diagnostics;
+using Humanizer;
 using Microsoft.EntityFrameworkCore;
 using Skills.Databases;
+using Skills.Extensions;
 using Skills.Models;
 using Skills.Models.Enums;
 using Timer = System.Timers.Timer;
@@ -10,7 +13,7 @@ namespace Skills.Services;
 /// This service is used to notify page components that a circuit has sent an update to the same component.
 /// This is a small workaround for real-time updates instead of using SignalR. This service shouldn't be used for fast updates.
 /// </summary>
-public class RealTimeUpdateService(IDbContextFactory<SkillsContext> factory) : IDisposable
+public class RealtimeUpdateService(ILogger<RealtimeUpdateService> logger, IDbContextFactory<SkillsContext> factory) : IDisposable
 {
     public delegate Task OnUpdateAsyncHandler(string component, Guid circuitId);
     public event OnUpdateAsyncHandler OnUpdateAsync = null!;
@@ -52,18 +55,21 @@ public class RealTimeUpdateService(IDbContextFactory<SkillsContext> factory) : I
 
     private async Task CheckExpiredCertificationsAsync()
     {
+        logger.LogInformation("{name} started !", nameof(CheckExpiredCertificationsAsync));
+        var st = Stopwatch.StartNew();
+        
         await using var db = await factory.CreateDbContextAsync();
         var certs = await db.UserSafetyCertifications.AsNoTracking()
                                                                                .Include(x => x.Certification)
                                                                                .Include(x => x.User)
                                                                                .ToListAsync();
-        var toDell = certs.Where(cert => cert.ExpireDate <= DateTime.Now).ToList();
+        var toDell = certs.Where(x => x.ExpireDate.HasValue && x.ExpireDate <= DateTime.Now).ToList();
         db.UserSafetyCertifications.RemoveRange(toDell);
 
-        var notifs = toDell.Select(cert =>
+        var notifs = toDell.Select(x =>
             new UserNotification {
-                RecipientId = cert.UserId,
-                Content = $"Votre habilitation {cert.Certification!.Name} de type {cert.Certification!.Category} a expiré !\nVeuillez la renouveler sur votre espace personnel.",
+                RecipientId = x.UserId,
+                Content = $"Votre habilitation {x.Certification!.Name} de type {x.Certification!.Category} a expiré !\nVeuillez la renouveler sur votre espace personnel.",
                 SenderId = Guid.Empty,
                 Severity = NotificationSeverity.Warning
             }
@@ -77,6 +83,9 @@ public class RealTimeUpdateService(IDbContextFactory<SkillsContext> factory) : I
         {
             await SendNotificationUpdateAsync(cert.User!.Username);
         }
+        
+        st.Stop();
+        logger.LogInformation("{name} finished in {time} !", nameof(CheckExpiredCertificationsAsync), st.Elapsed.Humanize(culture: Hardcoded.English, precision: 2));
     }
 
     public void Dispose()

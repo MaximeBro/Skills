@@ -15,7 +15,6 @@ public class SkillsContext : DbContext
     public DbSet<CvEducationInfo> CvEducations { get; set; }
     public DbSet<CvExperienceInfo> CvExperiences { get; set; }
     public DbSet<CvCertificationInfo> CvCertifications { get; set; }
-    public DbSet<SafetyCertification> SafetyCertifications { get; set; } // Admin certifications
     
     // Overview
     public DbSet<UserEducationInfo> UserEducations { get; set; }
@@ -27,7 +26,6 @@ public class SkillsContext : DbContext
     public DbSet<SkillModel> Skills { get; set; }
     public DbSet<SoftSkillModel> SoftSkills { get; set; }
     public DbSet<SKillInfo> SkillsTypes { get; set; }
-    public DbSet<GroupModel> Groups { get; set; }
     
     // Users
     public DbSet<UserModel> Users { get; set; }
@@ -35,6 +33,11 @@ public class SkillsContext : DbContext
     public DbSet<TypeLevel> TypesLevels { get; set; }
     public DbSet<SoftTypeLevel> SoftTypesLevels { get; set; }
     public DbSet<UserNotification> Notifications { get; set; }
+    public DbSet<GroupModel> Groups { get; set; }
+    
+    
+    // BackOffice only
+    public DbSet<SafetyCertification> SafetyCertifications { get; set; }
 
     public SkillsContext(DbContextOptions<SkillsContext> options, IConfiguration configuration) : base(options)
     {
@@ -44,7 +47,10 @@ public class SkillsContext : DbContext
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
         optionsBuilder.UseSqlite(Configuration.GetConnectionString("SkillsDb"));
+        
+        #if DEBUG
         optionsBuilder.EnableSensitiveDataLogging();
+        #endif
     }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)

@@ -176,6 +176,7 @@ public partial class ProfileCv : FullComponentBase
                      .Include(x => x.Skills).ThenInclude(x => x.Skill)
                      .Include(x => x.Educations).Include(x => x.Experiences)
                      .Include(x => x.Certifications)
+                     .AsSplitQuery()
                      .OrderByDescending(x => x.CreatedAt)
                      .ToList();
         

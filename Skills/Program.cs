@@ -46,7 +46,7 @@ builder.Services.AddSingleton<ActiveDirectoryService>();
 builder.Services.AddSingleton<ThemeManager>();
 builder.Services.AddSingleton<LocalizationManager>();
 builder.Services.AddSingleton<SkillService>();
-builder.Services.AddSingleton<RealTimeUpdateService>();
+builder.Services.AddSingleton<RealtimeUpdateService>();
 /* Custom Services */
 
 /* Databases */
@@ -82,8 +82,10 @@ app.UseStatusCodePagesWithRedirects("/notfound");
 
 var themeManager = app.Services.GetRequiredService<ThemeManager>();
 var localizationManager = app.Services.GetRequiredService<LocalizationManager>();
+var realtimeUpdateService = app.Services.GetRequiredService<RealtimeUpdateService>();
 await themeManager.InitAsync();
 await localizationManager.InitAsync();
+await realtimeUpdateService.InitAsync();
 
 await RunMigrationAsync<SkillsContext>(app);
 

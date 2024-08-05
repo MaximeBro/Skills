@@ -19,6 +19,6 @@ public abstract class AbstractSkillModel
     
     public new string ToString() => !string.IsNullOrWhiteSpace(Type) ? (Type == Hardcoded.SoftSkill ? string.Join(" - ", Type, Description) : string.Join(" - ", Type, Category, SubCategory, Description)) : string.Empty;
     public string ToStringNoType() => !string.IsNullOrWhiteSpace(Type) ? (Type == Hardcoded.SoftSkill ? string.Join(" - ", Type, Description) : string.Join(" - ", Category, SubCategory, Description)) : string.Empty;
-    public string ToStringNoTypeDesc() => !string.IsNullOrWhiteSpace(Type) ? (Type == Hardcoded.SoftSkill ? $"{Type}" : string.Join(" - ", Category, SubCategory)) : string.Empty;
+    public string ToStringNoTypeNoDesc() => !string.IsNullOrWhiteSpace(Type) ? (Type == Hardcoded.SoftSkill ? $"{Type}" : string.Join(" - ", Category, SubCategory)) : string.Empty;
     public string ToStringNoDesc() => !string.IsNullOrWhiteSpace(Type) ? (Type == Hardcoded.SoftSkill ? $"{Type}" : string.Join(" - ", Type, Category, SubCategory)) : string.Empty;
 }

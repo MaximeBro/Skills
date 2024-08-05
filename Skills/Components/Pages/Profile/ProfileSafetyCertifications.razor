@@ -41,9 +41,9 @@
 
                                                 @{
                                                     var userCertification = _userSafetyCertifications.FirstOrDefault(x => x.CertId == certification.Id);
-                                                    if (userCertification != null)
+                                                    if (userCertification != null && userCertification.ExpireDate.HasValue)
                                                     {
-                                                        <MudIcon Size="Size.Small" Icon="@IconsR.Info" Color="Color.Info" Title="@($"Expire dans {(userCertification.ExpireDate - DateTime.Now).DisplayRemainingTime()}")"/>
+                                                        <MudIcon Size="Size.Small" Icon="@IconsR.Info" Color="Color.Info" Title="@($"Expire dans {(userCertification.ExpireDate.Value - DateTime.Now).DisplayRemainingTime()}")"/>
                                                     }
                                                 }
                                             </MudStack>

@@ -7,8 +7,15 @@
         </MudStack>
         <MudStack Class="px-4 py-2" Justify="Justify.SpaceEvenly" Row="false" Spacing="0">
             <MudStack Row>
-                <MudDatePicker @bind-Date="_expireDate" Label="Date d'expiration" AnchorOrigin="Origin.TopCenter" TransformOrigin="Origin.BottomCenter"
-                               Culture="@Hardcoded.French" DateFormat="dd-MM-yyyy"/>
+                <MudDatePicker @ref="_picker" @bind-Date="_expireDate" Label="Date d'expiration" AnchorOrigin="Origin.CenterRight" TransformOrigin="Origin.CenterLeft"
+                               Culture="@Hardcoded.French" DateFormat="dd-MM-yyyy" HelperText="Optionnel" Adornment="Adornment.Start" Clearable AutoClose
+                               IsDateDisabledFunc="@((date) => date < DateTime.Now)">
+                    <PickerActions>
+                        <MudButton Color="Color.Info" Style="text-transform: none;" OnClick="@(async() => await AddTimeAsync(3))">3 mois</MudButton>
+                        <MudButton Color="Color.Info" Style="text-transform: none;" OnClick="@(async() => await AddTimeAsync(6))">6 mois</MudButton>
+                        <MudButton Color="Color.Info" Style="text-transform: none;" OnClick="@(async() => await AddTimeAsync(12))">1 an</MudButton>
+                    </PickerActions>
+                </MudDatePicker>
             </MudStack>
         </MudStack>
     </DialogContent>
@@ -21,8 +28,15 @@
     [CascadingParameter] public MudDialogInstance Dialog { get; set; } = null!;
     [Parameter] public SafetyCertification Certification { get; set; } = null!;
 
-    private DateTime? _expireDate = DateTime.Now;
+    private MudDatePicker _picker = null!;
+    private DateTime? _expireDate;
 
+    private async Task AddTimeAsync(int months)
+    {
+        await _picker.GoToDate(_expireDate.GetValueOrDefault(DateTime.Now).AddMonths(months));
+        _picker.Close();
+    }
+    
     private void Submit()
     {
         Dialog.Close(_expireDate);
